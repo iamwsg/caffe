@@ -1,0 +1,363 @@
+name: "LeNet"
+layer {
+  name: "mnist"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mnist/mnist_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "mnist"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    scale: 0.00390625
+  }
+  data_param {
+    source: "examples/mnist/mnist_test_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+
+#column1 
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "ip2"
+  type: "InnerProduct"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 10
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+
+#column2 
+layer {
+  name: "conv21"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv21"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool21"
+  type: "Pooling"
+  bottom: "conv21"
+  top: "pool21"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv22"
+  type: "Convolution"
+  bottom: "pool21"
+  top: "conv22"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool22"
+  type: "Pooling"
+  bottom: "conv22"
+  top: "pool22"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip21"
+  type: "InnerProduct"
+  bottom: "pool22"
+  top: "ip21"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu21"
+  type: "ReLU"
+  bottom: "ip21"
+  top: "ip21"
+}
+layer {
+  name: "ip22"
+  type: "InnerProduct"
+  bottom: "ip21"
+  top: "ip22"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 10
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+#pooling multiple columns
+  layer {
+    name: "rip22"
+    type: "Reshape"
+    bottom: "ip22"
+    top: "rip22"
+    reshape_param {
+      shape {
+        dim: 64  # copy the dimension from below
+        dim: 1
+        dim: 10
+        dim: -1 # infer it from the other dimensions
+      }
+    }
+  }
+
+  layer {
+    name: "rip2"
+    type: "Reshape"
+    bottom: "ip2"
+    top: "rip2"
+    reshape_param {
+      shape {
+        dim: 64  # copy the dimension from below
+        dim: 1
+        dim: 10
+        dim: -1 # infer it from the other dimensions
+      }
+    }
+  }
+
+
+layer {
+  name: "concat"
+  bottom: "rip2"
+  bottom: "rip22"
+  top: "concat"
+  type: "Concat"
+  concat_param {
+    axis: 2
+  }
+}
+
+
+layer {
+  name: "poolc"
+  type: "Pooling"
+  bottom: "concat"
+  top: "poolc"
+  pooling_param {
+    pool: MAX
+    kernel_h: 2
+    kernel_w: 1
+    stride: 2
+  }
+}
+
+  layer {
+    name: "rpoolc"
+    type: "Reshape"
+    bottom: "poolc"
+    top: "rpoolc"
+    reshape_param {
+      shape {
+        dim: 64  # copy the dimension from below
+        dim: 10
+        dim: 1
+        dim: 1 
+      }
+    }
+  }
+
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "rpoolc"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "rpoolc"
+  bottom: "label"
+  top: "loss"
+}
