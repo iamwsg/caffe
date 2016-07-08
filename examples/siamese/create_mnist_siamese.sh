@@ -18,4 +18,9 @@ $EXAMPLES/convert_mnist_siamese_data.bin \
     $DATA/t10k-labels-idx1-ubyte \
     ./examples/siamese/mnist_siamese_test_leveldb
 
+#$EXAMPLES/MyConvert_mnist_siamese_data_test.bin \
+#    $DATA/t10k-images-idx3-ubyte \
+#    $DATA/t10k-labels-idx1-ubyte \
+#    ./examples/siamese/mnist_siamese_test_leveldb_789
+
 echo "Done."

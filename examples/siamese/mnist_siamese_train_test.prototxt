@@ -11,8 +11,8 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/siamese/My_mnist_siamese_train_leveldb"
-    batch_size: 64
+    source: "examples/siamese/My_mnist_siamese_train_leveldb_600000"
+    batch_size: 128  #64
   }
 }
 layer {
@@ -27,7 +27,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/siamese/My_mnist_siamese_test_leveldb"
+    source: "examples/siamese/My_mnist_siamese_test_leveldb_600000"
     batch_size: 100
   }
 }
@@ -56,7 +56,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 20
+    num_output: 100 #20
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -92,7 +92,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 50
+    num_output: 500 #50
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -128,7 +128,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 500
+    num_output: 5000 #500
     weight_filler {
       type: "xavier"
     }
@@ -203,7 +203,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 20
+    num_output: 100 #20
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -239,7 +239,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 50
+    num_output: 500 #50
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -275,7 +275,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 500
+    num_output: 5000 #500
     weight_filler {
       type: "xavier"
     }

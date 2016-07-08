@@ -7,7 +7,7 @@ test_iter: 100
 # Carry out testing every 500 training iterations.
 test_interval: 500
 # The base learning rate, momentum and the weight decay of the network.
-base_lr: 0.01
+base_lr: 0.01 #0.01
 momentum: 0.9
 weight_decay: 0.0000
 # The learning rate policy
@@ -20,6 +20,6 @@ display: 100
 max_iter: 50000
 # snapshot intermediate results
 snapshot: 5000
-snapshot_prefix: "examples/siamese/mnist_siamese_lNet_lData"
+snapshot_prefix: "examples/siamese/My_mnist_siamese_lData0to9_lNet"
 # solver mode: CPU or GPU
 solver_mode: GPU

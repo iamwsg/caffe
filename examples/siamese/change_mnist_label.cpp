@@ -1,10 +1,6 @@
 //
-// This script converts the MNIST dataset to the leveldb format used
-// by caffe to train siamese network.
-// Usage:
-//    convert_mnist_data input_image_file input_label_file output_db_file
-// The MNIST dataset could be downloaded at
-//    http://yann.lecun.com/exdb/mnist/
+// This script randomly change some label in mnist dataset from '1' to '10'
+
 #include <fstream>  // NOLINT(readability/streams)
 #include <string>
 
@@ -84,28 +80,18 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   datum.set_width(cols);
   LOG(INFO) << "A total of " << num_items << " items.";
   LOG(INFO) << "Rows: " << rows << " Cols: " << cols;
-
-  int nMatched = 0;
-  int nUmatched = 0;
-
-  for (int itemid = 0; itemid < 10*num_items; ++itemid) {
-    do { // Test on the labels. ShaogangWang
+  for (int itemid = 0; itemid < num_items; ++itemid) {
     int i = caffe::caffe_rng_rand() % num_items;  // pick a random  pair
     int j = caffe::caffe_rng_rand() % num_items;
     read_image(&image_file, &label_file, i, rows, cols,
         pixels, &label_i);
     read_image(&image_file, &label_file, j, rows, cols,
         pixels + (rows * cols), &label_j);
-    } while((label_i > 9) || (label_j > 9));
-
-
     datum.set_data(pixels, 2*rows*cols);
     if (label_i  == label_j) {
       datum.set_label(1);
-      nMatched++;
     } else {
       datum.set_label(0);
-      nUmatched++;
     }
     datum.SerializeToString(&value);
     std::string key_str = caffe::format_int(itemid, 8);
@@ -114,8 +100,6 @@ void convert_dataset(const char* image_filename, const char* label_filename,
 
   delete db;
   delete [] pixels;
-  
-  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n",num_items, nMatched, nUmatched, (float)nMatched/(float)num_items);
 }
 
 int main(int argc, char** argv) {

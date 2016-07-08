@@ -96,7 +96,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
         pixels, &label_i);
     read_image(&image_file, &label_file, j, rows, cols,
         pixels + (rows * cols), &label_j);
-    } while((label_i > 9) || (label_j > 9));
+    } while((label_i < 7) || (label_j < 7));
 
 
     datum.set_data(pixels, 2*rows*cols);
@@ -115,7 +115,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   delete db;
   delete [] pixels;
   
-  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n",num_items, nMatched, nUmatched, (float)nMatched/(float)num_items);
+  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n",10*num_items, nMatched, nUmatched, (float)nMatched/(float)num_items/10);
 }
 
 int main(int argc, char** argv) {
