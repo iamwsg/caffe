@@ -19,7 +19,12 @@ display: 100
 # The maximum number of iterations
 max_iter: 50000
 # snapshot intermediate results
+<<<<<<< HEAD
 snapshot: 50000
 snapshot_prefix: "examples/siamese/My_mnist_siamese_0to9l"
+=======
+snapshot: 5000
+snapshot_prefix: "examples/siamese/My_mnist_siamese_0to8"
+>>>>>>> 4a3ee5864d5ddedb936e421c90fe671ee39b9b99
 # solver mode: CPU or GPU
 solver_mode: GPU

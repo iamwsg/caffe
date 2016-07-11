@@ -11,7 +11,11 @@ layer {
     scale: 0.00390625
   }
   data_param {
+<<<<<<< HEAD
     source: "examples/siamese/mnist_siamese_train_leveldb_0to9l"
+=======
+    source: "examples/siamese/mnist_siamese_train_leveldb_0to8"
+>>>>>>> 4a3ee5864d5ddedb936e421c90fe671ee39b9b99
     batch_size: 64
   }
 }
@@ -27,7 +31,11 @@ layer {
     scale: 0.00390625
   }
   data_param {
+<<<<<<< HEAD
     source: "examples/siamese/mnist_siamese_test_leveldb_0to9l"
+=======
+    source: "examples/siamese/mnist_siamese_test_leveldb_0to8"
+>>>>>>> 4a3ee5864d5ddedb936e421c90fe671ee39b9b99
     batch_size: 100
   }
 }
