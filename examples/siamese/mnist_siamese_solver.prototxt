@@ -20,6 +20,6 @@ display: 100
 max_iter: 5000
 # snapshot intermediate results
 snapshot: 5000
-snapshot_prefix: "examples/siamese/My_mnist_siamese_0to6l"
+snapshot_prefix: "examples/siamese/My_mnist_siamese_0to8"
 # solver mode: CPU or GPU
 solver_mode: CPU

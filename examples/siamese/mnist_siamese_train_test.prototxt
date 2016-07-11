@@ -11,7 +11,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/siamese/mnist_siamese_train_leveldb_0to6_l"
+    source: "examples/siamese/mnist_siamese_train_leveldb_0to8"
     batch_size: 64
   }
 }
@@ -27,7 +27,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "examples/siamese/mnist_siamese_test_leveldb_0to6_l"
+    source: "examples/siamese/mnist_siamese_test_leveldb_0to8"
     batch_size: 100
   }
 }
