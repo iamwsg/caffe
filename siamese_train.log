@@ -1,0 +1,13 @@
+[libprotobuf ERROR google/protobuf/text_format.cc:245] Error parsing text-format caffe.SolverParameter: 23:1: Expected identifier.
+F0711 11:26:04.821955 31390 upgrade_proto.cpp:1063] Check failed: ReadProtoFromTextFile(param_file, param) Failed to parse SolverParameter file: examples/siamese/mnist_siamese_solver.prototxt
+*** Check failure stack trace: ***
+    @     0x7f0fb5ba9daa  (unknown)
+    @     0x7f0fb5ba9ce4  (unknown)
+    @     0x7f0fb5ba96e6  (unknown)
+    @     0x7f0fb5bac687  (unknown)
+    @     0x7f0fb61ddabe  caffe::ReadSolverParamsFromTextFileOrDie()
+    @           0x407a3b  train()
+    @           0x4059bc  main
+    @     0x7f0fb4eaaf45  (unknown)
+    @           0x4060f1  (unknown)
+    @              (nil)  (unknown)

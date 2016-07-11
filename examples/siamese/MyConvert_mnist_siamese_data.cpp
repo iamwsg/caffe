@@ -88,7 +88,9 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   int nMatched = 0;
   int nUmatched = 0;
 
-  for (int itemid = 0; itemid < 10*num_items; ++itemid) {
+  int num = 10*num_items;
+  int th = 6;
+  for (int itemid = 0; itemid < num; ++itemid) {
     do { // Test on the labels. ShaogangWang
     int i = caffe::caffe_rng_rand() % num_items;  // pick a random  pair
     int j = caffe::caffe_rng_rand() % num_items;
@@ -96,7 +98,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
         pixels, &label_i);
     read_image(&image_file, &label_file, j, rows, cols,
         pixels + (rows * cols), &label_j);
-    } while((label_i > 9) || (label_j > 9));
+    } while((label_i > th) || (label_j > th));
 
 
     datum.set_data(pixels, 2*rows*cols);
@@ -115,7 +117,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   delete db;
   delete [] pixels;
   
-  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n",num_items, nMatched, nUmatched, (float)nMatched/(float)num_items);
+  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n",num, nMatched, nUmatched, (float)nMatched/(float)num);
 }
 
 int main(int argc, char** argv) {
