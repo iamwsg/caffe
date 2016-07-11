@@ -17,9 +17,9 @@ power: 0.75
 # Display every 100 iterations
 display: 100
 # The maximum number of iterations
-max_iter: 5000
+max_iter: 50000
 # snapshot intermediate results
-snapshot: 5000
-snapshot_prefix: "examples/siamese/My_mnist_siamese_0to6l"
+snapshot: 50000
+snapshot_prefix: "examples/siamese/My_mnist_siamese_0to9l"
 # solver mode: CPU or GPU
-solver_mode: CPU
+solver_mode: GPU

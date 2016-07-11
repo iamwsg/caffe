@@ -89,7 +89,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   int nUmatched = 0;
 
   int num = 10*num_items;
-  int th = 6;
+  int th = 9;
   for (int itemid = 0; itemid < num; ++itemid) {
     do { // Test on the labels. ShaogangWang
     int i = caffe::caffe_rng_rand() % num_items;  // pick a random  pair
