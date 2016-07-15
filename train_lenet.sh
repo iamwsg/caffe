@@ -1,1 +1,0 @@
-./examples/mnist/train_lenet.sh

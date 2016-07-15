@@ -29,7 +29,7 @@ void read_image(std::ifstream* image_file, std::ifstream* label_file,
         char* pixels, char* label) {
   image_file->seekg(index * rows * cols + 16);
   image_file->read(pixels, rows * cols);
-  label_file->seekg(index + 8);
+  label_file->seekg(index +8);
   label_file->read(label, 1);
 }
 
@@ -88,13 +88,9 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   int nMatched = 0;
   int nUmatched = 0;
 
-<<<<<<< HEAD
-  int num = 10*num_items;
-  int th = 9;
-=======
   int num = 1*num_items;
-  int th = 8;
->>>>>>> 4a3ee5864d5ddedb936e421c90fe671ee39b9b99
+  int th = 4;
+
   for (int itemid = 0; itemid < num; ++itemid) {
     do { // Test on the labels. ShaogangWang
     int i = caffe::caffe_rng_rand() % num_items;  // pick a random  pair

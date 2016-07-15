@@ -1,8 +1,8 @@
 #./tools/extra/parse_log.py siamese_train.log .
 import pandas as pd
 import matplotlib.pyplot as plt
-train_log = pd.read_csv("./lenet_train_fine3.log.train")
-test_log = pd.read_csv("./lenet_train_fine3.log.test")
+train_log = pd.read_csv("./lenet_train_s.log.train")
+test_log = pd.read_csv("./lenet_train_s.log.test")
 _, ax1 = plt.subplots(figsize=(15, 10))
 ax2 = ax1.twinx()
 ax1.plot(train_log["NumIters"], train_log["loss"], alpha=0.4)
