@@ -140,6 +140,40 @@ bool ReadImageToDatum(const string& filename, const int label,
     return false;
   }
 }
+
+//added by Shaogang 7/16/2016
+bool MyReadImageToDatum(const string& root, const string& filename, const int label,
+    const int height, const int width, const bool is_color,
+    const std::string & encoding, Datum* datum) {
+
+  int pos = filename.find_last_of(' ');
+  std::string file1= root + filename.substr(0, pos);
+  std::string file2= root + filename.substr(pos+1, filename.length());
+  
+  cv::Mat cv_img = ReadImageToCVMat(file1, height, width, is_color);
+  cv::Mat cv_img2 = ReadImageToCVMat(file2, height, width, is_color);
+
+
+  if (cv_img.data && cv_img2.data) {
+    if (encoding.size()) {
+      //if ( (cv_img.channels() == 3) == is_color && !height && !width &&
+      //    matchExt(filename, encoding) )
+      //  return ReadFileToDatum(filename, label, datum);
+      std::vector<uchar> buf;
+      cv::imencode("."+encoding, cv_img, buf);
+      datum->set_data(std::string(reinterpret_cast<char*>(&buf[0]),
+                      buf.size()));
+      datum->set_label(label);
+      datum->set_encoded(true);
+      return true;
+    }
+    MyCVMatToDatum(cv_img, cv_img2, datum);
+    datum->set_label(label);
+    return true;
+  } else {
+    return false;
+  }
+}
 #endif  // USE_OPENCV
 
 bool ReadFileToDatum(const string& filename, const int label,
@@ -230,6 +264,42 @@ void CVMatToDatum(const cv::Mat& cv_img, Datum* datum) {
         int datum_index = (c * datum_height + h) * datum_width + w;
         buffer[datum_index] = static_cast<char>(ptr[img_index++]);
       }
+    }
+  }
+  datum->set_data(buffer);
+}
+
+//added by Shaogang 7/16/2016
+void MyCVMatToDatum(const cv::Mat& cv_img, const cv::Mat& cv_img2, Datum* datum) {
+  CHECK(cv_img.depth() == CV_8U) << "Image data type must be unsigned byte";
+  datum->set_channels(2*cv_img.channels());
+  datum->set_height(cv_img.rows);
+  datum->set_width(cv_img.cols);
+  datum->clear_data();
+  datum->clear_float_data();
+  datum->set_encoded(false);
+  int datum_channels = datum->channels();
+  int datum_height = datum->height();
+  int datum_width = datum->width();
+  int datum_size = datum_channels * datum_height * datum_width;
+  std::string buffer(datum_size, ' ');
+  for (int h = 0; h < datum_height; ++h) {
+    const uchar* ptr = cv_img.ptr<uchar>(h);
+	const uchar* ptr2 = cv_img2.ptr<uchar>(h);
+    int img_index = 0;
+    int img2_index = 0;
+    for (int w = 0; w < datum_width; ++w) {
+      //write cv_img
+      for (int c = 0; c < datum_channels/2; ++c) {
+        int datum_index = (c * datum_height + h) * datum_width + w;
+        buffer[datum_index] = static_cast<char>(ptr[img_index++]);
+      }
+      //write cv_img2
+      for (int c = datum_channels/2; c < datum_channels; ++c) {
+        int datum_index = (c * datum_height + h) * datum_width + w;
+        buffer[datum_index] = static_cast<char>(ptr2[img2_index++]);
+      }
+  
     }
   }
   datum->set_data(buffer);

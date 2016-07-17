@@ -11,9 +11,9 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "/home/shaogang/caffe/examples/siamese/mnist_siamese_train_leveldb_0to6"
-    batch_size: 64
-    backend: LEVELDB
+    source: "/home/shaogang/caffe/examples/scene/train_pairs.lmdb"
+    batch_size: 32
+    backend: LMDB
   }
 }
 layer {
@@ -28,9 +28,9 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "/home/shaogang/caffe/examples/siamese/mnist_siamese_test_leveldb_89"
-    batch_size: 100
-    backend: LEVELDB
+    source: "/home/shaogang/caffe/examples/scene/test_pairs.lmdb"
+    batch_size: 10
+    backend: LMDB
   }
 }
 layer {
@@ -41,7 +41,7 @@ layer {
   top: "data_p"
   slice_param {
     slice_dim: 1
-    slice_point: 1
+    slice_point: 3
   }
 }
 layer {

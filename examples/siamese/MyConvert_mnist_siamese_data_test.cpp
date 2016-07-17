@@ -96,7 +96,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
         pixels, &label_i);
     read_image(&image_file, &label_file, j, rows, cols,
         pixels + (rows * cols), &label_j);
-    } while((label_i < 7) || (label_j < 7));
+    } while((label_i < 8) || (label_j < 8));
 
 
     datum.set_data(pixels, 2*rows*cols);

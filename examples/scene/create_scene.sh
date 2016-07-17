@@ -2,12 +2,12 @@
 # Create the imagenet lmdb inputs
 # N.B. set the path to the imagenet train + val data dirs
 
-EXAMPLE=examples/15_scene
-DATA=data/15_scene
+EXAMPLE=./examples/scene
+DATA=/media/sf_Datasets/Caltech101
 TOOLS=build/tools
 
-TRAIN_DATA_ROOT=/
-VAL_DATA_ROOT=/
+TRAIN_DATA_ROOT=/media/sf_Datasets/Caltech101/
+VAL_DATA_ROOT=/media/sf_Datasets/Caltech101/
 
 # Set RESIZE=true to resize the images to 256x256. Leave as false if images have
 # already been resized using another tool.
@@ -36,22 +36,22 @@ fi
 
 echo "Creating train lmdb..."
 
-GLOG_logtostderr=1 $TOOLS/convert_imageset \
+GLOG_logtostderr=1 $TOOLS/convert_pairs \
     --resize_height=$RESIZE_HEIGHT \
     --resize_width=$RESIZE_WIDTH \
-    --shuffle \
+    #--shuffle \
     $TRAIN_DATA_ROOT \
-    $DATA/15_scene_train.txt \
-    $EXAMPLE/15_scene_train_lmdb
+    $DATA/train_pairs.txt \
+    $EXAMPLE/scene_pair_train_lmdb
 
 echo "Creating val lmdb..."
 
-GLOG_logtostderr=1 $TOOLS/convert_imageset \
+GLOG_logtostderr=1 $TOOLS/convert_pairs \
     --resize_height=$RESIZE_HEIGHT \
     --resize_width=$RESIZE_WIDTH \
-    --shuffle \
+    #--shuffle \
     $VAL_DATA_ROOT \
-    $DATA/15_scene_test.txt \
-    $EXAMPLE/15_scene_test_lmdb
+    $DATA/test_pairs.txt \
+    $EXAMPLE/scene_pair_test_lmdb
 
 echo "Done."
