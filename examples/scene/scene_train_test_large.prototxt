@@ -1,4 +1,4 @@
-name: "mnist_siamese_train_test_sim"
+name: "mnist_siamese_train_test_sim_large"
 layer {
   name: "pair_data"
   type: "Data"
@@ -8,8 +8,9 @@ layer {
     phase: TRAIN
   }
   transform_param {
-    scale: 0.00390625
-    #scale:0.00130208
+    mirror: true
+    mean_file: "examples/scene/scene_mean.binaryproto"
+	scale: 0.00390625
   }
   data_param {
     source: "examples/scene/train_pairs.lmdb"
@@ -26,8 +27,9 @@ layer {
     phase: TEST
   }
   transform_param {
-    scale: 0.00390625
-    #scale:0.00130208
+    mirror: false
+    mean_file: "examples/scene/scene_mean.binaryproto"
+	scale: 0.00390625
   }
   data_param {
     source: "examples/scene/test_pairs.lmdb"
@@ -161,7 +163,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 10
+    num_output: 500 #10
     weight_filler {
       type: "xavier"
     }
@@ -194,6 +196,8 @@ layer {
     }
   }
 }
+
+
 
 layer {
   name: "conv1_p"
@@ -310,7 +314,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 10
+    num_output: 500 #10
     weight_filler {
       type: "xavier"
     }
@@ -344,6 +348,8 @@ layer {
   }
 }
 
+
+
 layer {
   name: "concat"
   bottom: "feat"
@@ -369,7 +375,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 100
+    num_output: 1024 #100
     weight_filler {
       type: "xavier"
     }
@@ -400,7 +406,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 50
+    num_output: 1024 #50
     weight_filler {
       type: "xavier"
     }
