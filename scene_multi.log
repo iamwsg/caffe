@@ -1,0 +1,3820 @@
+I0719 16:44:50.017851 12618 caffe.cpp:185] Using GPUs 0
+I0719 16:44:50.031498 12618 caffe.cpp:190] GPU 0: GeForce GTX TITAN X
+I0719 16:44:50.380460 12618 solver.cpp:48] Initializing solver from parameters: 
+test_iter: 10
+test_interval: 100
+base_lr: 0.01
+display: 100
+max_iter: 5000
+lr_policy: "inv"
+gamma: 0.0001
+power: 0.75
+momentum: 0.9
+weight_decay: 0.02
+snapshot: 1000
+snapshot_prefix: "examples/scene/scene"
+solver_mode: GPU
+device_id: 0
+net: "examples/scene/scene_train_test_multi.prototxt"
+I0719 16:44:50.380627 12618 solver.cpp:91] Creating training net from net file: examples/scene/scene_train_test_multi.prototxt
+I0719 16:44:50.388656 12618 net.cpp:313] The NetState phase (0) differed from the phase (1) specified by a rule in layer pair_data
+I0719 16:44:50.388921 12618 net.cpp:313] The NetState phase (0) differed from the phase (1) specified by a rule in layer accuracy
+I0719 16:44:50.390825 12618 net.cpp:49] Initializing net from parameters: 
+name: "mnist_siamese_train_test_sim_multi"
+state {
+  phase: TRAIN
+}
+layer {
+  name: "pair_data"
+  type: "Data"
+  top: "pair_data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 0.00390625
+    mirror: true
+    mean_file: "examples/scene/scene_mean.binaryproto"
+  }
+  data_param {
+    source: "examples/scene/train_pairs.lmdb"
+    batch_size: 128
+    backend: LMDB
+  }
+}
+layer {
+  name: "slice_pair"
+  type: "Slice"
+  bottom: "pair_data"
+  top: "i1"
+  top: "i2"
+  slice_param {
+    slice_dim: 1
+    slice_point: 3
+  }
+}
+layer {
+  name: "pool_i1"
+  type: "Pooling"
+  bottom: "i1"
+  top: "p1"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "pool_i2"
+  type: "Pooling"
+  bottom: "i2"
+  top: "p2"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "slice_h_i1"
+  type: "Slice"
+  bottom: "i1"
+  top: "i1_h1"
+  top: "i1_h2"
+  slice_param {
+    slice_dim: 2
+    slice_point: 64
+  }
+}
+layer {
+  name: "slice_h_i2"
+  type: "Slice"
+  bottom: "i2"
+  top: "i2_h1"
+  top: "i2_h2"
+  slice_param {
+    slice_dim: 2
+    slice_point: 64
+  }
+}
+layer {
+  name: "slice_w_i1_h1"
+  type: "Slice"
+  bottom: "i1_h1"
+  top: "s11"
+  top: "s12"
+  slice_param {
+    slice_dim: 3
+    slice_point: 64
+  }
+}
+layer {
+  name: "slice_w_i1_h2"
+  type: "Slice"
+  bottom: "i1_h2"
+  top: "s13"
+  top: "s14"
+  slice_param {
+    slice_dim: 3
+    slice_point: 64
+  }
+}
+layer {
+  name: "slice_w_i2_h1"
+  type: "Slice"
+  bottom: "i2_h1"
+  top: "s21"
+  top: "s22"
+  slice_param {
+    slice_dim: 3
+    slice_point: 64
+  }
+}
+layer {
+  name: "slice_w_i2_h2"
+  type: "Slice"
+  bottom: "i2_h2"
+  top: "s23"
+  top: "s24"
+  slice_param {
+    slice_dim: 3
+    slice_point: 64
+  }
+}
+layer {
+  name: "conv1_11"
+  type: "Convolution"
+  bottom: "p1"
+  top: "conv1_11"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_11"
+  type: "Pooling"
+  bottom: "conv1_11"
+  top: "pool1_11"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_11"
+  type: "Convolution"
+  bottom: "pool1_11"
+  top: "conv2_11"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_11"
+  type: "Pooling"
+  bottom: "conv2_11"
+  top: "pool2_11"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_11"
+  type: "InnerProduct"
+  bottom: "pool2_11"
+  top: "ip1_11"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_11"
+  type: "ReLU"
+  bottom: "ip1_11"
+  top: "ip1_11"
+}
+layer {
+  name: "ip2_11"
+  type: "InnerProduct"
+  bottom: "ip1_11"
+  top: "ip2_11"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_12"
+  type: "Convolution"
+  bottom: "p2"
+  top: "conv1_12"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_12"
+  type: "Pooling"
+  bottom: "conv1_12"
+  top: "pool1_12"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_12"
+  type: "Convolution"
+  bottom: "pool1_12"
+  top: "conv2_12"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_12"
+  type: "Pooling"
+  bottom: "conv2_12"
+  top: "pool2_12"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_12"
+  type: "InnerProduct"
+  bottom: "pool2_12"
+  top: "ip1_12"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_12"
+  type: "ReLU"
+  bottom: "ip1_12"
+  top: "ip1_12"
+}
+layer {
+  name: "ip2_12"
+  type: "InnerProduct"
+  bottom: "ip1_12"
+  top: "ip2_12"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "concat1"
+  type: "Concat"
+  bottom: "ip2_11"
+  bottom: "ip2_12"
+  top: "comb_1"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "fc1_1"
+  type: "InnerProduct"
+  bottom: "comb_1"
+  top: "fc1_1"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc1_1"
+  type: "ReLU"
+  bottom: "fc1_1"
+  top: "fc1_1"
+}
+layer {
+  name: "fc2_1"
+  type: "InnerProduct"
+  bottom: "fc1_1"
+  top: "fc2_1"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc2_1"
+  type: "ReLU"
+  bottom: "fc2_1"
+  top: "fc2_1"
+}
+layer {
+  name: "fc3_1"
+  type: "InnerProduct"
+  bottom: "fc2_1"
+  top: "fc3_1"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_21"
+  type: "Convolution"
+  bottom: "p1"
+  top: "conv1_21"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_21"
+  type: "Pooling"
+  bottom: "conv1_21"
+  top: "pool1_21"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_21"
+  type: "Convolution"
+  bottom: "pool1_21"
+  top: "conv2_21"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_21"
+  type: "Pooling"
+  bottom: "conv2_21"
+  top: "pool2_21"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_21"
+  type: "InnerProduct"
+  bottom: "pool2_21"
+  top: "ip1_21"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_21"
+  type: "ReLU"
+  bottom: "ip1_21"
+  top: "ip1_21"
+}
+layer {
+  name: "ip2_21"
+  type: "InnerProduct"
+  bottom: "ip1_21"
+  top: "ip2_21"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_22"
+  type: "Convolution"
+  bottom: "s21"
+  top: "conv1_22"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_22"
+  type: "Pooling"
+  bottom: "conv1_22"
+  top: "pool1_22"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_22"
+  type: "Convolution"
+  bottom: "pool1_22"
+  top: "conv2_22"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_22"
+  type: "Pooling"
+  bottom: "conv2_22"
+  top: "pool2_22"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_22"
+  type: "InnerProduct"
+  bottom: "pool2_22"
+  top: "ip1_22"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_22"
+  type: "ReLU"
+  bottom: "ip1_22"
+  top: "ip1_22"
+}
+layer {
+  name: "ip2_22"
+  type: "InnerProduct"
+  bottom: "ip1_22"
+  top: "ip2_22"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_22"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "concat"
+  type: "Concat"
+  bottom: "ip2_21"
+  bottom: "ip2_22"
+  top: "comb_2"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "fc1_2"
+  type: "InnerProduct"
+  bottom: "comb_2"
+  top: "fc1_2"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc1_2"
+  type: "ReLU"
+  bottom: "fc1_2"
+  top: "fc1_2"
+}
+layer {
+  name: "fc2_2"
+  type: "InnerProduct"
+  bottom: "fc1_2"
+  top: "fc2_2"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc2_2"
+  type: "ReLU"
+  bottom: "fc2_2"
+  top: "fc2_2"
+}
+layer {
+  name: "fc3_2"
+  type: "InnerProduct"
+  bottom: "fc2_2"
+  top: "fc3_2"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_31"
+  type: "Convolution"
+  bottom: "p1"
+  top: "conv1_31"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_31"
+  type: "Pooling"
+  bottom: "conv1_31"
+  top: "pool1_31"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_31"
+  type: "Convolution"
+  bottom: "pool1_31"
+  top: "conv2_31"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_31"
+  type: "Pooling"
+  bottom: "conv2_31"
+  top: "pool2_31"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_31"
+  type: "InnerProduct"
+  bottom: "pool2_31"
+  top: "ip1_31"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_31"
+  type: "ReLU"
+  bottom: "ip1_31"
+  top: "ip1_31"
+}
+layer {
+  name: "ip2_31"
+  type: "InnerProduct"
+  bottom: "ip1_31"
+  top: "ip2_31"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_32"
+  type: "Convolution"
+  bottom: "s22"
+  top: "conv1_32"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_32"
+  type: "Pooling"
+  bottom: "conv1_32"
+  top: "pool1_32"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_32"
+  type: "Convolution"
+  bottom: "pool1_32"
+  top: "conv2_32"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_32"
+  type: "Pooling"
+  bottom: "conv2_32"
+  top: "pool2_32"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_32"
+  type: "InnerProduct"
+  bottom: "pool2_32"
+  top: "ip1_32"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_32"
+  type: "ReLU"
+  bottom: "ip1_32"
+  top: "ip1_32"
+}
+layer {
+  name: "ip2_32"
+  type: "InnerProduct"
+  bottom: "ip1_32"
+  top: "ip2_32"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "concat_3"
+  type: "Concat"
+  bottom: "ip2_31"
+  bottom: "ip2_32"
+  top: "comb_3"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "fc1_3"
+  type: "InnerProduct"
+  bottom: "comb_3"
+  top: "fc1_3"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc1_3"
+  type: "ReLU"
+  bottom: "fc1_3"
+  top: "fc1_3"
+}
+layer {
+  name: "fc2_3"
+  type: "InnerProduct"
+  bottom: "fc1_3"
+  top: "fc2_3"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc2_3"
+  type: "ReLU"
+  bottom: "fc2_3"
+  top: "fc2_3"
+}
+layer {
+  name: "fc3_3"
+  type: "InnerProduct"
+  bottom: "fc2_3"
+  top: "fc3_3"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_41"
+  type: "Convolution"
+  bottom: "p1"
+  top: "conv1_41"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_41"
+  type: "Pooling"
+  bottom: "conv1_41"
+  top: "pool1_41"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_41"
+  type: "Convolution"
+  bottom: "pool1_41"
+  top: "conv2_41"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_41"
+  type: "Pooling"
+  bottom: "conv2_41"
+  top: "pool2_41"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_41"
+  type: "InnerProduct"
+  bottom: "pool2_41"
+  top: "ip1_41"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_41"
+  type: "ReLU"
+  bottom: "ip1_41"
+  top: "ip1_41"
+}
+layer {
+  name: "ip2_41"
+  type: "InnerProduct"
+  bottom: "ip1_41"
+  top: "ip2_41"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_42"
+  type: "Convolution"
+  bottom: "s23"
+  top: "conv1_42"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_42"
+  type: "Pooling"
+  bottom: "conv1_42"
+  top: "pool1_42"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_42"
+  type: "Convolution"
+  bottom: "pool1_42"
+  top: "conv2_42"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_42"
+  type: "Pooling"
+  bottom: "conv2_42"
+  top: "pool2_42"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_42"
+  type: "InnerProduct"
+  bottom: "pool2_42"
+  top: "ip1_42"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_42"
+  type: "ReLU"
+  bottom: "ip1_42"
+  top: "ip1_42"
+}
+layer {
+  name: "ip2_42"
+  type: "InnerProduct"
+  bottom: "ip1_42"
+  top: "ip2_42"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "concat_4"
+  type: "Concat"
+  bottom: "ip2_41"
+  bottom: "ip2_42"
+  top: "comb_4"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "fc1_4"
+  type: "InnerProduct"
+  bottom: "comb_4"
+  top: "fc1_4"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc1_4"
+  type: "ReLU"
+  bottom: "fc1_4"
+  top: "fc1_4"
+}
+layer {
+  name: "fc2_4"
+  type: "InnerProduct"
+  bottom: "fc1_4"
+  top: "fc2_4"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc2_4"
+  type: "ReLU"
+  bottom: "fc2_4"
+  top: "fc2_4"
+}
+layer {
+  name: "fc3_4"
+  type: "InnerProduct"
+  bottom: "fc2_4"
+  top: "fc3_4"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_51"
+  type: "Convolution"
+  bottom: "p1"
+  top: "conv1_51"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_51"
+  type: "Pooling"
+  bottom: "conv1_51"
+  top: "pool1_51"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_51"
+  type: "Convolution"
+  bottom: "pool1_51"
+  top: "conv2_51"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_51"
+  type: "Pooling"
+  bottom: "conv2_51"
+  top: "pool2_51"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_51"
+  type: "InnerProduct"
+  bottom: "pool2_51"
+  top: "ip1_51"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_51"
+  type: "ReLU"
+  bottom: "ip1_51"
+  top: "ip1_51"
+}
+layer {
+  name: "ip2_51"
+  type: "InnerProduct"
+  bottom: "ip1_51"
+  top: "ip2_51"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_52"
+  type: "Convolution"
+  bottom: "s24"
+  top: "conv1_52"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_52"
+  type: "Pooling"
+  bottom: "conv1_52"
+  top: "pool1_52"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_52"
+  type: "Convolution"
+  bottom: "pool1_52"
+  top: "conv2_52"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_52"
+  type: "Pooling"
+  bottom: "conv2_52"
+  top: "pool2_52"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_52"
+  type: "InnerProduct"
+  bottom: "pool2_52"
+  top: "ip1_52"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_52"
+  type: "ReLU"
+  bottom: "ip1_52"
+  top: "ip1_52"
+}
+layer {
+  name: "ip2_52"
+  type: "InnerProduct"
+  bottom: "ip1_52"
+  top: "ip2_52"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "concat_5"
+  type: "Concat"
+  bottom: "ip2_51"
+  bottom: "ip2_52"
+  top: "comb_5"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "fc1_5"
+  type: "InnerProduct"
+  bottom: "comb_5"
+  top: "fc1_5"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc1_5"
+  type: "ReLU"
+  bottom: "fc1_5"
+  top: "fc1_5"
+}
+layer {
+  name: "fc2_5"
+  type: "InnerProduct"
+  bottom: "fc1_5"
+  top: "fc2_5"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc2_5"
+  type: "ReLU"
+  bottom: "fc2_5"
+  top: "fc2_5"
+}
+layer {
+  name: "fc3_5"
+  type: "InnerProduct"
+  bottom: "fc2_5"
+  top: "fc3_5"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_61"
+  type: "Convolution"
+  bottom: "s11"
+  top: "conv1_61"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_61"
+  type: "Pooling"
+  bottom: "conv1_61"
+  top: "pool1_61"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_61"
+  type: "Convolution"
+  bottom: "pool1_61"
+  top: "conv2_61"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_61"
+  type: "Pooling"
+  bottom: "conv2_61"
+  top: "pool2_61"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_61"
+  type: "InnerProduct"
+  bottom: "pool2_61"
+  top: "ip1_61"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_61"
+  type: "ReLU"
+  bottom: "ip1_61"
+  top: "ip1_61"
+}
+layer {
+  name: "ip2_61"
+  type: "InnerProduct"
+  bottom: "ip1_61"
+  top: "ip2_61"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv1_62"
+  type: "Convolution"
+  bottom: "p2"
+  top: "conv1_62"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_62"
+  type: "Pooling"
+  bottom: "conv1_62"
+  top: "pool1_62"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv2_62"
+  type: "Convolution"
+  bottom: "pool1_62"
+  top: "conv2_62"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 50
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool2_62"
+  type: "Pooling"
+  bottom: "conv2_62"
+  top: "pool2_62"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "ip1_62"
+  type: "InnerProduct"
+  bottom: "pool2_62"
+  top: "ip1_62"
+  param {
+    name: "ip1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu1_62"
+  type: "ReLU"
+  bottom: "ip1_62"
+  top: "ip1_62"
+}
+layer {
+  name: "ip2_62"
+  type: "InnerProduct"
+  bottom: "ip1_62"
+  top: "ip2_62"
+  param {
+    name: "ip2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "ip2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 500
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "concat_6"
+  type: "Concat"
+  bottom: "ip2_61"
+  bottom: "ip2_62"
+  top: "comb_6"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "fc1_6"
+  type: "InnerProduct"
+  bottom: "comb_6"
+  top: "fc1_6"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc1_6"
+  type: "ReLU"
+  bottom: "fc1_6"
+  top: "fc1_6"
+}
+layer {
+  name: "fc2_6"
+  type: "InnerProduct"
+  bottom: "fc1_6"
+  top: "fc2_6"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "relu_fc2_6"
+  type: "ReLU"
+  bottom: "fc2_6"
+  top: "fc2_6"
+}
+layer {
+  name: "fc3_6"
+  type: "InnerProduct"
+  bottom: "fc2_6"
+  top: "
+I0719 16:44:50.392135 12618 layer_factory.hpp:77] Creating layer pair_data
+I0719 16:44:50.392624 12618 net.cpp:91] Creating Layer pair_data
+I0719 16:44:50.392662 12618 net.cpp:399] pair_data -> pair_data
+I0719 16:44:50.392693 12618 net.cpp:399] pair_data -> label
+I0719 16:44:50.392714 12618 data_transformer.cpp:25] Loading mean file from: examples/scene/scene_mean.binaryproto
+I0719 16:44:50.396121 12624 db_lmdb.cpp:35] Opened lmdb examples/scene/train_pairs.lmdb
+I0719 16:44:50.421386 12618 data_layer.cpp:41] output data size: 128,6,128,128
+I0719 16:44:50.546726 12618 net.cpp:141] Setting up pair_data
+I0719 16:44:50.546764 12618 net.cpp:148] Top shape: 128 6 128 128 (12582912)
+I0719 16:44:50.546774 12618 net.cpp:148] Top shape: 128 (128)
+I0719 16:44:50.546782 12618 net.cpp:156] Memory required for data: 50332160
+I0719 16:44:50.546802 12618 layer_factory.hpp:77] Creating layer label_pair_data_1_split
+I0719 16:44:50.546831 12618 net.cpp:91] Creating Layer label_pair_data_1_split
+I0719 16:44:50.546845 12618 net.cpp:425] label_pair_data_1_split <- label
+I0719 16:44:50.546864 12618 net.cpp:399] label_pair_data_1_split -> label_pair_data_1_split_0
+I0719 16:44:50.546883 12618 net.cpp:399] label_pair_data_1_split -> label_pair_data_1_split_1
+I0719 16:44:50.547001 12618 net.cpp:141] Setting up label_pair_data_1_split
+I0719 16:44:50.547018 12618 net.cpp:148] Top shape: 128 (128)
+I0719 16:44:50.547029 12618 net.cpp:148] Top shape: 128 (128)
+I0719 16:44:50.547037 12618 net.cpp:156] Memory required for data: 50333184
+I0719 16:44:50.547045 12618 layer_factory.hpp:77] Creating layer slice_pair
+I0719 16:44:50.547065 12618 net.cpp:91] Creating Layer slice_pair
+I0719 16:44:50.547072 12618 net.cpp:425] slice_pair <- pair_data
+I0719 16:44:50.547083 12618 net.cpp:399] slice_pair -> i1
+I0719 16:44:50.547101 12618 net.cpp:399] slice_pair -> i2
+I0719 16:44:50.547159 12618 net.cpp:141] Setting up slice_pair
+I0719 16:44:50.547173 12618 net.cpp:148] Top shape: 128 3 128 128 (6291456)
+I0719 16:44:50.547205 12618 net.cpp:148] Top shape: 128 3 128 128 (6291456)
+I0719 16:44:50.547214 12618 net.cpp:156] Memory required for data: 100664832
+I0719 16:44:50.547220 12618 layer_factory.hpp:77] Creating layer i1_slice_pair_0_split
+I0719 16:44:50.547232 12618 net.cpp:91] Creating Layer i1_slice_pair_0_split
+I0719 16:44:50.547241 12618 net.cpp:425] i1_slice_pair_0_split <- i1
+I0719 16:44:50.547253 12618 net.cpp:399] i1_slice_pair_0_split -> i1_slice_pair_0_split_0
+I0719 16:44:50.547267 12618 net.cpp:399] i1_slice_pair_0_split -> i1_slice_pair_0_split_1
+I0719 16:44:50.547320 12618 net.cpp:141] Setting up i1_slice_pair_0_split
+I0719 16:44:50.547333 12618 net.cpp:148] Top shape: 128 3 128 128 (6291456)
+I0719 16:44:50.547343 12618 net.cpp:148] Top shape: 128 3 128 128 (6291456)
+I0719 16:44:50.547349 12618 net.cpp:156] Memory required for data: 150996480
+I0719 16:44:50.547356 12618 layer_factory.hpp:77] Creating layer i2_slice_pair_1_split
+I0719 16:44:50.547368 12618 net.cpp:91] Creating Layer i2_slice_pair_1_split
+I0719 16:44:50.547376 12618 net.cpp:425] i2_slice_pair_1_split <- i2
+I0719 16:44:50.547387 12618 net.cpp:399] i2_slice_pair_1_split -> i2_slice_pair_1_split_0
+I0719 16:44:50.547404 12618 net.cpp:399] i2_slice_pair_1_split -> i2_slice_pair_1_split_1
+I0719 16:44:50.547456 12618 net.cpp:141] Setting up i2_slice_pair_1_split
+I0719 16:44:50.547469 12618 net.cpp:148] Top shape: 128 3 128 128 (6291456)
+I0719 16:44:50.547478 12618 net.cpp:148] Top shape: 128 3 128 128 (6291456)
+I0719 16:44:50.547487 12618 net.cpp:156] Memory required for data: 201328128
+I0719 16:44:50.547493 12618 layer_factory.hpp:77] Creating layer pool_i1
+I0719 16:44:50.547507 12618 net.cpp:91] Creating Layer pool_i1
+I0719 16:44:50.547515 12618 net.cpp:425] pool_i1 <- i1_slice_pair_0_split_0
+I0719 16:44:50.547525 12618 net.cpp:399] pool_i1 -> p1
+I0719 16:44:50.547582 12618 net.cpp:141] Setting up pool_i1
+I0719 16:44:50.547598 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.547606 12618 net.cpp:156] Memory required for data: 207619584
+I0719 16:44:50.547615 12618 layer_factory.hpp:77] Creating layer p1_pool_i1_0_split
+I0719 16:44:50.547624 12618 net.cpp:91] Creating Layer p1_pool_i1_0_split
+I0719 16:44:50.547633 12618 net.cpp:425] p1_pool_i1_0_split <- p1
+I0719 16:44:50.547644 12618 net.cpp:399] p1_pool_i1_0_split -> p1_pool_i1_0_split_0
+I0719 16:44:50.547659 12618 net.cpp:399] p1_pool_i1_0_split -> p1_pool_i1_0_split_1
+I0719 16:44:50.547673 12618 net.cpp:399] p1_pool_i1_0_split -> p1_pool_i1_0_split_2
+I0719 16:44:50.547688 12618 net.cpp:399] p1_pool_i1_0_split -> p1_pool_i1_0_split_3
+I0719 16:44:50.547700 12618 net.cpp:399] p1_pool_i1_0_split -> p1_pool_i1_0_split_4
+I0719 16:44:50.555398 12618 net.cpp:141] Setting up p1_pool_i1_0_split
+I0719 16:44:50.555421 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555431 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555440 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555452 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555464 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555470 12618 net.cpp:156] Memory required for data: 239076864
+I0719 16:44:50.555481 12618 layer_factory.hpp:77] Creating layer pool_i2
+I0719 16:44:50.555495 12618 net.cpp:91] Creating Layer pool_i2
+I0719 16:44:50.555505 12618 net.cpp:425] pool_i2 <- i2_slice_pair_1_split_0
+I0719 16:44:50.555517 12618 net.cpp:399] pool_i2 -> p2
+I0719 16:44:50.555554 12618 net.cpp:141] Setting up pool_i2
+I0719 16:44:50.555568 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555577 12618 net.cpp:156] Memory required for data: 245368320
+I0719 16:44:50.555585 12618 layer_factory.hpp:77] Creating layer p2_pool_i2_0_split
+I0719 16:44:50.555599 12618 net.cpp:91] Creating Layer p2_pool_i2_0_split
+I0719 16:44:50.555608 12618 net.cpp:425] p2_pool_i2_0_split <- p2
+I0719 16:44:50.555619 12618 net.cpp:399] p2_pool_i2_0_split -> p2_pool_i2_0_split_0
+I0719 16:44:50.555634 12618 net.cpp:399] p2_pool_i2_0_split -> p2_pool_i2_0_split_1
+I0719 16:44:50.555667 12618 net.cpp:399] p2_pool_i2_0_split -> p2_pool_i2_0_split_2
+I0719 16:44:50.555685 12618 net.cpp:399] p2_pool_i2_0_split -> p2_pool_i2_0_split_3
+I0719 16:44:50.555728 12618 net.cpp:399] p2_pool_i2_0_split -> p2_pool_i2_0_split_4
+I0719 16:44:50.555869 12618 net.cpp:141] Setting up p2_pool_i2_0_split
+I0719 16:44:50.555889 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555907 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555923 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555940 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555956 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.555969 12618 net.cpp:156] Memory required for data: 276825600
+I0719 16:44:50.555980 12618 layer_factory.hpp:77] Creating layer slice_h_i1
+I0719 16:44:50.555999 12618 net.cpp:91] Creating Layer slice_h_i1
+I0719 16:44:50.556013 12618 net.cpp:425] slice_h_i1 <- i1_slice_pair_0_split_1
+I0719 16:44:50.556030 12618 net.cpp:399] slice_h_i1 -> i1_h1
+I0719 16:44:50.556054 12618 net.cpp:399] slice_h_i1 -> i1_h2
+I0719 16:44:50.556125 12618 net.cpp:141] Setting up slice_h_i1
+I0719 16:44:50.556143 12618 net.cpp:148] Top shape: 128 3 64 128 (3145728)
+I0719 16:44:50.556160 12618 net.cpp:148] Top shape: 128 3 64 128 (3145728)
+I0719 16:44:50.556174 12618 net.cpp:156] Memory required for data: 301991424
+I0719 16:44:50.556185 12618 layer_factory.hpp:77] Creating layer slice_h_i2
+I0719 16:44:50.556200 12618 net.cpp:91] Creating Layer slice_h_i2
+I0719 16:44:50.556215 12618 net.cpp:425] slice_h_i2 <- i2_slice_pair_1_split_1
+I0719 16:44:50.556231 12618 net.cpp:399] slice_h_i2 -> i2_h1
+I0719 16:44:50.556255 12618 net.cpp:399] slice_h_i2 -> i2_h2
+I0719 16:44:50.556326 12618 net.cpp:141] Setting up slice_h_i2
+I0719 16:44:50.556344 12618 net.cpp:148] Top shape: 128 3 64 128 (3145728)
+I0719 16:44:50.556361 12618 net.cpp:148] Top shape: 128 3 64 128 (3145728)
+I0719 16:44:50.556373 12618 net.cpp:156] Memory required for data: 327157248
+I0719 16:44:50.556385 12618 layer_factory.hpp:77] Creating layer slice_w_i1_h1
+I0719 16:44:50.556402 12618 net.cpp:91] Creating Layer slice_w_i1_h1
+I0719 16:44:50.556416 12618 net.cpp:425] slice_w_i1_h1 <- i1_h1
+I0719 16:44:50.556434 12618 net.cpp:399] slice_w_i1_h1 -> s11
+I0719 16:44:50.556457 12618 net.cpp:399] slice_w_i1_h1 -> s12
+I0719 16:44:50.556529 12618 net.cpp:141] Setting up slice_w_i1_h1
+I0719 16:44:50.556546 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.556563 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.556576 12618 net.cpp:156] Memory required for data: 339740160
+I0719 16:44:50.556587 12618 layer_factory.hpp:77] Creating layer slice_w_i1_h2
+I0719 16:44:50.556604 12618 net.cpp:91] Creating Layer slice_w_i1_h2
+I0719 16:44:50.556617 12618 net.cpp:425] slice_w_i1_h2 <- i1_h2
+I0719 16:44:50.556633 12618 net.cpp:399] slice_w_i1_h2 -> s13
+I0719 16:44:50.556656 12618 net.cpp:399] slice_w_i1_h2 -> s14
+I0719 16:44:50.556730 12618 net.cpp:141] Setting up slice_w_i1_h2
+I0719 16:44:50.556747 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.556764 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.556777 12618 net.cpp:156] Memory required for data: 352323072
+I0719 16:44:50.556787 12618 layer_factory.hpp:77] Creating layer slice_w_i2_h1
+I0719 16:44:50.556805 12618 net.cpp:91] Creating Layer slice_w_i2_h1
+I0719 16:44:50.556820 12618 net.cpp:425] slice_w_i2_h1 <- i2_h1
+I0719 16:44:50.556836 12618 net.cpp:399] slice_w_i2_h1 -> s21
+I0719 16:44:50.556859 12618 net.cpp:399] slice_w_i2_h1 -> s22
+I0719 16:44:50.556933 12618 net.cpp:141] Setting up slice_w_i2_h1
+I0719 16:44:50.556951 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.556965 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.556977 12618 net.cpp:156] Memory required for data: 364905984
+I0719 16:44:50.556988 12618 layer_factory.hpp:77] Creating layer slice_w_i2_h2
+I0719 16:44:50.557003 12618 net.cpp:91] Creating Layer slice_w_i2_h2
+I0719 16:44:50.557034 12618 net.cpp:425] slice_w_i2_h2 <- i2_h2
+I0719 16:44:50.557052 12618 net.cpp:399] slice_w_i2_h2 -> s23
+I0719 16:44:50.557080 12618 net.cpp:399] slice_w_i2_h2 -> s24
+I0719 16:44:50.557155 12618 net.cpp:141] Setting up slice_w_i2_h2
+I0719 16:44:50.557174 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.557189 12618 net.cpp:148] Top shape: 128 3 64 64 (1572864)
+I0719 16:44:50.557200 12618 net.cpp:156] Memory required for data: 377488896
+I0719 16:44:50.557211 12618 layer_factory.hpp:77] Creating layer conv1_11
+I0719 16:44:50.557241 12618 net.cpp:91] Creating Layer conv1_11
+I0719 16:44:50.557258 12618 net.cpp:425] conv1_11 <- p1_pool_i1_0_split_0
+I0719 16:44:50.557277 12618 net.cpp:399] conv1_11 -> conv1_11
+I0719 16:44:50.558650 12618 net.cpp:141] Setting up conv1_11
+I0719 16:44:50.558678 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.558688 12618 net.cpp:156] Memory required for data: 414352896
+I0719 16:44:50.558713 12618 layer_factory.hpp:77] Creating layer pool1_11
+I0719 16:44:50.558737 12618 net.cpp:91] Creating Layer pool1_11
+I0719 16:44:50.558746 12618 net.cpp:425] pool1_11 <- conv1_11
+I0719 16:44:50.558761 12618 net.cpp:399] pool1_11 -> pool1_11
+I0719 16:44:50.558836 12618 net.cpp:141] Setting up pool1_11
+I0719 16:44:50.558851 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.558859 12618 net.cpp:156] Memory required for data: 423568896
+I0719 16:44:50.558868 12618 layer_factory.hpp:77] Creating layer conv2_11
+I0719 16:44:50.558888 12618 net.cpp:91] Creating Layer conv2_11
+I0719 16:44:50.558899 12618 net.cpp:425] conv2_11 <- pool1_11
+I0719 16:44:50.558915 12618 net.cpp:399] conv2_11 -> conv2_11
+I0719 16:44:50.561569 12618 net.cpp:141] Setting up conv2_11
+I0719 16:44:50.561605 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.561617 12618 net.cpp:156] Memory required for data: 440874496
+I0719 16:44:50.561643 12618 layer_factory.hpp:77] Creating layer pool2_11
+I0719 16:44:50.561662 12618 net.cpp:91] Creating Layer pool2_11
+I0719 16:44:50.561676 12618 net.cpp:425] pool2_11 <- conv2_11
+I0719 16:44:50.561693 12618 net.cpp:399] pool2_11 -> pool2_11
+I0719 16:44:50.561787 12618 net.cpp:141] Setting up pool2_11
+I0719 16:44:50.561807 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.561818 12618 net.cpp:156] Memory required for data: 445200896
+I0719 16:44:50.561830 12618 layer_factory.hpp:77] Creating layer ip1_11
+I0719 16:44:50.561847 12618 net.cpp:91] Creating Layer ip1_11
+I0719 16:44:50.561859 12618 net.cpp:425] ip1_11 <- pool2_11
+I0719 16:44:50.561877 12618 net.cpp:399] ip1_11 -> ip1_11
+I0719 16:44:50.605237 12618 net.cpp:141] Setting up ip1_11
+I0719 16:44:50.605283 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.605293 12618 net.cpp:156] Memory required for data: 445456896
+I0719 16:44:50.605319 12618 layer_factory.hpp:77] Creating layer relu_11
+I0719 16:44:50.605339 12618 net.cpp:91] Creating Layer relu_11
+I0719 16:44:50.605351 12618 net.cpp:425] relu_11 <- ip1_11
+I0719 16:44:50.605367 12618 net.cpp:386] relu_11 -> ip1_11 (in-place)
+I0719 16:44:50.605384 12618 net.cpp:141] Setting up relu_11
+I0719 16:44:50.605393 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.605401 12618 net.cpp:156] Memory required for data: 445712896
+I0719 16:44:50.605408 12618 layer_factory.hpp:77] Creating layer ip2_11
+I0719 16:44:50.605423 12618 net.cpp:91] Creating Layer ip2_11
+I0719 16:44:50.605430 12618 net.cpp:425] ip2_11 <- ip1_11
+I0719 16:44:50.605443 12618 net.cpp:399] ip2_11 -> ip2_11
+I0719 16:44:50.608237 12618 net.cpp:141] Setting up ip2_11
+I0719 16:44:50.608258 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.608266 12618 net.cpp:156] Memory required for data: 445968896
+I0719 16:44:50.608278 12618 layer_factory.hpp:77] Creating layer conv1_12
+I0719 16:44:50.608295 12618 net.cpp:91] Creating Layer conv1_12
+I0719 16:44:50.608304 12618 net.cpp:425] conv1_12 <- p2_pool_i2_0_split_0
+I0719 16:44:50.608317 12618 net.cpp:399] conv1_12 -> conv1_12
+I0719 16:44:50.608708 12618 net.cpp:141] Setting up conv1_12
+I0719 16:44:50.608747 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.608755 12618 net.cpp:156] Memory required for data: 482832896
+I0719 16:44:50.608767 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.608778 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.608786 12618 layer_factory.hpp:77] Creating layer pool1_12
+I0719 16:44:50.608799 12618 net.cpp:91] Creating Layer pool1_12
+I0719 16:44:50.608808 12618 net.cpp:425] pool1_12 <- conv1_12
+I0719 16:44:50.608819 12618 net.cpp:399] pool1_12 -> pool1_12
+I0719 16:44:50.608876 12618 net.cpp:141] Setting up pool1_12
+I0719 16:44:50.608886 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.608892 12618 net.cpp:156] Memory required for data: 492048896
+I0719 16:44:50.608899 12618 layer_factory.hpp:77] Creating layer conv2_12
+I0719 16:44:50.608913 12618 net.cpp:91] Creating Layer conv2_12
+I0719 16:44:50.608921 12618 net.cpp:425] conv2_12 <- pool1_12
+I0719 16:44:50.608932 12618 net.cpp:399] conv2_12 -> conv2_12
+I0719 16:44:50.609498 12618 net.cpp:141] Setting up conv2_12
+I0719 16:44:50.609513 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.609519 12618 net.cpp:156] Memory required for data: 509354496
+I0719 16:44:50.609526 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.609535 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.609542 12618 layer_factory.hpp:77] Creating layer pool2_12
+I0719 16:44:50.609555 12618 net.cpp:91] Creating Layer pool2_12
+I0719 16:44:50.609563 12618 net.cpp:425] pool2_12 <- conv2_12
+I0719 16:44:50.609573 12618 net.cpp:399] pool2_12 -> pool2_12
+I0719 16:44:50.609628 12618 net.cpp:141] Setting up pool2_12
+I0719 16:44:50.609638 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.609647 12618 net.cpp:156] Memory required for data: 513680896
+I0719 16:44:50.609654 12618 layer_factory.hpp:77] Creating layer ip1_12
+I0719 16:44:50.609669 12618 net.cpp:91] Creating Layer ip1_12
+I0719 16:44:50.609678 12618 net.cpp:425] ip1_12 <- pool2_12
+I0719 16:44:50.609693 12618 net.cpp:399] ip1_12 -> ip1_12
+I0719 16:44:50.652897 12618 net.cpp:141] Setting up ip1_12
+I0719 16:44:50.652946 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.652954 12618 net.cpp:156] Memory required for data: 513936896
+I0719 16:44:50.652968 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.652979 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.652988 12618 layer_factory.hpp:77] Creating layer relu1_12
+I0719 16:44:50.653005 12618 net.cpp:91] Creating Layer relu1_12
+I0719 16:44:50.653015 12618 net.cpp:425] relu1_12 <- ip1_12
+I0719 16:44:50.653029 12618 net.cpp:386] relu1_12 -> ip1_12 (in-place)
+I0719 16:44:50.653046 12618 net.cpp:141] Setting up relu1_12
+I0719 16:44:50.653058 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.653064 12618 net.cpp:156] Memory required for data: 514192896
+I0719 16:44:50.653072 12618 layer_factory.hpp:77] Creating layer ip2_12
+I0719 16:44:50.653087 12618 net.cpp:91] Creating Layer ip2_12
+I0719 16:44:50.653095 12618 net.cpp:425] ip2_12 <- ip1_12
+I0719 16:44:50.653108 12618 net.cpp:399] ip2_12 -> ip2_12
+I0719 16:44:50.655894 12618 net.cpp:141] Setting up ip2_12
+I0719 16:44:50.655918 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.655926 12618 net.cpp:156] Memory required for data: 514448896
+I0719 16:44:50.655936 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.655946 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:50.655954 12618 layer_factory.hpp:77] Creating layer concat1
+I0719 16:44:50.655977 12618 net.cpp:91] Creating Layer concat1
+I0719 16:44:50.655984 12618 net.cpp:425] concat1 <- ip2_11
+I0719 16:44:50.655995 12618 net.cpp:425] concat1 <- ip2_12
+I0719 16:44:50.656030 12618 net.cpp:399] concat1 -> comb_1
+I0719 16:44:50.656070 12618 net.cpp:141] Setting up concat1
+I0719 16:44:50.656085 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:50.656092 12618 net.cpp:156] Memory required for data: 514960896
+I0719 16:44:50.656100 12618 layer_factory.hpp:77] Creating layer fc1_1
+I0719 16:44:50.656113 12618 net.cpp:91] Creating Layer fc1_1
+I0719 16:44:50.656121 12618 net.cpp:425] fc1_1 <- comb_1
+I0719 16:44:50.656133 12618 net.cpp:399] fc1_1 -> fc1_1
+I0719 16:44:50.661372 12618 net.cpp:141] Setting up fc1_1
+I0719 16:44:50.661397 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.661406 12618 net.cpp:156] Memory required for data: 515223040
+I0719 16:44:50.661432 12618 layer_factory.hpp:77] Creating layer relu_fc1_1
+I0719 16:44:50.661445 12618 net.cpp:91] Creating Layer relu_fc1_1
+I0719 16:44:50.661454 12618 net.cpp:425] relu_fc1_1 <- fc1_1
+I0719 16:44:50.661468 12618 net.cpp:386] relu_fc1_1 -> fc1_1 (in-place)
+I0719 16:44:50.661484 12618 net.cpp:141] Setting up relu_fc1_1
+I0719 16:44:50.661492 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.661500 12618 net.cpp:156] Memory required for data: 515485184
+I0719 16:44:50.661509 12618 layer_factory.hpp:77] Creating layer fc2_1
+I0719 16:44:50.661532 12618 net.cpp:91] Creating Layer fc2_1
+I0719 16:44:50.661540 12618 net.cpp:425] fc2_1 <- fc1_1
+I0719 16:44:50.661553 12618 net.cpp:399] fc2_1 -> fc2_1
+I0719 16:44:50.664360 12618 net.cpp:141] Setting up fc2_1
+I0719 16:44:50.664382 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.664391 12618 net.cpp:156] Memory required for data: 515747328
+I0719 16:44:50.664404 12618 layer_factory.hpp:77] Creating layer relu_fc2_1
+I0719 16:44:50.664420 12618 net.cpp:91] Creating Layer relu_fc2_1
+I0719 16:44:50.664428 12618 net.cpp:425] relu_fc2_1 <- fc2_1
+I0719 16:44:50.664440 12618 net.cpp:386] relu_fc2_1 -> fc2_1 (in-place)
+I0719 16:44:50.664453 12618 net.cpp:141] Setting up relu_fc2_1
+I0719 16:44:50.664464 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.664471 12618 net.cpp:156] Memory required for data: 516009472
+I0719 16:44:50.664479 12618 layer_factory.hpp:77] Creating layer fc3_1
+I0719 16:44:50.664492 12618 net.cpp:91] Creating Layer fc3_1
+I0719 16:44:50.664499 12618 net.cpp:425] fc3_1 <- fc2_1
+I0719 16:44:50.664512 12618 net.cpp:399] fc3_1 -> fc3_1
+I0719 16:44:50.664659 12618 net.cpp:141] Setting up fc3_1
+I0719 16:44:50.664677 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:50.664685 12618 net.cpp:156] Memory required for data: 516010496
+I0719 16:44:50.664696 12618 layer_factory.hpp:77] Creating layer conv1_21
+I0719 16:44:50.664713 12618 net.cpp:91] Creating Layer conv1_21
+I0719 16:44:50.664721 12618 net.cpp:425] conv1_21 <- p1_pool_i1_0_split_1
+I0719 16:44:50.664738 12618 net.cpp:399] conv1_21 -> conv1_21
+I0719 16:44:50.665092 12618 net.cpp:141] Setting up conv1_21
+I0719 16:44:50.665110 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.665118 12618 net.cpp:156] Memory required for data: 552874496
+I0719 16:44:50.665127 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.665137 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.665144 12618 layer_factory.hpp:77] Creating layer pool1_21
+I0719 16:44:50.665155 12618 net.cpp:91] Creating Layer pool1_21
+I0719 16:44:50.665163 12618 net.cpp:425] pool1_21 <- conv1_21
+I0719 16:44:50.665179 12618 net.cpp:399] pool1_21 -> pool1_21
+I0719 16:44:50.665244 12618 net.cpp:141] Setting up pool1_21
+I0719 16:44:50.665259 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.665266 12618 net.cpp:156] Memory required for data: 562090496
+I0719 16:44:50.665274 12618 layer_factory.hpp:77] Creating layer conv2_21
+I0719 16:44:50.665294 12618 net.cpp:91] Creating Layer conv2_21
+I0719 16:44:50.665304 12618 net.cpp:425] conv2_21 <- pool1_21
+I0719 16:44:50.665318 12618 net.cpp:399] conv2_21 -> conv2_21
+I0719 16:44:50.665838 12618 net.cpp:141] Setting up conv2_21
+I0719 16:44:50.665873 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.665880 12618 net.cpp:156] Memory required for data: 579396096
+I0719 16:44:50.665889 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.665899 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.665906 12618 layer_factory.hpp:77] Creating layer pool2_21
+I0719 16:44:50.665920 12618 net.cpp:91] Creating Layer pool2_21
+I0719 16:44:50.665927 12618 net.cpp:425] pool2_21 <- conv2_21
+I0719 16:44:50.665940 12618 net.cpp:399] pool2_21 -> pool2_21
+I0719 16:44:50.666007 12618 net.cpp:141] Setting up pool2_21
+I0719 16:44:50.666026 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.666033 12618 net.cpp:156] Memory required for data: 583722496
+I0719 16:44:50.666040 12618 layer_factory.hpp:77] Creating layer ip1_21
+I0719 16:44:50.666054 12618 net.cpp:91] Creating Layer ip1_21
+I0719 16:44:50.666061 12618 net.cpp:425] ip1_21 <- pool2_21
+I0719 16:44:50.666077 12618 net.cpp:399] ip1_21 -> ip1_21
+I0719 16:44:50.709631 12618 net.cpp:141] Setting up ip1_21
+I0719 16:44:50.709671 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.709679 12618 net.cpp:156] Memory required for data: 583978496
+I0719 16:44:50.709692 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.709703 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.709713 12618 layer_factory.hpp:77] Creating layer relu1_21
+I0719 16:44:50.709730 12618 net.cpp:91] Creating Layer relu1_21
+I0719 16:44:50.709739 12618 net.cpp:425] relu1_21 <- ip1_21
+I0719 16:44:50.709753 12618 net.cpp:386] relu1_21 -> ip1_21 (in-place)
+I0719 16:44:50.709769 12618 net.cpp:141] Setting up relu1_21
+I0719 16:44:50.709777 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.709784 12618 net.cpp:156] Memory required for data: 584234496
+I0719 16:44:50.709792 12618 layer_factory.hpp:77] Creating layer ip2_21
+I0719 16:44:50.709806 12618 net.cpp:91] Creating Layer ip2_21
+I0719 16:44:50.709815 12618 net.cpp:425] ip2_21 <- ip1_21
+I0719 16:44:50.709827 12618 net.cpp:399] ip2_21 -> ip2_21
+I0719 16:44:50.712709 12618 net.cpp:141] Setting up ip2_21
+I0719 16:44:50.712733 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.712741 12618 net.cpp:156] Memory required for data: 584490496
+I0719 16:44:50.712750 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.712760 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:50.712769 12618 layer_factory.hpp:77] Creating layer conv1_22
+I0719 16:44:50.712787 12618 net.cpp:91] Creating Layer conv1_22
+I0719 16:44:50.712796 12618 net.cpp:425] conv1_22 <- s21
+I0719 16:44:50.712810 12618 net.cpp:399] conv1_22 -> conv1_22
+I0719 16:44:50.713245 12618 net.cpp:141] Setting up conv1_22
+I0719 16:44:50.713258 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.713265 12618 net.cpp:156] Memory required for data: 621354496
+I0719 16:44:50.713274 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.713281 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.713289 12618 layer_factory.hpp:77] Creating layer pool1_22
+I0719 16:44:50.713304 12618 net.cpp:91] Creating Layer pool1_22
+I0719 16:44:50.713312 12618 net.cpp:425] pool1_22 <- conv1_22
+I0719 16:44:50.713323 12618 net.cpp:399] pool1_22 -> pool1_22
+I0719 16:44:50.713383 12618 net.cpp:141] Setting up pool1_22
+I0719 16:44:50.713394 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.713402 12618 net.cpp:156] Memory required for data: 630570496
+I0719 16:44:50.713408 12618 layer_factory.hpp:77] Creating layer conv2_22
+I0719 16:44:50.713424 12618 net.cpp:91] Creating Layer conv2_22
+I0719 16:44:50.713433 12618 net.cpp:425] conv2_22 <- pool1_22
+I0719 16:44:50.713449 12618 net.cpp:399] conv2_22 -> conv2_22
+I0719 16:44:50.714053 12618 net.cpp:141] Setting up conv2_22
+I0719 16:44:50.714084 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.714092 12618 net.cpp:156] Memory required for data: 647876096
+I0719 16:44:50.714112 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.714120 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.714131 12618 layer_factory.hpp:77] Creating layer pool2_22
+I0719 16:44:50.714143 12618 net.cpp:91] Creating Layer pool2_22
+I0719 16:44:50.714149 12618 net.cpp:425] pool2_22 <- conv2_22
+I0719 16:44:50.714159 12618 net.cpp:399] pool2_22 -> pool2_22
+I0719 16:44:50.714221 12618 net.cpp:141] Setting up pool2_22
+I0719 16:44:50.714231 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.714237 12618 net.cpp:156] Memory required for data: 652202496
+I0719 16:44:50.714244 12618 layer_factory.hpp:77] Creating layer ip1_22
+I0719 16:44:50.714256 12618 net.cpp:91] Creating Layer ip1_22
+I0719 16:44:50.714263 12618 net.cpp:425] ip1_22 <- pool2_22
+I0719 16:44:50.714278 12618 net.cpp:399] ip1_22 -> ip1_22
+I0719 16:44:50.757737 12618 net.cpp:141] Setting up ip1_22
+I0719 16:44:50.757781 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.757789 12618 net.cpp:156] Memory required for data: 652458496
+I0719 16:44:50.757802 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.757813 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.757822 12618 layer_factory.hpp:77] Creating layer relu1_22
+I0719 16:44:50.757839 12618 net.cpp:91] Creating Layer relu1_22
+I0719 16:44:50.757848 12618 net.cpp:425] relu1_22 <- ip1_22
+I0719 16:44:50.757860 12618 net.cpp:386] relu1_22 -> ip1_22 (in-place)
+I0719 16:44:50.757876 12618 net.cpp:141] Setting up relu1_22
+I0719 16:44:50.757886 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.757894 12618 net.cpp:156] Memory required for data: 652714496
+I0719 16:44:50.757900 12618 layer_factory.hpp:77] Creating layer ip2_22
+I0719 16:44:50.757920 12618 net.cpp:91] Creating Layer ip2_22
+I0719 16:44:50.757928 12618 net.cpp:425] ip2_22 <- ip1_22
+I0719 16:44:50.757941 12618 net.cpp:399] ip2_22 -> ip2_22
+I0719 16:44:50.760668 12618 net.cpp:141] Setting up ip2_22
+I0719 16:44:50.760690 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.760699 12618 net.cpp:156] Memory required for data: 652970496
+I0719 16:44:50.760707 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.760720 12618 layer_factory.hpp:77] Creating layer concat
+I0719 16:44:50.760732 12618 net.cpp:91] Creating Layer concat
+I0719 16:44:50.760740 12618 net.cpp:425] concat <- ip2_21
+I0719 16:44:50.760751 12618 net.cpp:425] concat <- ip2_22
+I0719 16:44:50.760762 12618 net.cpp:399] concat -> comb_2
+I0719 16:44:50.760797 12618 net.cpp:141] Setting up concat
+I0719 16:44:50.760839 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:50.760869 12618 net.cpp:156] Memory required for data: 653482496
+I0719 16:44:50.760897 12618 layer_factory.hpp:77] Creating layer fc1_2
+I0719 16:44:50.760932 12618 net.cpp:91] Creating Layer fc1_2
+I0719 16:44:50.760964 12618 net.cpp:425] fc1_2 <- comb_2
+I0719 16:44:50.760998 12618 net.cpp:399] fc1_2 -> fc1_2
+I0719 16:44:50.766158 12618 net.cpp:141] Setting up fc1_2
+I0719 16:44:50.766187 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.766196 12618 net.cpp:156] Memory required for data: 653744640
+I0719 16:44:50.766206 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:50.766217 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:50.766225 12618 layer_factory.hpp:77] Creating layer relu_fc1_2
+I0719 16:44:50.766237 12618 net.cpp:91] Creating Layer relu_fc1_2
+I0719 16:44:50.766245 12618 net.cpp:425] relu_fc1_2 <- fc1_2
+I0719 16:44:50.766259 12618 net.cpp:386] relu_fc1_2 -> fc1_2 (in-place)
+I0719 16:44:50.766274 12618 net.cpp:141] Setting up relu_fc1_2
+I0719 16:44:50.766337 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.766366 12618 net.cpp:156] Memory required for data: 654006784
+I0719 16:44:50.766393 12618 layer_factory.hpp:77] Creating layer fc2_2
+I0719 16:44:50.766427 12618 net.cpp:91] Creating Layer fc2_2
+I0719 16:44:50.766453 12618 net.cpp:425] fc2_2 <- fc1_2
+I0719 16:44:50.766489 12618 net.cpp:399] fc2_2 -> fc2_2
+I0719 16:44:50.769364 12618 net.cpp:141] Setting up fc2_2
+I0719 16:44:50.769423 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.769453 12618 net.cpp:156] Memory required for data: 654268928
+I0719 16:44:50.769481 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:50.769512 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:50.769539 12618 layer_factory.hpp:77] Creating layer relu_fc2_2
+I0719 16:44:50.769568 12618 net.cpp:91] Creating Layer relu_fc2_2
+I0719 16:44:50.769593 12618 net.cpp:425] relu_fc2_2 <- fc2_2
+I0719 16:44:50.769621 12618 net.cpp:386] relu_fc2_2 -> fc2_2 (in-place)
+I0719 16:44:50.769650 12618 net.cpp:141] Setting up relu_fc2_2
+I0719 16:44:50.769680 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.769704 12618 net.cpp:156] Memory required for data: 654531072
+I0719 16:44:50.769733 12618 layer_factory.hpp:77] Creating layer fc3_2
+I0719 16:44:50.769768 12618 net.cpp:91] Creating Layer fc3_2
+I0719 16:44:50.769793 12618 net.cpp:425] fc3_2 <- fc2_2
+I0719 16:44:50.769824 12618 net.cpp:399] fc3_2 -> fc3_2
+I0719 16:44:50.770010 12618 net.cpp:141] Setting up fc3_2
+I0719 16:44:50.770046 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:50.770073 12618 net.cpp:156] Memory required for data: 654532096
+I0719 16:44:50.770103 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:50.770134 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:50.770162 12618 layer_factory.hpp:77] Creating layer conv1_31
+I0719 16:44:50.770200 12618 net.cpp:91] Creating Layer conv1_31
+I0719 16:44:50.770226 12618 net.cpp:425] conv1_31 <- p1_pool_i1_0_split_2
+I0719 16:44:50.770257 12618 net.cpp:399] conv1_31 -> conv1_31
+I0719 16:44:50.770705 12618 net.cpp:141] Setting up conv1_31
+I0719 16:44:50.770743 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.770769 12618 net.cpp:156] Memory required for data: 691396096
+I0719 16:44:50.770797 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.770823 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.770845 12618 layer_factory.hpp:77] Creating layer pool1_31
+I0719 16:44:50.770874 12618 net.cpp:91] Creating Layer pool1_31
+I0719 16:44:50.770895 12618 net.cpp:425] pool1_31 <- conv1_31
+I0719 16:44:50.770921 12618 net.cpp:399] pool1_31 -> pool1_31
+I0719 16:44:50.770995 12618 net.cpp:141] Setting up pool1_31
+I0719 16:44:50.771019 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.771040 12618 net.cpp:156] Memory required for data: 700612096
+I0719 16:44:50.771061 12618 layer_factory.hpp:77] Creating layer conv2_31
+I0719 16:44:50.771091 12618 net.cpp:91] Creating Layer conv2_31
+I0719 16:44:50.771113 12618 net.cpp:425] conv2_31 <- pool1_31
+I0719 16:44:50.771142 12618 net.cpp:399] conv2_31 -> conv2_31
+I0719 16:44:50.776573 12618 net.cpp:141] Setting up conv2_31
+I0719 16:44:50.776590 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.776598 12618 net.cpp:156] Memory required for data: 717917696
+I0719 16:44:50.776607 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.776618 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.776624 12618 layer_factory.hpp:77] Creating layer pool2_31
+I0719 16:44:50.776638 12618 net.cpp:91] Creating Layer pool2_31
+I0719 16:44:50.776645 12618 net.cpp:425] pool2_31 <- conv2_31
+I0719 16:44:50.776655 12618 net.cpp:399] pool2_31 -> pool2_31
+I0719 16:44:50.776741 12618 net.cpp:141] Setting up pool2_31
+I0719 16:44:50.776754 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.776762 12618 net.cpp:156] Memory required for data: 722244096
+I0719 16:44:50.776769 12618 layer_factory.hpp:77] Creating layer ip1_31
+I0719 16:44:50.776785 12618 net.cpp:91] Creating Layer ip1_31
+I0719 16:44:50.776796 12618 net.cpp:425] ip1_31 <- pool2_31
+I0719 16:44:50.776808 12618 net.cpp:399] ip1_31 -> ip1_31
+I0719 16:44:50.817860 12618 net.cpp:141] Setting up ip1_31
+I0719 16:44:50.817906 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.817912 12618 net.cpp:156] Memory required for data: 722500096
+I0719 16:44:50.817922 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.817931 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.817937 12618 layer_factory.hpp:77] Creating layer relu1_31
+I0719 16:44:50.817966 12618 net.cpp:91] Creating Layer relu1_31
+I0719 16:44:50.817975 12618 net.cpp:425] relu1_31 <- ip1_31
+I0719 16:44:50.817984 12618 net.cpp:386] relu1_31 -> ip1_31 (in-place)
+I0719 16:44:50.817998 12618 net.cpp:141] Setting up relu1_31
+I0719 16:44:50.818006 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.818011 12618 net.cpp:156] Memory required for data: 722756096
+I0719 16:44:50.818019 12618 layer_factory.hpp:77] Creating layer ip2_31
+I0719 16:44:50.818033 12618 net.cpp:91] Creating Layer ip2_31
+I0719 16:44:50.818038 12618 net.cpp:425] ip2_31 <- ip1_31
+I0719 16:44:50.818048 12618 net.cpp:399] ip2_31 -> ip2_31
+I0719 16:44:50.820667 12618 net.cpp:141] Setting up ip2_31
+I0719 16:44:50.820693 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.820698 12618 net.cpp:156] Memory required for data: 723012096
+I0719 16:44:50.820704 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.820713 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:50.820718 12618 layer_factory.hpp:77] Creating layer conv1_32
+I0719 16:44:50.820736 12618 net.cpp:91] Creating Layer conv1_32
+I0719 16:44:50.820754 12618 net.cpp:425] conv1_32 <- s22
+I0719 16:44:50.820765 12618 net.cpp:399] conv1_32 -> conv1_32
+I0719 16:44:50.821110 12618 net.cpp:141] Setting up conv1_32
+I0719 16:44:50.821120 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.821126 12618 net.cpp:156] Memory required for data: 759876096
+I0719 16:44:50.821132 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.821140 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.821146 12618 layer_factory.hpp:77] Creating layer pool1_32
+I0719 16:44:50.821156 12618 net.cpp:91] Creating Layer pool1_32
+I0719 16:44:50.821162 12618 net.cpp:425] pool1_32 <- conv1_32
+I0719 16:44:50.821171 12618 net.cpp:399] pool1_32 -> pool1_32
+I0719 16:44:50.821220 12618 net.cpp:141] Setting up pool1_32
+I0719 16:44:50.821230 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.821236 12618 net.cpp:156] Memory required for data: 769092096
+I0719 16:44:50.821241 12618 layer_factory.hpp:77] Creating layer conv2_32
+I0719 16:44:50.821274 12618 net.cpp:91] Creating Layer conv2_32
+I0719 16:44:50.821281 12618 net.cpp:425] conv2_32 <- pool1_32
+I0719 16:44:50.821291 12618 net.cpp:399] conv2_32 -> conv2_32
+I0719 16:44:50.821805 12618 net.cpp:141] Setting up conv2_32
+I0719 16:44:50.821820 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.821825 12618 net.cpp:156] Memory required for data: 786397696
+I0719 16:44:50.821831 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.821838 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.821847 12618 layer_factory.hpp:77] Creating layer pool2_32
+I0719 16:44:50.821856 12618 net.cpp:91] Creating Layer pool2_32
+I0719 16:44:50.821861 12618 net.cpp:425] pool2_32 <- conv2_32
+I0719 16:44:50.821892 12618 net.cpp:399] pool2_32 -> pool2_32
+I0719 16:44:50.821941 12618 net.cpp:141] Setting up pool2_32
+I0719 16:44:50.821951 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.821957 12618 net.cpp:156] Memory required for data: 790724096
+I0719 16:44:50.821962 12618 layer_factory.hpp:77] Creating layer ip1_32
+I0719 16:44:50.821971 12618 net.cpp:91] Creating Layer ip1_32
+I0719 16:44:50.821977 12618 net.cpp:425] ip1_32 <- pool2_32
+I0719 16:44:50.821988 12618 net.cpp:399] ip1_32 -> ip1_32
+I0719 16:44:50.862813 12618 net.cpp:141] Setting up ip1_32
+I0719 16:44:50.862859 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.862865 12618 net.cpp:156] Memory required for data: 790980096
+I0719 16:44:50.862875 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.862884 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.862890 12618 layer_factory.hpp:77] Creating layer relu1_32
+I0719 16:44:50.862912 12618 net.cpp:91] Creating Layer relu1_32
+I0719 16:44:50.862920 12618 net.cpp:425] relu1_32 <- ip1_32
+I0719 16:44:50.862931 12618 net.cpp:386] relu1_32 -> ip1_32 (in-place)
+I0719 16:44:50.862943 12618 net.cpp:141] Setting up relu1_32
+I0719 16:44:50.862951 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.862957 12618 net.cpp:156] Memory required for data: 791236096
+I0719 16:44:50.862962 12618 layer_factory.hpp:77] Creating layer ip2_32
+I0719 16:44:50.862979 12618 net.cpp:91] Creating Layer ip2_32
+I0719 16:44:50.862985 12618 net.cpp:425] ip2_32 <- ip1_32
+I0719 16:44:50.862998 12618 net.cpp:399] ip2_32 -> ip2_32
+I0719 16:44:50.865640 12618 net.cpp:141] Setting up ip2_32
+I0719 16:44:50.865666 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.865672 12618 net.cpp:156] Memory required for data: 791492096
+I0719 16:44:50.865679 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.865686 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:50.865692 12618 layer_factory.hpp:77] Creating layer concat_3
+I0719 16:44:50.865702 12618 net.cpp:91] Creating Layer concat_3
+I0719 16:44:50.865708 12618 net.cpp:425] concat_3 <- ip2_31
+I0719 16:44:50.865723 12618 net.cpp:425] concat_3 <- ip2_32
+I0719 16:44:50.865737 12618 net.cpp:399] concat_3 -> comb_3
+I0719 16:44:50.865764 12618 net.cpp:141] Setting up concat_3
+I0719 16:44:50.865772 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:50.865778 12618 net.cpp:156] Memory required for data: 792004096
+I0719 16:44:50.865783 12618 layer_factory.hpp:77] Creating layer fc1_3
+I0719 16:44:50.865794 12618 net.cpp:91] Creating Layer fc1_3
+I0719 16:44:50.865800 12618 net.cpp:425] fc1_3 <- comb_3
+I0719 16:44:50.865809 12618 net.cpp:399] fc1_3 -> fc1_3
+I0719 16:44:50.870797 12618 net.cpp:141] Setting up fc1_3
+I0719 16:44:50.870827 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.870832 12618 net.cpp:156] Memory required for data: 792266240
+I0719 16:44:50.870841 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:50.870847 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:50.870853 12618 layer_factory.hpp:77] Creating layer relu_fc1_3
+I0719 16:44:50.870862 12618 net.cpp:91] Creating Layer relu_fc1_3
+I0719 16:44:50.870868 12618 net.cpp:425] relu_fc1_3 <- fc1_3
+I0719 16:44:50.870890 12618 net.cpp:386] relu_fc1_3 -> fc1_3 (in-place)
+I0719 16:44:50.870900 12618 net.cpp:141] Setting up relu_fc1_3
+I0719 16:44:50.870908 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.870913 12618 net.cpp:156] Memory required for data: 792528384
+I0719 16:44:50.870918 12618 layer_factory.hpp:77] Creating layer fc2_3
+I0719 16:44:50.870928 12618 net.cpp:91] Creating Layer fc2_3
+I0719 16:44:50.870934 12618 net.cpp:425] fc2_3 <- fc1_3
+I0719 16:44:50.870944 12618 net.cpp:399] fc2_3 -> fc2_3
+I0719 16:44:50.873612 12618 net.cpp:141] Setting up fc2_3
+I0719 16:44:50.873628 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.873653 12618 net.cpp:156] Memory required for data: 792790528
+I0719 16:44:50.873661 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:50.873668 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:50.873674 12618 layer_factory.hpp:77] Creating layer relu_fc2_3
+I0719 16:44:50.873682 12618 net.cpp:91] Creating Layer relu_fc2_3
+I0719 16:44:50.873688 12618 net.cpp:425] relu_fc2_3 <- fc2_3
+I0719 16:44:50.873697 12618 net.cpp:386] relu_fc2_3 -> fc2_3 (in-place)
+I0719 16:44:50.873705 12618 net.cpp:141] Setting up relu_fc2_3
+I0719 16:44:50.873713 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.873718 12618 net.cpp:156] Memory required for data: 793052672
+I0719 16:44:50.873723 12618 layer_factory.hpp:77] Creating layer fc3_3
+I0719 16:44:50.873734 12618 net.cpp:91] Creating Layer fc3_3
+I0719 16:44:50.873740 12618 net.cpp:425] fc3_3 <- fc2_3
+I0719 16:44:50.873749 12618 net.cpp:399] fc3_3 -> fc3_3
+I0719 16:44:50.873879 12618 net.cpp:141] Setting up fc3_3
+I0719 16:44:50.873888 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:50.873893 12618 net.cpp:156] Memory required for data: 793053696
+I0719 16:44:50.873919 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:50.873926 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:50.873932 12618 layer_factory.hpp:77] Creating layer conv1_41
+I0719 16:44:50.873945 12618 net.cpp:91] Creating Layer conv1_41
+I0719 16:44:50.873951 12618 net.cpp:425] conv1_41 <- p1_pool_i1_0_split_3
+I0719 16:44:50.873968 12618 net.cpp:399] conv1_41 -> conv1_41
+I0719 16:44:50.874310 12618 net.cpp:141] Setting up conv1_41
+I0719 16:44:50.874320 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.874326 12618 net.cpp:156] Memory required for data: 829917696
+I0719 16:44:50.874332 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.874339 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.874346 12618 layer_factory.hpp:77] Creating layer pool1_41
+I0719 16:44:50.874354 12618 net.cpp:91] Creating Layer pool1_41
+I0719 16:44:50.874359 12618 net.cpp:425] pool1_41 <- conv1_41
+I0719 16:44:50.874368 12618 net.cpp:399] pool1_41 -> pool1_41
+I0719 16:44:50.874418 12618 net.cpp:141] Setting up pool1_41
+I0719 16:44:50.874426 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.874431 12618 net.cpp:156] Memory required for data: 839133696
+I0719 16:44:50.874436 12618 layer_factory.hpp:77] Creating layer conv2_41
+I0719 16:44:50.874449 12618 net.cpp:91] Creating Layer conv2_41
+I0719 16:44:50.874456 12618 net.cpp:425] conv2_41 <- pool1_41
+I0719 16:44:50.874469 12618 net.cpp:399] conv2_41 -> conv2_41
+I0719 16:44:50.874979 12618 net.cpp:141] Setting up conv2_41
+I0719 16:44:50.874989 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.874994 12618 net.cpp:156] Memory required for data: 856439296
+I0719 16:44:50.875000 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.875007 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.875012 12618 layer_factory.hpp:77] Creating layer pool2_41
+I0719 16:44:50.875020 12618 net.cpp:91] Creating Layer pool2_41
+I0719 16:44:50.875025 12618 net.cpp:425] pool2_41 <- conv2_41
+I0719 16:44:50.875036 12618 net.cpp:399] pool2_41 -> pool2_41
+I0719 16:44:50.875082 12618 net.cpp:141] Setting up pool2_41
+I0719 16:44:50.875092 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.875097 12618 net.cpp:156] Memory required for data: 860765696
+I0719 16:44:50.875105 12618 layer_factory.hpp:77] Creating layer ip1_41
+I0719 16:44:50.875113 12618 net.cpp:91] Creating Layer ip1_41
+I0719 16:44:50.875119 12618 net.cpp:425] ip1_41 <- pool2_41
+I0719 16:44:50.875130 12618 net.cpp:399] ip1_41 -> ip1_41
+I0719 16:44:50.916610 12618 net.cpp:141] Setting up ip1_41
+I0719 16:44:50.916682 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.916688 12618 net.cpp:156] Memory required for data: 861021696
+I0719 16:44:50.916699 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.916707 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.916714 12618 layer_factory.hpp:77] Creating layer relu1_41
+I0719 16:44:50.916738 12618 net.cpp:91] Creating Layer relu1_41
+I0719 16:44:50.916746 12618 net.cpp:425] relu1_41 <- ip1_41
+I0719 16:44:50.916760 12618 net.cpp:386] relu1_41 -> ip1_41 (in-place)
+I0719 16:44:50.916774 12618 net.cpp:141] Setting up relu1_41
+I0719 16:44:50.916781 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.916786 12618 net.cpp:156] Memory required for data: 861277696
+I0719 16:44:50.916791 12618 layer_factory.hpp:77] Creating layer ip2_41
+I0719 16:44:50.916802 12618 net.cpp:91] Creating Layer ip2_41
+I0719 16:44:50.916808 12618 net.cpp:425] ip2_41 <- ip1_41
+I0719 16:44:50.916821 12618 net.cpp:399] ip2_41 -> ip2_41
+I0719 16:44:50.919453 12618 net.cpp:141] Setting up ip2_41
+I0719 16:44:50.919478 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.919484 12618 net.cpp:156] Memory required for data: 861533696
+I0719 16:44:50.919491 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.919498 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:50.919503 12618 layer_factory.hpp:77] Creating layer conv1_42
+I0719 16:44:50.919517 12618 net.cpp:91] Creating Layer conv1_42
+I0719 16:44:50.919524 12618 net.cpp:425] conv1_42 <- s23
+I0719 16:44:50.919548 12618 net.cpp:399] conv1_42 -> conv1_42
+I0719 16:44:50.919909 12618 net.cpp:141] Setting up conv1_42
+I0719 16:44:50.919920 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.919926 12618 net.cpp:156] Memory required for data: 898397696
+I0719 16:44:50.919932 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.919940 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.919945 12618 layer_factory.hpp:77] Creating layer pool1_42
+I0719 16:44:50.919955 12618 net.cpp:91] Creating Layer pool1_42
+I0719 16:44:50.919960 12618 net.cpp:425] pool1_42 <- conv1_42
+I0719 16:44:50.919970 12618 net.cpp:399] pool1_42 -> pool1_42
+I0719 16:44:50.920019 12618 net.cpp:141] Setting up pool1_42
+I0719 16:44:50.920027 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.920032 12618 net.cpp:156] Memory required for data: 907613696
+I0719 16:44:50.920037 12618 layer_factory.hpp:77] Creating layer conv2_42
+I0719 16:44:50.920052 12618 net.cpp:91] Creating Layer conv2_42
+I0719 16:44:50.920058 12618 net.cpp:425] conv2_42 <- pool1_42
+I0719 16:44:50.920070 12618 net.cpp:399] conv2_42 -> conv2_42
+I0719 16:44:50.920591 12618 net.cpp:141] Setting up conv2_42
+I0719 16:44:50.920601 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.920608 12618 net.cpp:156] Memory required for data: 924919296
+I0719 16:44:50.920614 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.920620 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.920626 12618 layer_factory.hpp:77] Creating layer pool2_42
+I0719 16:44:50.920636 12618 net.cpp:91] Creating Layer pool2_42
+I0719 16:44:50.920642 12618 net.cpp:425] pool2_42 <- conv2_42
+I0719 16:44:50.920650 12618 net.cpp:399] pool2_42 -> pool2_42
+I0719 16:44:50.920697 12618 net.cpp:141] Setting up pool2_42
+I0719 16:44:50.920704 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.920711 12618 net.cpp:156] Memory required for data: 929245696
+I0719 16:44:50.920716 12618 layer_factory.hpp:77] Creating layer ip1_42
+I0719 16:44:50.920723 12618 net.cpp:91] Creating Layer ip1_42
+I0719 16:44:50.920729 12618 net.cpp:425] ip1_42 <- pool2_42
+I0719 16:44:50.920740 12618 net.cpp:399] ip1_42 -> ip1_42
+I0719 16:44:50.962288 12618 net.cpp:141] Setting up ip1_42
+I0719 16:44:50.962335 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.962342 12618 net.cpp:156] Memory required for data: 929501696
+I0719 16:44:50.962353 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:50.962362 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:50.962368 12618 layer_factory.hpp:77] Creating layer relu1_42
+I0719 16:44:50.962388 12618 net.cpp:91] Creating Layer relu1_42
+I0719 16:44:50.962396 12618 net.cpp:425] relu1_42 <- ip1_42
+I0719 16:44:50.962406 12618 net.cpp:386] relu1_42 -> ip1_42 (in-place)
+I0719 16:44:50.962420 12618 net.cpp:141] Setting up relu1_42
+I0719 16:44:50.962427 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.962432 12618 net.cpp:156] Memory required for data: 929757696
+I0719 16:44:50.962438 12618 layer_factory.hpp:77] Creating layer ip2_42
+I0719 16:44:50.962453 12618 net.cpp:91] Creating Layer ip2_42
+I0719 16:44:50.962460 12618 net.cpp:425] ip2_42 <- ip1_42
+I0719 16:44:50.962468 12618 net.cpp:399] ip2_42 -> ip2_42
+I0719 16:44:50.965172 12618 net.cpp:141] Setting up ip2_42
+I0719 16:44:50.965198 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:50.965204 12618 net.cpp:156] Memory required for data: 930013696
+I0719 16:44:50.965210 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:50.965217 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:50.965224 12618 layer_factory.hpp:77] Creating layer concat_4
+I0719 16:44:50.965234 12618 net.cpp:91] Creating Layer concat_4
+I0719 16:44:50.965240 12618 net.cpp:425] concat_4 <- ip2_41
+I0719 16:44:50.965255 12618 net.cpp:425] concat_4 <- ip2_42
+I0719 16:44:50.965265 12618 net.cpp:399] concat_4 -> comb_4
+I0719 16:44:50.965294 12618 net.cpp:141] Setting up concat_4
+I0719 16:44:50.965302 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:50.965308 12618 net.cpp:156] Memory required for data: 930525696
+I0719 16:44:50.965313 12618 layer_factory.hpp:77] Creating layer fc1_4
+I0719 16:44:50.965325 12618 net.cpp:91] Creating Layer fc1_4
+I0719 16:44:50.965330 12618 net.cpp:425] fc1_4 <- comb_4
+I0719 16:44:50.965340 12618 net.cpp:399] fc1_4 -> fc1_4
+I0719 16:44:50.970329 12618 net.cpp:141] Setting up fc1_4
+I0719 16:44:50.970358 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.970365 12618 net.cpp:156] Memory required for data: 930787840
+I0719 16:44:50.970372 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:50.970379 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:50.970386 12618 layer_factory.hpp:77] Creating layer relu_fc1_4
+I0719 16:44:50.970396 12618 net.cpp:91] Creating Layer relu_fc1_4
+I0719 16:44:50.970403 12618 net.cpp:425] relu_fc1_4 <- fc1_4
+I0719 16:44:50.970420 12618 net.cpp:386] relu_fc1_4 -> fc1_4 (in-place)
+I0719 16:44:50.970430 12618 net.cpp:141] Setting up relu_fc1_4
+I0719 16:44:50.970438 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.970443 12618 net.cpp:156] Memory required for data: 931049984
+I0719 16:44:50.970448 12618 layer_factory.hpp:77] Creating layer fc2_4
+I0719 16:44:50.970460 12618 net.cpp:91] Creating Layer fc2_4
+I0719 16:44:50.970465 12618 net.cpp:425] fc2_4 <- fc1_4
+I0719 16:44:50.970475 12618 net.cpp:399] fc2_4 -> fc2_4
+I0719 16:44:50.973139 12618 net.cpp:141] Setting up fc2_4
+I0719 16:44:50.973153 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.973160 12618 net.cpp:156] Memory required for data: 931312128
+I0719 16:44:50.973166 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:50.973175 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:50.973179 12618 layer_factory.hpp:77] Creating layer relu_fc2_4
+I0719 16:44:50.973196 12618 net.cpp:91] Creating Layer relu_fc2_4
+I0719 16:44:50.973201 12618 net.cpp:425] relu_fc2_4 <- fc2_4
+I0719 16:44:50.973230 12618 net.cpp:386] relu_fc2_4 -> fc2_4 (in-place)
+I0719 16:44:50.973240 12618 net.cpp:141] Setting up relu_fc2_4
+I0719 16:44:50.973248 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:50.973253 12618 net.cpp:156] Memory required for data: 931574272
+I0719 16:44:50.973258 12618 layer_factory.hpp:77] Creating layer fc3_4
+I0719 16:44:50.973270 12618 net.cpp:91] Creating Layer fc3_4
+I0719 16:44:50.973275 12618 net.cpp:425] fc3_4 <- fc2_4
+I0719 16:44:50.973284 12618 net.cpp:399] fc3_4 -> fc3_4
+I0719 16:44:50.973417 12618 net.cpp:141] Setting up fc3_4
+I0719 16:44:50.973424 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:50.973429 12618 net.cpp:156] Memory required for data: 931575296
+I0719 16:44:50.973435 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:50.973443 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:50.973448 12618 layer_factory.hpp:77] Creating layer conv1_51
+I0719 16:44:50.973464 12618 net.cpp:91] Creating Layer conv1_51
+I0719 16:44:50.973470 12618 net.cpp:425] conv1_51 <- p1_pool_i1_0_split_4
+I0719 16:44:50.973480 12618 net.cpp:399] conv1_51 -> conv1_51
+I0719 16:44:50.973837 12618 net.cpp:141] Setting up conv1_51
+I0719 16:44:50.973848 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:50.973853 12618 net.cpp:156] Memory required for data: 968439296
+I0719 16:44:50.973860 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:50.973867 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:50.973873 12618 layer_factory.hpp:77] Creating layer pool1_51
+I0719 16:44:50.973881 12618 net.cpp:91] Creating Layer pool1_51
+I0719 16:44:50.973887 12618 net.cpp:425] pool1_51 <- conv1_51
+I0719 16:44:50.973898 12618 net.cpp:399] pool1_51 -> pool1_51
+I0719 16:44:50.973948 12618 net.cpp:141] Setting up pool1_51
+I0719 16:44:50.973954 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:50.973959 12618 net.cpp:156] Memory required for data: 977655296
+I0719 16:44:50.973965 12618 layer_factory.hpp:77] Creating layer conv2_51
+I0719 16:44:50.973980 12618 net.cpp:91] Creating Layer conv2_51
+I0719 16:44:50.973986 12618 net.cpp:425] conv2_51 <- pool1_51
+I0719 16:44:50.973999 12618 net.cpp:399] conv2_51 -> conv2_51
+I0719 16:44:50.974527 12618 net.cpp:141] Setting up conv2_51
+I0719 16:44:50.974546 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:50.974553 12618 net.cpp:156] Memory required for data: 994960896
+I0719 16:44:50.974561 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:50.974571 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:50.974580 12618 layer_factory.hpp:77] Creating layer pool2_51
+I0719 16:44:50.974588 12618 net.cpp:91] Creating Layer pool2_51
+I0719 16:44:50.974598 12618 net.cpp:425] pool2_51 <- conv2_51
+I0719 16:44:50.974609 12618 net.cpp:399] pool2_51 -> pool2_51
+I0719 16:44:50.974669 12618 net.cpp:141] Setting up pool2_51
+I0719 16:44:50.974684 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:50.974690 12618 net.cpp:156] Memory required for data: 999287296
+I0719 16:44:50.974699 12618 layer_factory.hpp:77] Creating layer ip1_51
+I0719 16:44:50.974711 12618 net.cpp:91] Creating Layer ip1_51
+I0719 16:44:50.974720 12618 net.cpp:425] ip1_51 <- pool2_51
+I0719 16:44:50.974735 12618 net.cpp:399] ip1_51 -> ip1_51
+I0719 16:44:51.016178 12618 net.cpp:141] Setting up ip1_51
+I0719 16:44:51.016232 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.016238 12618 net.cpp:156] Memory required for data: 999543296
+I0719 16:44:51.016248 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.016258 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.016264 12618 layer_factory.hpp:77] Creating layer relu1_51
+I0719 16:44:51.016288 12618 net.cpp:91] Creating Layer relu1_51
+I0719 16:44:51.016321 12618 net.cpp:425] relu1_51 <- ip1_51
+I0719 16:44:51.016331 12618 net.cpp:386] relu1_51 -> ip1_51 (in-place)
+I0719 16:44:51.016345 12618 net.cpp:141] Setting up relu1_51
+I0719 16:44:51.016352 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.016357 12618 net.cpp:156] Memory required for data: 999799296
+I0719 16:44:51.016362 12618 layer_factory.hpp:77] Creating layer ip2_51
+I0719 16:44:51.016374 12618 net.cpp:91] Creating Layer ip2_51
+I0719 16:44:51.016379 12618 net.cpp:425] ip2_51 <- ip1_51
+I0719 16:44:51.016392 12618 net.cpp:399] ip2_51 -> ip2_51
+I0719 16:44:51.019131 12618 net.cpp:141] Setting up ip2_51
+I0719 16:44:51.019158 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.019163 12618 net.cpp:156] Memory required for data: 1000055296
+I0719 16:44:51.019170 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.019178 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.019183 12618 layer_factory.hpp:77] Creating layer conv1_52
+I0719 16:44:51.019197 12618 net.cpp:91] Creating Layer conv1_52
+I0719 16:44:51.019204 12618 net.cpp:425] conv1_52 <- s24
+I0719 16:44:51.019229 12618 net.cpp:399] conv1_52 -> conv1_52
+I0719 16:44:51.019584 12618 net.cpp:141] Setting up conv1_52
+I0719 16:44:51.019594 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.019600 12618 net.cpp:156] Memory required for data: 1036919296
+I0719 16:44:51.019606 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.019613 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.019619 12618 layer_factory.hpp:77] Creating layer pool1_52
+I0719 16:44:51.019629 12618 net.cpp:91] Creating Layer pool1_52
+I0719 16:44:51.019634 12618 net.cpp:425] pool1_52 <- conv1_52
+I0719 16:44:51.019645 12618 net.cpp:399] pool1_52 -> pool1_52
+I0719 16:44:51.019726 12618 net.cpp:141] Setting up pool1_52
+I0719 16:44:51.019742 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.019747 12618 net.cpp:156] Memory required for data: 1046135296
+I0719 16:44:51.019754 12618 layer_factory.hpp:77] Creating layer conv2_52
+I0719 16:44:51.019776 12618 net.cpp:91] Creating Layer conv2_52
+I0719 16:44:51.019788 12618 net.cpp:425] conv2_52 <- pool1_52
+I0719 16:44:51.019801 12618 net.cpp:399] conv2_52 -> conv2_52
+I0719 16:44:51.020351 12618 net.cpp:141] Setting up conv2_52
+I0719 16:44:51.020365 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.020372 12618 net.cpp:156] Memory required for data: 1063440896
+I0719 16:44:51.020380 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.020391 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.020398 12618 layer_factory.hpp:77] Creating layer pool2_52
+I0719 16:44:51.020408 12618 net.cpp:91] Creating Layer pool2_52
+I0719 16:44:51.020414 12618 net.cpp:425] pool2_52 <- conv2_52
+I0719 16:44:51.020422 12618 net.cpp:399] pool2_52 -> pool2_52
+I0719 16:44:51.020474 12618 net.cpp:141] Setting up pool2_52
+I0719 16:44:51.020484 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.020490 12618 net.cpp:156] Memory required for data: 1067767296
+I0719 16:44:51.020495 12618 layer_factory.hpp:77] Creating layer ip1_52
+I0719 16:44:51.020508 12618 net.cpp:91] Creating Layer ip1_52
+I0719 16:44:51.020512 12618 net.cpp:425] ip1_52 <- pool2_52
+I0719 16:44:51.020524 12618 net.cpp:399] ip1_52 -> ip1_52
+I0719 16:44:51.061614 12618 net.cpp:141] Setting up ip1_52
+I0719 16:44:51.061653 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.061661 12618 net.cpp:156] Memory required for data: 1068023296
+I0719 16:44:51.061674 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.061696 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.061703 12618 layer_factory.hpp:77] Creating layer relu1_52
+I0719 16:44:51.061774 12618 net.cpp:91] Creating Layer relu1_52
+I0719 16:44:51.061789 12618 net.cpp:425] relu1_52 <- ip1_52
+I0719 16:44:51.061805 12618 net.cpp:386] relu1_52 -> ip1_52 (in-place)
+I0719 16:44:51.061825 12618 net.cpp:141] Setting up relu1_52
+I0719 16:44:51.061839 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.061866 12618 net.cpp:156] Memory required for data: 1068279296
+I0719 16:44:51.061878 12618 layer_factory.hpp:77] Creating layer ip2_52
+I0719 16:44:51.061892 12618 net.cpp:91] Creating Layer ip2_52
+I0719 16:44:51.061904 12618 net.cpp:425] ip2_52 <- ip1_52
+I0719 16:44:51.061919 12618 net.cpp:399] ip2_52 -> ip2_52
+I0719 16:44:51.064569 12618 net.cpp:141] Setting up ip2_52
+I0719 16:44:51.064595 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.064601 12618 net.cpp:156] Memory required for data: 1068535296
+I0719 16:44:51.064609 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.064616 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.064621 12618 layer_factory.hpp:77] Creating layer concat_5
+I0719 16:44:51.064631 12618 net.cpp:91] Creating Layer concat_5
+I0719 16:44:51.064637 12618 net.cpp:425] concat_5 <- ip2_51
+I0719 16:44:51.064656 12618 net.cpp:425] concat_5 <- ip2_52
+I0719 16:44:51.064668 12618 net.cpp:399] concat_5 -> comb_5
+I0719 16:44:51.064697 12618 net.cpp:141] Setting up concat_5
+I0719 16:44:51.064703 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:51.064708 12618 net.cpp:156] Memory required for data: 1069047296
+I0719 16:44:51.064714 12618 layer_factory.hpp:77] Creating layer fc1_5
+I0719 16:44:51.064726 12618 net.cpp:91] Creating Layer fc1_5
+I0719 16:44:51.064734 12618 net.cpp:425] fc1_5 <- comb_5
+I0719 16:44:51.064746 12618 net.cpp:399] fc1_5 -> fc1_5
+I0719 16:44:51.069747 12618 net.cpp:141] Setting up fc1_5
+I0719 16:44:51.069777 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.069783 12618 net.cpp:156] Memory required for data: 1069309440
+I0719 16:44:51.069790 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:51.069798 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:51.069803 12618 layer_factory.hpp:77] Creating layer relu_fc1_5
+I0719 16:44:51.069813 12618 net.cpp:91] Creating Layer relu_fc1_5
+I0719 16:44:51.069818 12618 net.cpp:425] relu_fc1_5 <- fc1_5
+I0719 16:44:51.069840 12618 net.cpp:386] relu_fc1_5 -> fc1_5 (in-place)
+I0719 16:44:51.069851 12618 net.cpp:141] Setting up relu_fc1_5
+I0719 16:44:51.069859 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.069864 12618 net.cpp:156] Memory required for data: 1069571584
+I0719 16:44:51.069869 12618 layer_factory.hpp:77] Creating layer fc2_5
+I0719 16:44:51.069880 12618 net.cpp:91] Creating Layer fc2_5
+I0719 16:44:51.069885 12618 net.cpp:425] fc2_5 <- fc1_5
+I0719 16:44:51.069896 12618 net.cpp:399] fc2_5 -> fc2_5
+I0719 16:44:51.072566 12618 net.cpp:141] Setting up fc2_5
+I0719 16:44:51.072580 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.072589 12618 net.cpp:156] Memory required for data: 1069833728
+I0719 16:44:51.072597 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:51.072603 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:51.072609 12618 layer_factory.hpp:77] Creating layer relu_fc2_5
+I0719 16:44:51.072618 12618 net.cpp:91] Creating Layer relu_fc2_5
+I0719 16:44:51.072624 12618 net.cpp:425] relu_fc2_5 <- fc2_5
+I0719 16:44:51.072633 12618 net.cpp:386] relu_fc2_5 -> fc2_5 (in-place)
+I0719 16:44:51.072643 12618 net.cpp:141] Setting up relu_fc2_5
+I0719 16:44:51.072649 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.072654 12618 net.cpp:156] Memory required for data: 1070095872
+I0719 16:44:51.072660 12618 layer_factory.hpp:77] Creating layer fc3_5
+I0719 16:44:51.072669 12618 net.cpp:91] Creating Layer fc3_5
+I0719 16:44:51.072675 12618 net.cpp:425] fc3_5 <- fc2_5
+I0719 16:44:51.072705 12618 net.cpp:399] fc3_5 -> fc3_5
+I0719 16:44:51.072862 12618 net.cpp:141] Setting up fc3_5
+I0719 16:44:51.072876 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:51.072883 12618 net.cpp:156] Memory required for data: 1070096896
+I0719 16:44:51.072916 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:51.072929 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:51.072937 12618 layer_factory.hpp:77] Creating layer conv1_61
+I0719 16:44:51.072957 12618 net.cpp:91] Creating Layer conv1_61
+I0719 16:44:51.072968 12618 net.cpp:425] conv1_61 <- s11
+I0719 16:44:51.072980 12618 net.cpp:399] conv1_61 -> conv1_61
+I0719 16:44:51.073361 12618 net.cpp:141] Setting up conv1_61
+I0719 16:44:51.073375 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.073382 12618 net.cpp:156] Memory required for data: 1106960896
+I0719 16:44:51.073411 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.073426 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.073432 12618 layer_factory.hpp:77] Creating layer pool1_61
+I0719 16:44:51.073447 12618 net.cpp:91] Creating Layer pool1_61
+I0719 16:44:51.073459 12618 net.cpp:425] pool1_61 <- conv1_61
+I0719 16:44:51.073474 12618 net.cpp:399] pool1_61 -> pool1_61
+I0719 16:44:51.073535 12618 net.cpp:141] Setting up pool1_61
+I0719 16:44:51.073549 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.073554 12618 net.cpp:156] Memory required for data: 1116176896
+I0719 16:44:51.073581 12618 layer_factory.hpp:77] Creating layer conv2_61
+I0719 16:44:51.073601 12618 net.cpp:91] Creating Layer conv2_61
+I0719 16:44:51.073612 12618 net.cpp:425] conv2_61 <- pool1_61
+I0719 16:44:51.073628 12618 net.cpp:399] conv2_61 -> conv2_61
+I0719 16:44:51.074803 12618 net.cpp:141] Setting up conv2_61
+I0719 16:44:51.074822 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.074831 12618 net.cpp:156] Memory required for data: 1133482496
+I0719 16:44:51.074838 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.074847 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.074858 12618 layer_factory.hpp:77] Creating layer pool2_61
+I0719 16:44:51.074872 12618 net.cpp:91] Creating Layer pool2_61
+I0719 16:44:51.074879 12618 net.cpp:425] pool2_61 <- conv2_61
+I0719 16:44:51.074889 12618 net.cpp:399] pool2_61 -> pool2_61
+I0719 16:44:51.074944 12618 net.cpp:141] Setting up pool2_61
+I0719 16:44:51.074957 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.074965 12618 net.cpp:156] Memory required for data: 1137808896
+I0719 16:44:51.074971 12618 layer_factory.hpp:77] Creating layer ip1_61
+I0719 16:44:51.074982 12618 net.cpp:91] Creating Layer ip1_61
+I0719 16:44:51.074992 12618 net.cpp:425] ip1_61 <- pool2_61
+I0719 16:44:51.075007 12618 net.cpp:399] ip1_61 -> ip1_61
+I0719 16:44:51.116267 12618 net.cpp:141] Setting up ip1_61
+I0719 16:44:51.116307 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.116315 12618 net.cpp:156] Memory required for data: 1138064896
+I0719 16:44:51.116328 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.116350 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.116359 12618 layer_factory.hpp:77] Creating layer relu1_61
+I0719 16:44:51.116379 12618 net.cpp:91] Creating Layer relu1_61
+I0719 16:44:51.116426 12618 net.cpp:425] relu1_61 <- ip1_61
+I0719 16:44:51.116444 12618 net.cpp:386] relu1_61 -> ip1_61 (in-place)
+I0719 16:44:51.116461 12618 net.cpp:141] Setting up relu1_61
+I0719 16:44:51.116474 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.116482 12618 net.cpp:156] Memory required for data: 1138320896
+I0719 16:44:51.116489 12618 layer_factory.hpp:77] Creating layer ip2_61
+I0719 16:44:51.116508 12618 net.cpp:91] Creating Layer ip2_61
+I0719 16:44:51.116540 12618 net.cpp:425] ip2_61 <- ip1_61
+I0719 16:44:51.116555 12618 net.cpp:399] ip2_61 -> ip2_61
+I0719 16:44:51.119226 12618 net.cpp:141] Setting up ip2_61
+I0719 16:44:51.119246 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.119261 12618 net.cpp:156] Memory required for data: 1138576896
+I0719 16:44:51.119269 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.119278 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.119287 12618 layer_factory.hpp:77] Creating layer conv1_62
+I0719 16:44:51.119309 12618 net.cpp:91] Creating Layer conv1_62
+I0719 16:44:51.119324 12618 net.cpp:425] conv1_62 <- p2_pool_i2_0_split_1
+I0719 16:44:51.119343 12618 net.cpp:399] conv1_62 -> conv1_62
+I0719 16:44:51.119747 12618 net.cpp:141] Setting up conv1_62
+I0719 16:44:51.119761 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.119770 12618 net.cpp:156] Memory required for data: 1175440896
+I0719 16:44:51.119777 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.119787 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.119796 12618 layer_factory.hpp:77] Creating layer pool1_62
+I0719 16:44:51.119810 12618 net.cpp:91] Creating Layer pool1_62
+I0719 16:44:51.119818 12618 net.cpp:425] pool1_62 <- conv1_62
+I0719 16:44:51.119830 12618 net.cpp:399] pool1_62 -> pool1_62
+I0719 16:44:51.119894 12618 net.cpp:141] Setting up pool1_62
+I0719 16:44:51.119909 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.119915 12618 net.cpp:156] Memory required for data: 1184656896
+I0719 16:44:51.119922 12618 layer_factory.hpp:77] Creating layer conv2_62
+I0719 16:44:51.119941 12618 net.cpp:91] Creating Layer conv2_62
+I0719 16:44:51.119951 12618 net.cpp:425] conv2_62 <- pool1_62
+I0719 16:44:51.119967 12618 net.cpp:399] conv2_62 -> conv2_62
+I0719 16:44:51.120533 12618 net.cpp:141] Setting up conv2_62
+I0719 16:44:51.120554 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.120561 12618 net.cpp:156] Memory required for data: 1201962496
+I0719 16:44:51.120570 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.120579 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.120586 12618 layer_factory.hpp:77] Creating layer pool2_62
+I0719 16:44:51.120596 12618 net.cpp:91] Creating Layer pool2_62
+I0719 16:44:51.120604 12618 net.cpp:425] pool2_62 <- conv2_62
+I0719 16:44:51.120618 12618 net.cpp:399] pool2_62 -> pool2_62
+I0719 16:44:51.120687 12618 net.cpp:141] Setting up pool2_62
+I0719 16:44:51.120700 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.120707 12618 net.cpp:156] Memory required for data: 1206288896
+I0719 16:44:51.120714 12618 layer_factory.hpp:77] Creating layer ip1_62
+I0719 16:44:51.120729 12618 net.cpp:91] Creating Layer ip1_62
+I0719 16:44:51.120738 12618 net.cpp:425] ip1_62 <- pool2_62
+I0719 16:44:51.120750 12618 net.cpp:399] ip1_62 -> ip1_62
+I0719 16:44:51.162030 12618 net.cpp:141] Setting up ip1_62
+I0719 16:44:51.162068 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.162076 12618 net.cpp:156] Memory required for data: 1206544896
+I0719 16:44:51.162099 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.162111 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.162119 12618 layer_factory.hpp:77] Creating layer relu1_62
+I0719 16:44:51.162133 12618 net.cpp:91] Creating Layer relu1_62
+I0719 16:44:51.162143 12618 net.cpp:425] relu1_62 <- ip1_62
+I0719 16:44:51.162169 12618 net.cpp:386] relu1_62 -> ip1_62 (in-place)
+I0719 16:44:51.162185 12618 net.cpp:141] Setting up relu1_62
+I0719 16:44:51.162195 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.162204 12618 net.cpp:156] Memory required for data: 1206800896
+I0719 16:44:51.162210 12618 layer_factory.hpp:77] Creating layer ip2_62
+I0719 16:44:51.162288 12618 net.cpp:91] Creating Layer ip2_62
+I0719 16:44:51.162300 12618 net.cpp:425] ip2_62 <- ip1_62
+I0719 16:44:51.162313 12618 net.cpp:399] ip2_62 -> ip2_62
+I0719 16:44:51.164983 12618 net.cpp:141] Setting up ip2_62
+I0719 16:44:51.165004 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.165021 12618 net.cpp:156] Memory required for data: 1207056896
+I0719 16:44:51.165030 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.165040 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.165048 12618 layer_factory.hpp:77] Creating layer concat_6
+I0719 16:44:51.165060 12618 net.cpp:91] Creating Layer concat_6
+I0719 16:44:51.165068 12618 net.cpp:425] concat_6 <- ip2_61
+I0719 16:44:51.165088 12618 net.cpp:425] concat_6 <- ip2_62
+I0719 16:44:51.165101 12618 net.cpp:399] concat_6 -> comb_6
+I0719 16:44:51.165138 12618 net.cpp:141] Setting up concat_6
+I0719 16:44:51.165150 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:51.165158 12618 net.cpp:156] Memory required for data: 1207568896
+I0719 16:44:51.165165 12618 layer_factory.hpp:77] Creating layer fc1_6
+I0719 16:44:51.165177 12618 net.cpp:91] Creating Layer fc1_6
+I0719 16:44:51.165185 12618 net.cpp:425] fc1_6 <- comb_6
+I0719 16:44:51.165201 12618 net.cpp:399] fc1_6 -> fc1_6
+I0719 16:44:51.170228 12618 net.cpp:141] Setting up fc1_6
+I0719 16:44:51.170250 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.170258 12618 net.cpp:156] Memory required for data: 1207831040
+I0719 16:44:51.170275 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:51.170285 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:51.170292 12618 layer_factory.hpp:77] Creating layer relu_fc1_6
+I0719 16:44:51.170303 12618 net.cpp:91] Creating Layer relu_fc1_6
+I0719 16:44:51.170311 12618 net.cpp:425] relu_fc1_6 <- fc1_6
+I0719 16:44:51.170323 12618 net.cpp:386] relu_fc1_6 -> fc1_6 (in-place)
+I0719 16:44:51.170343 12618 net.cpp:141] Setting up relu_fc1_6
+I0719 16:44:51.170353 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.170361 12618 net.cpp:156] Memory required for data: 1208093184
+I0719 16:44:51.170368 12618 layer_factory.hpp:77] Creating layer fc2_6
+I0719 16:44:51.170383 12618 net.cpp:91] Creating Layer fc2_6
+I0719 16:44:51.170392 12618 net.cpp:425] fc2_6 <- fc1_6
+I0719 16:44:51.170408 12618 net.cpp:399] fc2_6 -> fc2_6
+I0719 16:44:51.173137 12618 net.cpp:141] Setting up fc2_6
+I0719 16:44:51.173161 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.173168 12618 net.cpp:156] Memory required for data: 1208355328
+I0719 16:44:51.173223 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:51.173238 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:51.173245 12618 layer_factory.hpp:77] Creating layer relu_fc2_6
+I0719 16:44:51.173256 12618 net.cpp:91] Creating Layer relu_fc2_6
+I0719 16:44:51.173264 12618 net.cpp:425] relu_fc2_6 <- fc2_6
+I0719 16:44:51.173279 12618 net.cpp:386] relu_fc2_6 -> fc2_6 (in-place)
+I0719 16:44:51.173291 12618 net.cpp:141] Setting up relu_fc2_6
+I0719 16:44:51.173302 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.173310 12618 net.cpp:156] Memory required for data: 1208617472
+I0719 16:44:51.173316 12618 layer_factory.hpp:77] Creating layer fc3_6
+I0719 16:44:51.173329 12618 net.cpp:91] Creating Layer fc3_6
+I0719 16:44:51.173336 12618 net.cpp:425] fc3_6 <- fc2_6
+I0719 16:44:51.173349 12618 net.cpp:399] fc3_6 -> fc3_6
+I0719 16:44:51.173499 12618 net.cpp:141] Setting up fc3_6
+I0719 16:44:51.173513 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:51.173521 12618 net.cpp:156] Memory required for data: 1208618496
+I0719 16:44:51.173528 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:51.173537 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:51.173564 12618 layer_factory.hpp:77] Creating layer conv1_71
+I0719 16:44:51.173585 12618 net.cpp:91] Creating Layer conv1_71
+I0719 16:44:51.173593 12618 net.cpp:425] conv1_71 <- s12
+I0719 16:44:51.173610 12618 net.cpp:399] conv1_71 -> conv1_71
+I0719 16:44:51.174006 12618 net.cpp:141] Setting up conv1_71
+I0719 16:44:51.174021 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.174028 12618 net.cpp:156] Memory required for data: 1245482496
+I0719 16:44:51.174036 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.174044 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.174052 12618 layer_factory.hpp:77] Creating layer pool1_71
+I0719 16:44:51.174063 12618 net.cpp:91] Creating Layer pool1_71
+I0719 16:44:51.174080 12618 net.cpp:425] pool1_71 <- conv1_71
+I0719 16:44:51.174091 12618 net.cpp:399] pool1_71 -> pool1_71
+I0719 16:44:51.174160 12618 net.cpp:141] Setting up pool1_71
+I0719 16:44:51.174173 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.174181 12618 net.cpp:156] Memory required for data: 1254698496
+I0719 16:44:51.174188 12618 layer_factory.hpp:77] Creating layer conv2_71
+I0719 16:44:51.174206 12618 net.cpp:91] Creating Layer conv2_71
+I0719 16:44:51.174213 12618 net.cpp:425] conv2_71 <- pool1_71
+I0719 16:44:51.174229 12618 net.cpp:399] conv2_71 -> conv2_71
+I0719 16:44:51.174787 12618 net.cpp:141] Setting up conv2_71
+I0719 16:44:51.174801 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.174808 12618 net.cpp:156] Memory required for data: 1272004096
+I0719 16:44:51.174816 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.174826 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.174834 12618 layer_factory.hpp:77] Creating layer pool2_71
+I0719 16:44:51.174845 12618 net.cpp:91] Creating Layer pool2_71
+I0719 16:44:51.174852 12618 net.cpp:425] pool2_71 <- conv2_71
+I0719 16:44:51.174867 12618 net.cpp:399] pool2_71 -> pool2_71
+I0719 16:44:51.174926 12618 net.cpp:141] Setting up pool2_71
+I0719 16:44:51.174938 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.174945 12618 net.cpp:156] Memory required for data: 1276330496
+I0719 16:44:51.174952 12618 layer_factory.hpp:77] Creating layer ip1_71
+I0719 16:44:51.174967 12618 net.cpp:91] Creating Layer ip1_71
+I0719 16:44:51.174974 12618 net.cpp:425] ip1_71 <- pool2_71
+I0719 16:44:51.174989 12618 net.cpp:399] ip1_71 -> ip1_71
+I0719 16:44:51.216155 12618 net.cpp:141] Setting up ip1_71
+I0719 16:44:51.216193 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.216202 12618 net.cpp:156] Memory required for data: 1276586496
+I0719 16:44:51.216224 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.216235 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.216243 12618 layer_factory.hpp:77] Creating layer relu1_71
+I0719 16:44:51.216259 12618 net.cpp:91] Creating Layer relu1_71
+I0719 16:44:51.216270 12618 net.cpp:425] relu1_71 <- ip1_71
+I0719 16:44:51.216296 12618 net.cpp:386] relu1_71 -> ip1_71 (in-place)
+I0719 16:44:51.216313 12618 net.cpp:141] Setting up relu1_71
+I0719 16:44:51.216323 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.216331 12618 net.cpp:156] Memory required for data: 1276842496
+I0719 16:44:51.216338 12618 layer_factory.hpp:77] Creating layer ip2_71
+I0719 16:44:51.216352 12618 net.cpp:91] Creating Layer ip2_71
+I0719 16:44:51.216361 12618 net.cpp:425] ip2_71 <- ip1_71
+I0719 16:44:51.216375 12618 net.cpp:399] ip2_71 -> ip2_71
+I0719 16:44:51.219087 12618 net.cpp:141] Setting up ip2_71
+I0719 16:44:51.219108 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.219115 12618 net.cpp:156] Memory required for data: 1277098496
+I0719 16:44:51.219125 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.219135 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.219163 12618 layer_factory.hpp:77] Creating layer conv1_72
+I0719 16:44:51.219182 12618 net.cpp:91] Creating Layer conv1_72
+I0719 16:44:51.219197 12618 net.cpp:425] conv1_72 <- p2_pool_i2_0_split_2
+I0719 16:44:51.219215 12618 net.cpp:399] conv1_72 -> conv1_72
+I0719 16:44:51.219612 12618 net.cpp:141] Setting up conv1_72
+I0719 16:44:51.219629 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.219635 12618 net.cpp:156] Memory required for data: 1313962496
+I0719 16:44:51.219645 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.219653 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.219661 12618 layer_factory.hpp:77] Creating layer pool1_72
+I0719 16:44:51.219673 12618 net.cpp:91] Creating Layer pool1_72
+I0719 16:44:51.219681 12618 net.cpp:425] pool1_72 <- conv1_72
+I0719 16:44:51.219693 12618 net.cpp:399] pool1_72 -> pool1_72
+I0719 16:44:51.219766 12618 net.cpp:141] Setting up pool1_72
+I0719 16:44:51.219781 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.219789 12618 net.cpp:156] Memory required for data: 1323178496
+I0719 16:44:51.219795 12618 layer_factory.hpp:77] Creating layer conv2_72
+I0719 16:44:51.219812 12618 net.cpp:91] Creating Layer conv2_72
+I0719 16:44:51.219820 12618 net.cpp:425] conv2_72 <- pool1_72
+I0719 16:44:51.219838 12618 net.cpp:399] conv2_72 -> conv2_72
+I0719 16:44:51.220412 12618 net.cpp:141] Setting up conv2_72
+I0719 16:44:51.220427 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.220433 12618 net.cpp:156] Memory required for data: 1340484096
+I0719 16:44:51.220443 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.220451 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.220458 12618 layer_factory.hpp:77] Creating layer pool2_72
+I0719 16:44:51.220468 12618 net.cpp:91] Creating Layer pool2_72
+I0719 16:44:51.220476 12618 net.cpp:425] pool2_72 <- conv2_72
+I0719 16:44:51.220491 12618 net.cpp:399] pool2_72 -> pool2_72
+I0719 16:44:51.220548 12618 net.cpp:141] Setting up pool2_72
+I0719 16:44:51.220564 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.220571 12618 net.cpp:156] Memory required for data: 1344810496
+I0719 16:44:51.220578 12618 layer_factory.hpp:77] Creating layer ip1_72
+I0719 16:44:51.220590 12618 net.cpp:91] Creating Layer ip1_72
+I0719 16:44:51.220598 12618 net.cpp:425] ip1_72 <- pool2_72
+I0719 16:44:51.220613 12618 net.cpp:399] ip1_72 -> ip1_72
+I0719 16:44:51.261458 12618 net.cpp:141] Setting up ip1_72
+I0719 16:44:51.261498 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.261518 12618 net.cpp:156] Memory required for data: 1345066496
+I0719 16:44:51.261530 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.261541 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.261549 12618 layer_factory.hpp:77] Creating layer relu1_72
+I0719 16:44:51.261564 12618 net.cpp:91] Creating Layer relu1_72
+I0719 16:44:51.261575 12618 net.cpp:425] relu1_72 <- ip1_72
+I0719 16:44:51.261595 12618 net.cpp:386] relu1_72 -> ip1_72 (in-place)
+I0719 16:44:51.261611 12618 net.cpp:141] Setting up relu1_72
+I0719 16:44:51.261620 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.261627 12618 net.cpp:156] Memory required for data: 1345322496
+I0719 16:44:51.261636 12618 layer_factory.hpp:77] Creating layer ip2_72
+I0719 16:44:51.261648 12618 net.cpp:91] Creating Layer ip2_72
+I0719 16:44:51.261656 12618 net.cpp:425] ip2_72 <- ip1_72
+I0719 16:44:51.261675 12618 net.cpp:399] ip2_72 -> ip2_72
+I0719 16:44:51.264312 12618 net.cpp:141] Setting up ip2_72
+I0719 16:44:51.264333 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.264349 12618 net.cpp:156] Memory required for data: 1345578496
+I0719 16:44:51.264358 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.264387 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.264396 12618 layer_factory.hpp:77] Creating layer concat_7
+I0719 16:44:51.264417 12618 net.cpp:91] Creating Layer concat_7
+I0719 16:44:51.264425 12618 net.cpp:425] concat_7 <- ip2_71
+I0719 16:44:51.264436 12618 net.cpp:425] concat_7 <- ip2_72
+I0719 16:44:51.264447 12618 net.cpp:399] concat_7 -> comb_7
+I0719 16:44:51.264482 12618 net.cpp:141] Setting up concat_7
+I0719 16:44:51.264497 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:51.264504 12618 net.cpp:156] Memory required for data: 1346090496
+I0719 16:44:51.264511 12618 layer_factory.hpp:77] Creating layer fc1_7
+I0719 16:44:51.264528 12618 net.cpp:91] Creating Layer fc1_7
+I0719 16:44:51.264535 12618 net.cpp:425] fc1_7 <- comb_7
+I0719 16:44:51.264550 12618 net.cpp:399] fc1_7 -> fc1_7
+I0719 16:44:51.269603 12618 net.cpp:141] Setting up fc1_7
+I0719 16:44:51.269628 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.269646 12618 net.cpp:156] Memory required for data: 1346352640
+I0719 16:44:51.269656 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:51.269665 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:51.269673 12618 layer_factory.hpp:77] Creating layer relu_fc1_7
+I0719 16:44:51.269687 12618 net.cpp:91] Creating Layer relu_fc1_7
+I0719 16:44:51.269695 12618 net.cpp:425] relu_fc1_7 <- fc1_7
+I0719 16:44:51.269716 12618 net.cpp:386] relu_fc1_7 -> fc1_7 (in-place)
+I0719 16:44:51.269729 12618 net.cpp:141] Setting up relu_fc1_7
+I0719 16:44:51.269739 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.269747 12618 net.cpp:156] Memory required for data: 1346614784
+I0719 16:44:51.269753 12618 layer_factory.hpp:77] Creating layer fc2_7
+I0719 16:44:51.269768 12618 net.cpp:91] Creating Layer fc2_7
+I0719 16:44:51.269775 12618 net.cpp:425] fc2_7 <- fc1_7
+I0719 16:44:51.269788 12618 net.cpp:399] fc2_7 -> fc2_7
+I0719 16:44:51.272492 12618 net.cpp:141] Setting up fc2_7
+I0719 16:44:51.272512 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.272529 12618 net.cpp:156] Memory required for data: 1346876928
+I0719 16:44:51.272538 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:51.272548 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:51.272557 12618 layer_factory.hpp:77] Creating layer relu_fc2_7
+I0719 16:44:51.272567 12618 net.cpp:91] Creating Layer relu_fc2_7
+I0719 16:44:51.272574 12618 net.cpp:425] relu_fc2_7 <- fc2_7
+I0719 16:44:51.272591 12618 net.cpp:386] relu_fc2_7 -> fc2_7 (in-place)
+I0719 16:44:51.272605 12618 net.cpp:141] Setting up relu_fc2_7
+I0719 16:44:51.272614 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.272622 12618 net.cpp:156] Memory required for data: 1347139072
+I0719 16:44:51.272629 12618 layer_factory.hpp:77] Creating layer fc3_7
+I0719 16:44:51.272641 12618 net.cpp:91] Creating Layer fc3_7
+I0719 16:44:51.272651 12618 net.cpp:425] fc3_7 <- fc2_7
+I0719 16:44:51.272665 12618 net.cpp:399] fc3_7 -> fc3_7
+I0719 16:44:51.272814 12618 net.cpp:141] Setting up fc3_7
+I0719 16:44:51.272830 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:51.272836 12618 net.cpp:156] Memory required for data: 1347140096
+I0719 16:44:51.272845 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:51.272855 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:51.272861 12618 layer_factory.hpp:77] Creating layer conv1_81
+I0719 16:44:51.272878 12618 net.cpp:91] Creating Layer conv1_81
+I0719 16:44:51.272886 12618 net.cpp:425] conv1_81 <- s13
+I0719 16:44:51.272902 12618 net.cpp:399] conv1_81 -> conv1_81
+I0719 16:44:51.273308 12618 net.cpp:141] Setting up conv1_81
+I0719 16:44:51.273321 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.273329 12618 net.cpp:156] Memory required for data: 1384004096
+I0719 16:44:51.273336 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.273360 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.273368 12618 layer_factory.hpp:77] Creating layer pool1_81
+I0719 16:44:51.273380 12618 net.cpp:91] Creating Layer pool1_81
+I0719 16:44:51.273387 12618 net.cpp:425] pool1_81 <- conv1_81
+I0719 16:44:51.273401 12618 net.cpp:399] pool1_81 -> pool1_81
+I0719 16:44:51.273460 12618 net.cpp:141] Setting up pool1_81
+I0719 16:44:51.273474 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.273481 12618 net.cpp:156] Memory required for data: 1393220096
+I0719 16:44:51.273488 12618 layer_factory.hpp:77] Creating layer conv2_81
+I0719 16:44:51.273507 12618 net.cpp:91] Creating Layer conv2_81
+I0719 16:44:51.273519 12618 net.cpp:425] conv2_81 <- pool1_81
+I0719 16:44:51.273531 12618 net.cpp:399] conv2_81 -> conv2_81
+I0719 16:44:51.274080 12618 net.cpp:141] Setting up conv2_81
+I0719 16:44:51.274099 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.274107 12618 net.cpp:156] Memory required for data: 1410525696
+I0719 16:44:51.274114 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.274123 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.274130 12618 layer_factory.hpp:77] Creating layer pool2_81
+I0719 16:44:51.274143 12618 net.cpp:91] Creating Layer pool2_81
+I0719 16:44:51.274152 12618 net.cpp:425] pool2_81 <- conv2_81
+I0719 16:44:51.274171 12618 net.cpp:399] pool2_81 -> pool2_81
+I0719 16:44:51.274233 12618 net.cpp:141] Setting up pool2_81
+I0719 16:44:51.274248 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.274255 12618 net.cpp:156] Memory required for data: 1414852096
+I0719 16:44:51.274262 12618 layer_factory.hpp:77] Creating layer ip1_81
+I0719 16:44:51.274274 12618 net.cpp:91] Creating Layer ip1_81
+I0719 16:44:51.274281 12618 net.cpp:425] ip1_81 <- pool2_81
+I0719 16:44:51.274296 12618 net.cpp:399] ip1_81 -> ip1_81
+I0719 16:44:51.315542 12618 net.cpp:141] Setting up ip1_81
+I0719 16:44:51.315582 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.315589 12618 net.cpp:156] Memory required for data: 1415108096
+I0719 16:44:51.315613 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.315623 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.315632 12618 layer_factory.hpp:77] Creating layer relu1_81
+I0719 16:44:51.315649 12618 net.cpp:91] Creating Layer relu1_81
+I0719 16:44:51.315660 12618 net.cpp:425] relu1_81 <- ip1_81
+I0719 16:44:51.315682 12618 net.cpp:386] relu1_81 -> ip1_81 (in-place)
+I0719 16:44:51.315698 12618 net.cpp:141] Setting up relu1_81
+I0719 16:44:51.315713 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.315721 12618 net.cpp:156] Memory required for data: 1415364096
+I0719 16:44:51.315728 12618 layer_factory.hpp:77] Creating layer ip2_81
+I0719 16:44:51.315742 12618 net.cpp:91] Creating Layer ip2_81
+I0719 16:44:51.315750 12618 net.cpp:425] ip2_81 <- ip1_81
+I0719 16:44:51.315768 12618 net.cpp:399] ip2_81 -> ip2_81
+I0719 16:44:51.318450 12618 net.cpp:141] Setting up ip2_81
+I0719 16:44:51.318470 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.318487 12618 net.cpp:156] Memory required for data: 1415620096
+I0719 16:44:51.318496 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.318506 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.318513 12618 layer_factory.hpp:77] Creating layer conv1_82
+I0719 16:44:51.318531 12618 net.cpp:91] Creating Layer conv1_82
+I0719 16:44:51.318538 12618 net.cpp:425] conv1_82 <- p2_pool_i2_0_split_3
+I0719 16:44:51.318563 12618 net.cpp:399] conv1_82 -> conv1_82
+I0719 16:44:51.318959 12618 net.cpp:141] Setting up conv1_82
+I0719 16:44:51.318974 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.318981 12618 net.cpp:156] Memory required for data: 1452484096
+I0719 16:44:51.319010 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.319020 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.319030 12618 layer_factory.hpp:77] Creating layer pool1_82
+I0719 16:44:51.319041 12618 net.cpp:91] Creating Layer pool1_82
+I0719 16:44:51.319048 12618 net.cpp:425] pool1_82 <- conv1_82
+I0719 16:44:51.319063 12618 net.cpp:399] pool1_82 -> pool1_82
+I0719 16:44:51.319123 12618 net.cpp:141] Setting up pool1_82
+I0719 16:44:51.319139 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.319145 12618 net.cpp:156] Memory required for data: 1461700096
+I0719 16:44:51.319152 12618 layer_factory.hpp:77] Creating layer conv2_82
+I0719 16:44:51.319175 12618 net.cpp:91] Creating Layer conv2_82
+I0719 16:44:51.319182 12618 net.cpp:425] conv2_82 <- pool1_82
+I0719 16:44:51.319195 12618 net.cpp:399] conv2_82 -> conv2_82
+I0719 16:44:51.319778 12618 net.cpp:141] Setting up conv2_82
+I0719 16:44:51.319795 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.319803 12618 net.cpp:156] Memory required for data: 1479005696
+I0719 16:44:51.319815 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.319824 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.319831 12618 layer_factory.hpp:77] Creating layer pool2_82
+I0719 16:44:51.319842 12618 net.cpp:91] Creating Layer pool2_82
+I0719 16:44:51.319850 12618 net.cpp:425] pool2_82 <- conv2_82
+I0719 16:44:51.319862 12618 net.cpp:399] pool2_82 -> pool2_82
+I0719 16:44:51.319931 12618 net.cpp:141] Setting up pool2_82
+I0719 16:44:51.319944 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.319952 12618 net.cpp:156] Memory required for data: 1483332096
+I0719 16:44:51.319959 12618 layer_factory.hpp:77] Creating layer ip1_82
+I0719 16:44:51.319974 12618 net.cpp:91] Creating Layer ip1_82
+I0719 16:44:51.319983 12618 net.cpp:425] ip1_82 <- pool2_82
+I0719 16:44:51.319995 12618 net.cpp:399] ip1_82 -> ip1_82
+I0719 16:44:51.361410 12618 net.cpp:141] Setting up ip1_82
+I0719 16:44:51.361449 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.361457 12618 net.cpp:156] Memory required for data: 1483588096
+I0719 16:44:51.361480 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.361490 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.361500 12618 layer_factory.hpp:77] Creating layer relu1_82
+I0719 16:44:51.361513 12618 net.cpp:91] Creating Layer relu1_82
+I0719 16:44:51.361523 12618 net.cpp:425] relu1_82 <- ip1_82
+I0719 16:44:51.361546 12618 net.cpp:386] relu1_82 -> ip1_82 (in-place)
+I0719 16:44:51.361562 12618 net.cpp:141] Setting up relu1_82
+I0719 16:44:51.361572 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.361578 12618 net.cpp:156] Memory required for data: 1483844096
+I0719 16:44:51.361585 12618 layer_factory.hpp:77] Creating layer ip2_82
+I0719 16:44:51.361618 12618 net.cpp:91] Creating Layer ip2_82
+I0719 16:44:51.361629 12618 net.cpp:425] ip2_82 <- ip1_82
+I0719 16:44:51.361646 12618 net.cpp:399] ip2_82 -> ip2_82
+I0719 16:44:51.364286 12618 net.cpp:141] Setting up ip2_82
+I0719 16:44:51.364306 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.364323 12618 net.cpp:156] Memory required for data: 1484100096
+I0719 16:44:51.364333 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.364342 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.364351 12618 layer_factory.hpp:77] Creating layer concat_8
+I0719 16:44:51.364362 12618 net.cpp:91] Creating Layer concat_8
+I0719 16:44:51.364370 12618 net.cpp:425] concat_8 <- ip2_81
+I0719 16:44:51.364390 12618 net.cpp:425] concat_8 <- ip2_82
+I0719 16:44:51.364406 12618 net.cpp:399] concat_8 -> comb_8
+I0719 16:44:51.364441 12618 net.cpp:141] Setting up concat_8
+I0719 16:44:51.364471 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:51.364480 12618 net.cpp:156] Memory required for data: 1484612096
+I0719 16:44:51.364486 12618 layer_factory.hpp:77] Creating layer fc1_8
+I0719 16:44:51.364501 12618 net.cpp:91] Creating Layer fc1_8
+I0719 16:44:51.364509 12618 net.cpp:425] fc1_8 <- comb_8
+I0719 16:44:51.364523 12618 net.cpp:399] fc1_8 -> fc1_8
+I0719 16:44:51.369554 12618 net.cpp:141] Setting up fc1_8
+I0719 16:44:51.369577 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.369585 12618 net.cpp:156] Memory required for data: 1484874240
+I0719 16:44:51.369602 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:51.369612 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:51.369621 12618 layer_factory.hpp:77] Creating layer relu_fc1_8
+I0719 16:44:51.369632 12618 net.cpp:91] Creating Layer relu_fc1_8
+I0719 16:44:51.369639 12618 net.cpp:425] relu_fc1_8 <- fc1_8
+I0719 16:44:51.369659 12618 net.cpp:386] relu_fc1_8 -> fc1_8 (in-place)
+I0719 16:44:51.369673 12618 net.cpp:141] Setting up relu_fc1_8
+I0719 16:44:51.369683 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.369690 12618 net.cpp:156] Memory required for data: 1485136384
+I0719 16:44:51.369698 12618 layer_factory.hpp:77] Creating layer fc2_8
+I0719 16:44:51.369710 12618 net.cpp:91] Creating Layer fc2_8
+I0719 16:44:51.369717 12618 net.cpp:425] fc2_8 <- fc1_8
+I0719 16:44:51.369734 12618 net.cpp:399] fc2_8 -> fc2_8
+I0719 16:44:51.372431 12618 net.cpp:141] Setting up fc2_8
+I0719 16:44:51.372450 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.372467 12618 net.cpp:156] Memory required for data: 1485398528
+I0719 16:44:51.372478 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:51.372488 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:51.372494 12618 layer_factory.hpp:77] Creating layer relu_fc2_8
+I0719 16:44:51.372506 12618 net.cpp:91] Creating Layer relu_fc2_8
+I0719 16:44:51.372514 12618 net.cpp:425] relu_fc2_8 <- fc2_8
+I0719 16:44:51.372527 12618 net.cpp:386] relu_fc2_8 -> fc2_8 (in-place)
+I0719 16:44:51.372542 12618 net.cpp:141] Setting up relu_fc2_8
+I0719 16:44:51.372552 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.372560 12618 net.cpp:156] Memory required for data: 1485660672
+I0719 16:44:51.372566 12618 layer_factory.hpp:77] Creating layer fc3_8
+I0719 16:44:51.372578 12618 net.cpp:91] Creating Layer fc3_8
+I0719 16:44:51.372586 12618 net.cpp:425] fc3_8 <- fc2_8
+I0719 16:44:51.372598 12618 net.cpp:399] fc3_8 -> fc3_8
+I0719 16:44:51.372755 12618 net.cpp:141] Setting up fc3_8
+I0719 16:44:51.372768 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:51.372776 12618 net.cpp:156] Memory required for data: 1485661696
+I0719 16:44:51.372784 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:51.372793 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:51.372802 12618 layer_factory.hpp:77] Creating layer conv1_91
+I0719 16:44:51.372820 12618 net.cpp:91] Creating Layer conv1_91
+I0719 16:44:51.372833 12618 net.cpp:425] conv1_91 <- s14
+I0719 16:44:51.372848 12618 net.cpp:399] conv1_91 -> conv1_91
+I0719 16:44:51.373245 12618 net.cpp:141] Setting up conv1_91
+I0719 16:44:51.373260 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.373266 12618 net.cpp:156] Memory required for data: 1522525696
+I0719 16:44:51.373275 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.373284 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.373291 12618 layer_factory.hpp:77] Creating layer pool1_91
+I0719 16:44:51.373306 12618 net.cpp:91] Creating Layer pool1_91
+I0719 16:44:51.373313 12618 net.cpp:425] pool1_91 <- conv1_91
+I0719 16:44:51.373325 12618 net.cpp:399] pool1_91 -> pool1_91
+I0719 16:44:51.373388 12618 net.cpp:141] Setting up pool1_91
+I0719 16:44:51.373414 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.373421 12618 net.cpp:156] Memory required for data: 1531741696
+I0719 16:44:51.373428 12618 layer_factory.hpp:77] Creating layer conv2_91
+I0719 16:44:51.373445 12618 net.cpp:91] Creating Layer conv2_91
+I0719 16:44:51.373452 12618 net.cpp:425] conv2_91 <- pool1_91
+I0719 16:44:51.373469 12618 net.cpp:399] conv2_91 -> conv2_91
+I0719 16:44:51.374017 12618 net.cpp:141] Setting up conv2_91
+I0719 16:44:51.374030 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.374037 12618 net.cpp:156] Memory required for data: 1549047296
+I0719 16:44:51.374045 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.374054 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.374063 12618 layer_factory.hpp:77] Creating layer pool2_91
+I0719 16:44:51.374073 12618 net.cpp:91] Creating Layer pool2_91
+I0719 16:44:51.374079 12618 net.cpp:425] pool2_91 <- conv2_91
+I0719 16:44:51.374090 12618 net.cpp:399] pool2_91 -> pool2_91
+I0719 16:44:51.374150 12618 net.cpp:141] Setting up pool2_91
+I0719 16:44:51.374162 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.374169 12618 net.cpp:156] Memory required for data: 1553373696
+I0719 16:44:51.374176 12618 layer_factory.hpp:77] Creating layer ip1_91
+I0719 16:44:51.374192 12618 net.cpp:91] Creating Layer ip1_91
+I0719 16:44:51.374200 12618 net.cpp:425] ip1_91 <- pool2_91
+I0719 16:44:51.374214 12618 net.cpp:399] ip1_91 -> ip1_91
+I0719 16:44:51.415609 12618 net.cpp:141] Setting up ip1_91
+I0719 16:44:51.415648 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.415657 12618 net.cpp:156] Memory required for data: 1553629696
+I0719 16:44:51.415679 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.415690 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.415699 12618 layer_factory.hpp:77] Creating layer relu1_91
+I0719 16:44:51.415729 12618 net.cpp:91] Creating Layer relu1_91
+I0719 16:44:51.415748 12618 net.cpp:425] relu1_91 <- ip1_91
+I0719 16:44:51.415760 12618 net.cpp:386] relu1_91 -> ip1_91 (in-place)
+I0719 16:44:51.415777 12618 net.cpp:141] Setting up relu1_91
+I0719 16:44:51.415787 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.415794 12618 net.cpp:156] Memory required for data: 1553885696
+I0719 16:44:51.415802 12618 layer_factory.hpp:77] Creating layer ip2_91
+I0719 16:44:51.415820 12618 net.cpp:91] Creating Layer ip2_91
+I0719 16:44:51.415828 12618 net.cpp:425] ip2_91 <- ip1_91
+I0719 16:44:51.415843 12618 net.cpp:399] ip2_91 -> ip2_91
+I0719 16:44:51.418560 12618 net.cpp:141] Setting up ip2_91
+I0719 16:44:51.418579 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.418596 12618 net.cpp:156] Memory required for data: 1554141696
+I0719 16:44:51.418606 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.418614 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.418622 12618 layer_factory.hpp:77] Creating layer conv1_92
+I0719 16:44:51.418642 12618 net.cpp:91] Creating Layer conv1_92
+I0719 16:44:51.418653 12618 net.cpp:425] conv1_92 <- p2_pool_i2_0_split_4
+I0719 16:44:51.418678 12618 net.cpp:399] conv1_92 -> conv1_92
+I0719 16:44:51.419075 12618 net.cpp:141] Setting up conv1_92
+I0719 16:44:51.419090 12618 net.cpp:148] Top shape: 128 20 60 60 (9216000)
+I0719 16:44:51.419096 12618 net.cpp:156] Memory required for data: 1591005696
+I0719 16:44:51.419106 12618 net.cpp:484] Sharing parameters 'conv1_w' owned by layer 'conv1_11', param index 0
+I0719 16:44:51.419114 12618 net.cpp:484] Sharing parameters 'conv1_b' owned by layer 'conv1_11', param index 1
+I0719 16:44:51.419122 12618 layer_factory.hpp:77] Creating layer pool1_92
+I0719 16:44:51.419137 12618 net.cpp:91] Creating Layer pool1_92
+I0719 16:44:51.419144 12618 net.cpp:425] pool1_92 <- conv1_92
+I0719 16:44:51.419181 12618 net.cpp:399] pool1_92 -> pool1_92
+I0719 16:44:51.419246 12618 net.cpp:141] Setting up pool1_92
+I0719 16:44:51.419260 12618 net.cpp:148] Top shape: 128 20 30 30 (2304000)
+I0719 16:44:51.419267 12618 net.cpp:156] Memory required for data: 1600221696
+I0719 16:44:51.419275 12618 layer_factory.hpp:77] Creating layer conv2_92
+I0719 16:44:51.419292 12618 net.cpp:91] Creating Layer conv2_92
+I0719 16:44:51.419301 12618 net.cpp:425] conv2_92 <- pool1_92
+I0719 16:44:51.419317 12618 net.cpp:399] conv2_92 -> conv2_92
+I0719 16:44:51.419894 12618 net.cpp:141] Setting up conv2_92
+I0719 16:44:51.419909 12618 net.cpp:148] Top shape: 128 50 26 26 (4326400)
+I0719 16:44:51.419917 12618 net.cpp:156] Memory required for data: 1617527296
+I0719 16:44:51.419924 12618 net.cpp:484] Sharing parameters 'conv2_w' owned by layer 'conv2_11', param index 0
+I0719 16:44:51.419934 12618 net.cpp:484] Sharing parameters 'conv2_b' owned by layer 'conv2_11', param index 1
+I0719 16:44:51.419942 12618 layer_factory.hpp:77] Creating layer pool2_92
+I0719 16:44:51.419952 12618 net.cpp:91] Creating Layer pool2_92
+I0719 16:44:51.419960 12618 net.cpp:425] pool2_92 <- conv2_92
+I0719 16:44:51.419975 12618 net.cpp:399] pool2_92 -> pool2_92
+I0719 16:44:51.420033 12618 net.cpp:141] Setting up pool2_92
+I0719 16:44:51.420047 12618 net.cpp:148] Top shape: 128 50 13 13 (1081600)
+I0719 16:44:51.420054 12618 net.cpp:156] Memory required for data: 1621853696
+I0719 16:44:51.420061 12618 layer_factory.hpp:77] Creating layer ip1_92
+I0719 16:44:51.420078 12618 net.cpp:91] Creating Layer ip1_92
+I0719 16:44:51.420084 12618 net.cpp:425] ip1_92 <- pool2_92
+I0719 16:44:51.420099 12618 net.cpp:399] ip1_92 -> ip1_92
+I0719 16:44:51.461875 12618 net.cpp:141] Setting up ip1_92
+I0719 16:44:51.461915 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.461922 12618 net.cpp:156] Memory required for data: 1622109696
+I0719 16:44:51.461946 12618 net.cpp:484] Sharing parameters 'ip1_w' owned by layer 'ip1_11', param index 0
+I0719 16:44:51.461958 12618 net.cpp:484] Sharing parameters 'ip1_b' owned by layer 'ip1_11', param index 1
+I0719 16:44:51.461966 12618 layer_factory.hpp:77] Creating layer relu1_92
+I0719 16:44:51.461982 12618 net.cpp:91] Creating Layer relu1_92
+I0719 16:44:51.461992 12618 net.cpp:425] relu1_92 <- ip1_92
+I0719 16:44:51.462028 12618 net.cpp:386] relu1_92 -> ip1_92 (in-place)
+I0719 16:44:51.462050 12618 net.cpp:141] Setting up relu1_92
+I0719 16:44:51.462064 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.462070 12618 net.cpp:156] Memory required for data: 1622365696
+I0719 16:44:51.462079 12618 layer_factory.hpp:77] Creating layer ip2_92
+I0719 16:44:51.462091 12618 net.cpp:91] Creating Layer ip2_92
+I0719 16:44:51.462101 12618 net.cpp:425] ip2_92 <- ip1_92
+I0719 16:44:51.462115 12618 net.cpp:399] ip2_92 -> ip2_92
+I0719 16:44:51.464767 12618 net.cpp:141] Setting up ip2_92
+I0719 16:44:51.464787 12618 net.cpp:148] Top shape: 128 500 (64000)
+I0719 16:44:51.464793 12618 net.cpp:156] Memory required for data: 1622621696
+I0719 16:44:51.464810 12618 net.cpp:484] Sharing parameters 'ip2_w' owned by layer 'ip2_11', param index 0
+I0719 16:44:51.464820 12618 net.cpp:484] Sharing parameters 'ip2_b' owned by layer 'ip2_11', param index 1
+I0719 16:44:51.464828 12618 layer_factory.hpp:77] Creating layer concat_9
+I0719 16:44:51.464843 12618 net.cpp:91] Creating Layer concat_9
+I0719 16:44:51.464850 12618 net.cpp:425] concat_9 <- ip2_91
+I0719 16:44:51.464867 12618 net.cpp:425] concat_9 <- ip2_92
+I0719 16:44:51.464882 12618 net.cpp:399] concat_9 -> comb_9
+I0719 16:44:51.464920 12618 net.cpp:141] Setting up concat_9
+I0719 16:44:51.464933 12618 net.cpp:148] Top shape: 128 1000 (128000)
+I0719 16:44:51.464941 12618 net.cpp:156] Memory required for data: 1623133696
+I0719 16:44:51.464948 12618 layer_factory.hpp:77] Creating layer fc1_9
+I0719 16:44:51.464962 12618 net.cpp:91] Creating Layer fc1_9
+I0719 16:44:51.464969 12618 net.cpp:425] fc1_9 <- comb_9
+I0719 16:44:51.464985 12618 net.cpp:399] fc1_9 -> fc1_9
+I0719 16:44:51.470026 12618 net.cpp:141] Setting up fc1_9
+I0719 16:44:51.470069 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.470085 12618 net.cpp:156] Memory required for data: 1623395840
+I0719 16:44:51.470094 12618 net.cpp:484] Sharing parameters 'fc1_w' owned by layer 'fc1_1', param index 0
+I0719 16:44:51.470104 12618 net.cpp:484] Sharing parameters 'fc1_b' owned by layer 'fc1_1', param index 1
+I0719 16:44:51.470111 12618 layer_factory.hpp:77] Creating layer relu_fc1_9
+I0719 16:44:51.470124 12618 net.cpp:91] Creating Layer relu_fc1_9
+I0719 16:44:51.470131 12618 net.cpp:425] relu_fc1_9 <- fc1_9
+I0719 16:44:51.470149 12618 net.cpp:386] relu_fc1_9 -> fc1_9 (in-place)
+I0719 16:44:51.470162 12618 net.cpp:141] Setting up relu_fc1_9
+I0719 16:44:51.470172 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.470180 12618 net.cpp:156] Memory required for data: 1623657984
+I0719 16:44:51.470186 12618 layer_factory.hpp:77] Creating layer fc2_9
+I0719 16:44:51.470198 12618 net.cpp:91] Creating Layer fc2_9
+I0719 16:44:51.470206 12618 net.cpp:425] fc2_9 <- fc1_9
+I0719 16:44:51.470221 12618 net.cpp:399] fc2_9 -> fc2_9
+I0719 16:44:51.472930 12618 net.cpp:141] Setting up fc2_9
+I0719 16:44:51.472950 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.472957 12618 net.cpp:156] Memory required for data: 1623920128
+I0719 16:44:51.472973 12618 net.cpp:484] Sharing parameters 'fc2_w' owned by layer 'fc2_1', param index 0
+I0719 16:44:51.472983 12618 net.cpp:484] Sharing parameters 'fc2_b' owned by layer 'fc2_1', param index 1
+I0719 16:44:51.472990 12618 layer_factory.hpp:77] Creating layer relu_fc2_9
+I0719 16:44:51.473001 12618 net.cpp:91] Creating Layer relu_fc2_9
+I0719 16:44:51.473009 12618 net.cpp:425] relu_fc2_9 <- fc2_9
+I0719 16:44:51.473019 12618 net.cpp:386] relu_fc2_9 -> fc2_9 (in-place)
+I0719 16:44:51.473033 12618 net.cpp:141] Setting up relu_fc2_9
+I0719 16:44:51.473043 12618 net.cpp:148] Top shape: 128 512 (65536)
+I0719 16:44:51.473052 12618 net.cpp:156] Memory required for data: 1624182272
+I0719 16:44:51.473058 12618 layer_factory.hpp:77] Creating layer fc3_9
+I0719 16:44:51.473072 12618 net.cpp:91] Creating Layer fc3_9
+I0719 16:44:51.473078 12618 net.cpp:425] fc3_9 <- fc2_9
+I0719 16:44:51.473095 12618 net.cpp:399] fc3_9 -> fc3_9
+I0719 16:44:51.473253 12618 net.cpp:141] Setting up fc3_9
+I0719 16:44:51.473268 12618 net.cpp:148] Top shape: 128 2 (256)
+I0719 16:44:51.473274 12618 net.cpp:156] Memory required for data: 1624183296
+I0719 16:44:51.473283 12618 net.cpp:484] Sharing parameters 'fc3_w' owned by layer 'fc3_1', param index 0
+I0719 16:44:51.473292 12618 net.cpp:484] Sharing parameters 'fc3_b' owned by layer 'fc3_1', param index 1
+I0719 16:44:51.473299 12618 layer_factory.hpp:77] Creating layer concat
+I0719 16:44:51.473315 12618 net.cpp:91] Creating Layer concat
+I0719 16:44:51.473321 12618 net.cpp:425] concat <- fc3_1
+I0719 16:44:51.473331 12618 net.cpp:425] concat <- fc3_2
+I0719 16:44:51.473340 12618 net.cpp:425] concat <- fc3_3
+I0719 16:44:51.473351 12618 net.cpp:425] concat <- fc3_4
+I0719 16:44:51.473358 12618 net.cpp:425] concat <- fc3_5
+I0719 16:44:51.473367 12618 net.cpp:425] concat <- fc3_6
+I0719 16:44:51.473376 12618 net.cpp:425] concat <- fc3_7
+I0719 16:44:51.473383 12618 net.cpp:425] concat <- fc3_8
+I0719 16:44:51.473390 12618 net.cpp:425] concat <- fc3_9
+I0719 16:44:51.473403 12618 net.cpp:399] concat -> comb
+I0719 16:44:51.473436 12618 net.cpp:141] Setting up concat
+I0719 16:44:51.473450 12618 net.cpp:148] Top shape: 128 18 (2304)
+I0719 16:44:51.473458 12618 net.cpp:156] Memory required for data: 1624192512
+I0719 16:44:51.473465 12618 layer_factory.hpp:77] Creating layer reshape
+I0719 16:44:51.473476 12618 net.cpp:91] Creating Layer reshape
+I0719 16:44:51.473484 12618 net.cpp:425] reshape <- comb
+I0719 16:44:51.473496 12618 net.cpp:399] reshape -> comb_r
+I0719 16:44:51.473544 12618 net.cpp:141] Setting up reshape
+I0719 16:44:51.473558 12618 net.cpp:148] Top shape: 128 1 2 9 (2304)
+I0719 16:44:51.473565 12618 net.cpp:156] Memory required for data: 1624201728
+I0719 16:44:51.473572 12618 layer_factory.hpp:77] Creating layer pool_sim
+I0719 16:44:51.473587 12618 net.cpp:91] Creating Layer pool_sim
+I0719 16:44:51.473613 12618 net.cpp:425] pool_sim <- comb_r
+I0719 16:44:51.473625 12618 net.cpp:399] pool_sim -> pool_sim
+I0719 16:44:51.473675 12618 net.cpp:141] Setting up pool_sim
+I0719 16:44:51.473690 12618 net.cpp:148] Top shape: 128 1 2 1 (256)
+I0719 16:44:51.473696 12618 net.cpp:156] Memory required for data: 1624202752
+I0719 16:44:51.473703 12618 layer_factory.hpp:77] Creating layer pool_sim_pool_sim_0_split
+I0719 16:44:51.473712 12618 net.cpp:91] Creating Layer pool_sim_pool_sim_0_split
+I0719 16:44:51.473721 12618 net.cpp:425] pool_sim_pool_sim_0_split <- pool_sim
+I0719 16:44:51.473734 12618 net.cpp:399] pool_sim_pool_sim_0_split -> pool_sim_pool_sim_0_split_0
+I0719 16:44:51.473747 12618 net.cpp:399] pool_sim_pool_sim_0_split -> pool_sim_pool_sim_0_split_1
+I0719 16:44:51.473803 12618 net.cpp:141] Setting up pool_sim_pool_sim_0_split
+I0719 16:44:51.473816 12618 net.cpp:148] Top shape: 128 1 2 1 (256)
+I0719 16:44:51.473825 12618 net.cpp:148] Top shape: 128 1 2 1 (256)
+I0719 16:44:51.473832 12618 net.cpp:156] Memory required for data: 1624204800
+I0719 16:44:51.473839 12618 layer_factory.hpp:77] Creating layer loss
+I0719 16:44:51.473850 12618 net.cpp:91] Creating Layer loss
+I0719 16:44:51.473856 12618 net.cpp:425] loss <- pool_sim_pool_sim_0_split_0
+I0719 16:44:51.473865 12618 net.cpp:425] loss <- label_pair_data_1_split_0
+I0719 16:44:51.473875 12618 net.cpp:399] loss -> loss
+I0719 16:44:51.473901 12618 layer_factory.hpp:77] Creating layer loss
+F0719 16:44:51.474026 12618 softmax_loss_layer.cpp:47] Check failed: outer_num_ * inner_num_ == bottom[1]->count() (256 vs. 128) Number of labels must match number of predictions; e.g., if softmax axis == 1 and prediction shape is (N, C, H, W), label count (number of labels) must be N*H*W, with integer values in {0, 1, ..., C-1}.
+*** Check failure stack trace: ***
+    @     0x7f9bfbcf1daa  (unknown)
+    @     0x7f9bfbcf1ce4  (unknown)
+    @     0x7f9bfbcf16e6  (unknown)
+    @     0x7f9bfbcf4687  (unknown)
+    @     0x7f9bfc3f0ff0  caffe::SoftmaxWithLossLayer<>::Reshape()
+    @     0x7f9bfc3675ac  caffe::Net<>::Init()
+    @     0x7f9bfc368425  caffe::Net<>::Net()
+    @     0x7f9bfc34c80a  caffe::Solver<>::InitTrainNet()
+    @     0x7f9bfc34d90c  caffe::Solver<>::Init()
+    @     0x7f9bfc34dc3a  caffe::Solver<>::Solver()
+    @     0x7f9bfc310393  caffe::Creator_SGDSolver<>()
+    @           0x40e98e  caffe::SolverRegistry<>::CreateSolver()
+    @           0x407b32  train()
+    @           0x4059bc  main
+    @     0x7f9bfaff2f45  (unknown)
+    @           0x4060f1  (unknown)
+    @              (nil)  (unknown)
