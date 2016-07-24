@@ -406,7 +406,7 @@ layer {
 
 
 layer {
-  name: "concat1"
+  name: "concat_1"
   bottom: "ip2_11"
   bottom: "ip2_12"
   top: "comb_1"
@@ -756,7 +756,7 @@ layer {
 
 
 layer {
-  name: "concat"
+  name: "concat_2"
   bottom: "ip2_21"
   bottom: "ip2_22"
   top: "comb_2"
@@ -3317,7 +3317,7 @@ layer {
 }
 
 layer {
-    name: "reshape"
+    name: "reshape1"
     type: "Reshape"
     bottom: "comb"
     top: "comb_r"
@@ -3346,7 +3346,7 @@ layer {
 }
 
 layer {
-    name: "reshape"
+    name: "reshape2"
     type: "Reshape"
     bottom: "pool_r"
     top: "pool_sim"
