@@ -17,7 +17,13 @@ for ii=1:n_neg
     %figure,imshow(imread(im_path{1}));
     im=caffe.io.load_image(im_path{1});
     im = imresize(im, [resize, resize]);
+    if ndims(im)~=3
+        disp('outlier');
+        disp(im_path);
+        continue;
+    end
     res = net.forward({im});
     neg_feat(ii,:) = net.blobs('fc7').get_data()';
+    
     disp(ii);
 end
