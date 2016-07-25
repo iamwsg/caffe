@@ -3,8 +3,8 @@ clear;
 close all;
 clc;
 
-image_path1='/media/sf_Datasets/Scenes/images/Taj_Mahal/20.jpg';
-image_path2='/media/sf_Datasets/Scenes/images/Eiffel_Tower/29.jpg';
+image_path1='/media/sf_Datasets/Scenes/images/Taj_Mahal/1.jpg';
+image_path2='/media/sf_Datasets/Scenes/images/Taj_Mahal/2.jpg';
 
 addpath /home/shaogang/caffe/matlab
 addpath /home/shaogang/caffe/examples/scene/one_shot
@@ -115,10 +115,10 @@ sup2=pos_feat1*coef2(:,1:2);
 figure,subplot(211),plot(pp1(:,1),pp1(:,2),'bo',nn1(:,1),nn1(:,2),'r*',sup1(:,1),sup1(:,2),'blacko'),grid;
 subplot(212),plot(pp2(:,1),pp2(:,2),'go',nn2(:,1),nn2(:,2),'r*',sup2(:,1),sup2(:,2),'blacko'),grid;
 
-nn1_1=neg_feat1.neg_feat*coef(:,1:2);nn1_2=neg_feat2.neg_feat*coef(:,1:2);
-figure,plot(pp1(:,1),pp1(:,2),'bo',nn1_1(:,1),nn1_1(:,2),'r*',nn1_2(:,1),nn1_2(:,2),'m*',sup1(:,1),sup1(:,2),'blacko'),grid;
-nn2_1=neg_feat1.neg_feat*coef2(:,1:2);nn2_2=neg_feat2.neg_feat*coef2(:,1:2);
-figure,plot(pp2(:,1),pp2(:,2),'bo',nn2_1(:,1),nn2_1(:,2),'r*',nn2_2(:,1),nn2_2(:,2),'m*'),grid;
+% nn1_1=neg_feat1.neg_feat*coef(:,1:2);nn1_2=neg_feat2.neg_feat*coef(:,1:2);
+% figure,plot(pp1(:,1),pp1(:,2),'bo',nn1_1(:,1),nn1_1(:,2),'r*',nn1_2(:,1),nn1_2(:,2),'m*',sup1(:,1),sup1(:,2),'blacko'),grid;
+% nn2_1=neg_feat1.neg_feat*coef2(:,1:2);nn2_2=neg_feat2.neg_feat*coef2(:,1:2);
+% figure,plot(pp2(:,1),pp2(:,2),'bo',nn2_1(:,1),nn2_1(:,2),'r*',nn2_2(:,1),nn2_2(:,2),'m*'),grid;
 %% predict
 [label1,score1] = predict(SVMModel_linear_1,pos_feat2);
 [label2,score2] = predict(SVMModel_linear_2,pos_feat1);
@@ -129,6 +129,8 @@ length(k1)/n_positive
 length(k2)/n_positive
 disp('average score:');
 ave=(mean(score2(:,2))+mean(score1(:,2)))/2
+
+svm_similarity= SVMModel_linear_1.Beta'*SVMModel_linear_2.Beta/norm(SVMModel_linear_1.Beta)/norm(SVMModel_linear_2.Beta)
 
 % ScoreSVMModel1 = fitPosterior(SVMModel_linear_1,X1,Y);
 % ScoreSVMModel2 = fitPosterior(SVMModel_linear_2,X2,Y);
