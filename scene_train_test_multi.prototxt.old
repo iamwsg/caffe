@@ -10,7 +10,7 @@ layer {
   transform_param {
     mirror: true
     mean_file: "examples/scene/scene_mean.binaryproto"
-	scale: 0.00390625
+    scale: 0.00390625
   }
   data_param {
     source: "examples/scene/train_pairs.lmdb"
@@ -29,10 +29,10 @@ layer {
   transform_param {
     mirror: false
     mean_file: "examples/scene/scene_mean.binaryproto"
-	scale: 0.00390625
+    scale: 0.00390625
   }
   data_param {
-    source: "examples/scene/test_pairs.lmdb"
+    source: "examples/scene/test_pairs_unseen.lmdb"
     batch_size: 100
     backend: LMDB
   }
@@ -406,7 +406,7 @@ layer {
 
 
 layer {
-  name: "concat1"
+  name: "concat_1"
   bottom: "ip2_11"
   bottom: "ip2_12"
   top: "comb_1"
@@ -756,7 +756,7 @@ layer {
 
 
 layer {
-  name: "concat"
+  name: "concat_2"
   bottom: "ip2_21"
   bottom: "ip2_22"
   top: "comb_2"
@@ -3317,7 +3317,7 @@ layer {
 }
 
 layer {
-    name: "reshape"
+    name: "reshape1"
     type: "Reshape"
     bottom: "comb"
     top: "comb_r"
@@ -3336,14 +3336,29 @@ layer {
   name: "pool_sim"
   type: "Pooling"
   bottom: "comb_r"
-  top: "pool_sim"
+  top: "pool_r"
   pooling_param {
-    pool: AVE
+    pool: MAX
     kernel_h: 1
     kernel_w: 9
     stride: 1
   }
 }
+
+layer {
+    name: "reshape2"
+    type: "Reshape"
+    bottom: "pool_r"
+    top: "pool_sim"
+    reshape_param {
+      shape {
+        dim: 0  # copy the dimension from below
+        dim: 2
+        dim: 1
+        dim: -1 # infer it from the other dimensions
+      }
+    }
+  }
 
 
 layer {
