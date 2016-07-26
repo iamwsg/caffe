@@ -10,7 +10,7 @@ layer {
   transform_param {
     mirror: true
     mean_file: "examples/scene/scene_mean.binaryproto"
-	scale: 0.00390625
+    scale: 0.00390625
   }
   data_param {
     source: "examples/scene/train_pairs.lmdb"
@@ -29,10 +29,10 @@ layer {
   transform_param {
     mirror: false
     mean_file: "examples/scene/scene_mean.binaryproto"
-	scale: 0.00390625
+    scale: 0.00390625
   }
   data_param {
-    source: "examples/scene/test_pairs.lmdb"
+    source: "examples/scene/test_pairs_unseen.lmdb"
     batch_size: 100
     backend: LMDB
   }
@@ -3338,7 +3338,7 @@ layer {
   bottom: "comb_r"
   top: "pool_r"
   pooling_param {
-    pool: AVE
+    pool: MAX
     kernel_h: 1
     kernel_w: 9
     stride: 1

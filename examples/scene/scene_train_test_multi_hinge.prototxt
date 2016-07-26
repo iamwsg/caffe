@@ -3394,5 +3394,9 @@ layer {
 }
 
 
+<<<<<<< HEAD
+#./python/draw_net.py ./examples/scene/scene_train_test_multi.prototxt ./examples/scene/scene_train_test_multi.png
+=======
 #./python/draw_net.py ./examples/scene/scene_train_test_multi_hinge.prototxt ./examples/scene/scene_train_test_multi_hinge.png
+>>>>>>> 180ffdce802cf851ef5b3c13b9d31d4c01198e6a
 
