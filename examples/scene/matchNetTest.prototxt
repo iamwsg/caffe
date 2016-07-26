@@ -13,7 +13,7 @@ layer {
   }
   data_param {
     source: "examples/scene/test_pairs.lmdb"
-    batch_size: 10
+    batch_size: 100
     backend: LMDB
   }
 }
@@ -59,7 +59,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -87,7 +87,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -115,7 +115,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -143,7 +143,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -171,7 +171,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -199,7 +199,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -227,7 +227,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -255,7 +255,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -283,7 +283,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -311,7 +311,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -339,7 +339,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -367,7 +367,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -395,7 +395,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -423,7 +423,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -451,7 +451,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -479,7 +479,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -507,7 +507,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -535,7 +535,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 10
+      dim: 100
       dim: 3
       dim: 64
       dim: 64
@@ -7070,11 +7070,11 @@ layer {
   top: "loss"
 }
 layer {
-  name: "acc"
+  name: "accuracy"
   type: "Accuracy"
   bottom: "r2"
   bottom: "label"
-  top: "acc"
+  top: "accuracy"
   include {
     phase: TEST
   }

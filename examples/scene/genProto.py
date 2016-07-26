@@ -132,15 +132,15 @@ def matchNetTrain(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.p=unevenPool(trNet.r1,1,19)	
 	trNet.r2=reshape(trNet.p,[0,2,1,-1])
 	trNet.loss=softMaxLoss(trNet.r2,trNet.label)
-	trNet.acc=acc(trNet.r2, trNet.label, Phase)
+	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
 	return trNet
 
 trainSrc="examples/scene/train_pairs.lmdb"
 testSrc="examples/scene/test_pairs.lmdb"
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=10
-testBatchSize=10
+trainBatchSize=128
+testBatchSize=100
 cropSize=64
 
 trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
