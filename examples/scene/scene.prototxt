@@ -2,18 +2,37 @@ name: "scene"
 layer {
   name: "pair_data"
   type: "Data"
-  top: "pair_data"
+  top: "data"
   top: "label"
   include {
     phase: TRAIN
   }
   transform_param {
     mirror: true
-    mean_file: "examples/scene/scene_mean.binaryproto"
+    #mean_file: "/home/shaogang/caffe/examples/scene/scene_mean.binaryproto"
 	scale: 0.00390625
   }
   data_param {
-    source: "examples/scene/train_raw.lmdb"
+    source: "/home/shaogang/caffe/examples/scene/test_raw.lmdb"
+    batch_size: 50
+    backend: LMDB
+  }
+}
+layer {
+  name: "pair_data"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    mirror: true
+    #mean_file: "/home/shaogang/caffe/examples/scene/scene_mean.binaryproto"
+	scale: 0.00390625
+  }
+  data_param {
+    source: "/home/shaogang/caffe/examples/scene/test_raw.lmdb"
     batch_size: 50
     backend: LMDB
   }

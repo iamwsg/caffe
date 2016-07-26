@@ -1,0 +1,151 @@
+layer {
+  name: "pair_data"
+  type: "Data"
+  top: "pair_data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 0.00392156862745
+    mirror: true
+    mean_file: "examples/scene/scene_mean.binaryproto"
+  }
+  data_param {
+    source: "examples/scene/train_pairs.lmdb"
+    batch_size: 128
+    backend: LMDB
+  }
+}
+layer {
+  name: "pair_data"
+  type: "Data"
+  top: "pair_data1"
+  top: "label1"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    scale: 0.00392156862745
+    mirror: true
+    mean_file: "examples/scene/scene_mean.binaryproto"
+  }
+  data_param {
+    source: "examples/scene/test_pairs.lmdb"
+    batch_size: 100
+    backend: LMDB
+  }
+}
+layer {
+  name: "slice"
+  type: "Slice"
+  bottom: "pair_data"
+  top: "i1"
+  top: "i2"
+  slice_param {
+    slice_dim: 1
+    slice_point: 3
+  }
+}
+layer {
+  name: "pool_i1"
+  type: "Pooling"
+  bottom: "i1"
+  top: "p1"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "pool_i2"
+  type: "Pooling"
+  bottom: "i2"
+  top: "p2"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "crop_ref1"
+  type: "Input"
+  top: "crop_ref1"
+  include {
+    phase: TRAIN
+  }
+  input_param {
+    shape {
+      dim: 128
+      dim: 3
+      dim: 64
+      dim: 64
+    }
+  }
+}
+layer {
+  name: "crop_ref2"
+  type: "Input"
+  top: "crop_ref2"
+  include {
+    phase: TEST
+  }
+  input_param {
+    shape {
+      dim: 100
+      dim: 3
+      dim: 64
+      dim: 64
+    }
+  }
+}
+layer {
+  name: "crop11"
+  type: "Crop"
+  bottom: "i1"
+  bottom: "crop_ref1"
+  top: "crop11"
+  crop_param {
+    axis: 2
+    offset: 0
+    offset: 0
+  }
+}
+layer {
+  name: "conv1_11"
+  type: "Convolution"
+  bottom: "crop11"
+  top: "conv1_11"
+  param {
+    name: "conv1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv1_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "pool1_11"
+  type: "Pooling"
+  bottom: "conv1_11"
+  top: "pool1_11"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}

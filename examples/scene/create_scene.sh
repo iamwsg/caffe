@@ -3,18 +3,18 @@
 # N.B. set the path to the imagenet train + val data dirs
 
 EXAMPLE=./examples/scene
-DATA=/media/sf_Datasets/Caltech101
+DATA=/media/sf_Datasets/Scenes
 TOOLS=build/tools
 
-TRAIN_DATA_ROOT=/media/sf_Datasets/Caltech101/
-VAL_DATA_ROOT=/media/sf_Datasets/Caltech101/
+TRAIN_DATA_ROOT=/media/sf_Datasets/Scenes/train/
+VAL_DATA_ROOT=/media/sf_Datasets/Scenes/test/
 
 # Set RESIZE=true to resize the images to 256x256. Leave as false if images have
 # already been resized using another tool.
 RESIZE=true
 if $RESIZE; then
-  RESIZE_HEIGHT=256
-  RESIZE_WIDTH=256
+  RESIZE_HEIGHT=128
+  RESIZE_WIDTH=128
 else
   RESIZE_HEIGHT=0
   RESIZE_WIDTH=0
