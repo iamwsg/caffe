@@ -3396,3 +3396,5 @@ layer {
 
 #./python/draw_net.py ./examples/scene/scene_train_test_multi.prototxt ./examples/scene/scene_train_test_multi.png
 
+#./python/draw_net.py ./examples/scene/gen.prototxt ./examples/scene/gen.png
+
