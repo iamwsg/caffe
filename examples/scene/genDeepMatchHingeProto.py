@@ -45,7 +45,7 @@ def doubleTower(bottom1,bottom2):
 		relu1=reLu(ip1)
 		ip2=ip(relu1,512,"fc2_w","fc2_b")
 		relu2=reLu(ip2)
-		ip3=ip(relu2,2,"fc3_w","fc3_b")
+		ip3=ip(relu2,1,"fc3_w","fc3_b")
 		return ip3
 
 def concatN(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19):
@@ -54,12 +54,15 @@ def concatN(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19):
 def reshape(bottom,Dim):
 	return L.Reshape(bottom, reshape_param=dict(shape=dict(dim=Dim)))
 
-def unevenPool(bottom,hight,width):
-	top=L.Pooling(bottom, kernel_h=hight,kernel_w=width, stride=1, pool=P.Pooling.MAX)
+def unevenPool(bottom,hight,width,poolType):
+	top=L.Pooling(bottom, kernel_h=hight,kernel_w=width, stride=1, pool=poolType)
 	return top
 
 def softMaxLoss(netOutput,label):
 	return L.SoftmaxWithLoss(netOutput, label)
+
+def hingeLoss(netOutput,label):
+	return L.HingeLoss(netOutput, label)
 
 def acc(netOutput, label, Phase):
 	return L.Accuracy(netOutput, label, include=dict(phase=Phase))
@@ -128,15 +131,15 @@ def matchNetTrain(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.con=concatN(trNet.dt0,trNet.dt1,trNet.dt2,trNet.dt3,trNet.dt4,trNet.dt5,trNet.dt6,trNet.dt7,
 			trNet.dt8,trNet.dt9,trNet.dt10,trNet.dt11,trNet.dt12,trNet.dt13,trNet.dt14,trNet.dt15,
 			trNet.dt16,trNet.dt17,trNet.dt18)
-	trNet.r1=reshape(trNet.con,[0,1,2,-1])
-	trNet.p=unevenPool(trNet.r1,1,19)	
-	trNet.r2=reshape(trNet.p,[0,2,1,-1])
-	trNet.loss=softMaxLoss(trNet.r2,trNet.label)
+	trNet.r1=reshape(trNet.con,[0,1,1,-1])
+	trNet.p=unevenPool(trNet.r1,1,19, P.Pooling.AVE)	
+	trNet.r2=reshape(trNet.p,[0,1,1,-1])
+	trNet.loss=hingeLoss(trNet.r2,trNet.label)
 	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
 	return trNet
 
 trainSrc="examples/scene/train_pairs.lmdb"
-testSrc="examples/scene/test_pairs_unseen.lmdb"
+testSrc="examples/scene/test_pairs.lmdb"
 mean="examples/scene/scene_mean.binaryproto"
 
 trainBatchSize=128
@@ -146,10 +149,10 @@ cropSize=64
 trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 teNet=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-with open('./matchNetTrain.prototxt', 'w') as f:
+with open('./matchNetTrainHinge.prototxt', 'w') as f:
     f.write(str(trNet.to_proto()))
 
-with open('./matchNetTest.prototxt', 'w') as f:
+with open('./matchNetTestHinge.prototxt', 'w') as f:
     f.write(str(teNet.to_proto()))
 
 

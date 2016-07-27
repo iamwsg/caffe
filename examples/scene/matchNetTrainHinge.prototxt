@@ -4,7 +4,7 @@ layer {
   top: "data"
   top: "label"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   transform_param {
     scale: 0.00392156862745
@@ -12,8 +12,8 @@ layer {
     mean_file: "examples/scene/scene_mean.binaryproto"
   }
   data_param {
-    source: "examples/scene/test_pairs_unseen.lmdb"
-    batch_size: 100
+    source: "examples/scene/train_pairs.lmdb"
+    batch_size: 128
     backend: LMDB
   }
 }
@@ -55,11 +55,11 @@ layer {
   type: "Input"
   top: "Input1"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -83,11 +83,11 @@ layer {
   type: "Input"
   top: "Input2"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -111,11 +111,11 @@ layer {
   type: "Input"
   top: "Input3"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -139,11 +139,11 @@ layer {
   type: "Input"
   top: "Input4"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -167,11 +167,11 @@ layer {
   type: "Input"
   top: "Input5"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -195,11 +195,11 @@ layer {
   type: "Input"
   top: "Input6"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -223,11 +223,11 @@ layer {
   type: "Input"
   top: "Input7"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -251,11 +251,11 @@ layer {
   type: "Input"
   top: "Input8"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -279,11 +279,11 @@ layer {
   type: "Input"
   top: "Input9"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -307,11 +307,11 @@ layer {
   type: "Input"
   top: "Input10"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -335,11 +335,11 @@ layer {
   type: "Input"
   top: "Input11"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -363,11 +363,11 @@ layer {
   type: "Input"
   top: "Input12"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -391,11 +391,11 @@ layer {
   type: "Input"
   top: "Input13"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -419,11 +419,11 @@ layer {
   type: "Input"
   top: "Input14"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -447,11 +447,11 @@ layer {
   type: "Input"
   top: "Input15"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -475,11 +475,11 @@ layer {
   type: "Input"
   top: "Input16"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -503,11 +503,11 @@ layer {
   type: "Input"
   top: "Input17"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -531,11 +531,11 @@ layer {
   type: "Input"
   top: "Input18"
   include {
-    phase: TEST
+    phase: TRAIN
   }
   input_param {
     shape {
-      dim: 100
+      dim: 128
       dim: 3
       dim: 64
       dim: 64
@@ -884,7 +884,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1223,7 +1223,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1562,7 +1562,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1901,7 +1901,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -2240,7 +2240,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -2579,7 +2579,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -2918,7 +2918,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -3257,7 +3257,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -3596,7 +3596,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -3935,7 +3935,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -4274,7 +4274,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -4613,7 +4613,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -4952,7 +4952,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -5291,7 +5291,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -5630,7 +5630,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -5969,7 +5969,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -6308,7 +6308,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -6647,7 +6647,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -6986,7 +6986,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -7031,7 +7031,7 @@ layer {
     shape {
       dim: 0
       dim: 1
-      dim: 2
+      dim: 1
       dim: -1
     }
   }
@@ -7042,7 +7042,7 @@ layer {
   bottom: "r1"
   top: "p"
   pooling_param {
-    pool: MAX
+    pool: AVE
     stride: 1
     kernel_h: 1
     kernel_w: 19
@@ -7056,7 +7056,7 @@ layer {
   reshape_param {
     shape {
       dim: 0
-      dim: 2
+      dim: 1
       dim: 1
       dim: -1
     }
@@ -7064,7 +7064,7 @@ layer {
 }
 layer {
   name: "loss"
-  type: "SoftmaxWithLoss"
+  type: "HingeLoss"
   bottom: "r2"
   bottom: "label"
   top: "loss"
@@ -7076,6 +7076,6 @@ layer {
   bottom: "label"
   top: "accuracy"
   include {
-    phase: TEST
+    phase: TRAIN
   }
 }

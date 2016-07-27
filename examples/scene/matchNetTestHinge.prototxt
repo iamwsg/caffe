@@ -12,7 +12,7 @@ layer {
     mean_file: "examples/scene/scene_mean.binaryproto"
   }
   data_param {
-    source: "examples/scene/test_pairs_unseen.lmdb"
+    source: "examples/scene/test_pairs.lmdb"
     batch_size: 100
     backend: LMDB
   }
@@ -884,7 +884,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1223,7 +1223,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1562,7 +1562,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1901,7 +1901,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -2240,7 +2240,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -2579,7 +2579,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -2918,7 +2918,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -3257,7 +3257,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -3596,7 +3596,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -3935,7 +3935,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -4274,7 +4274,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -4613,7 +4613,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -4952,7 +4952,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -5291,7 +5291,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -5630,7 +5630,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -5969,7 +5969,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -6308,7 +6308,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -6647,7 +6647,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -6986,7 +6986,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -7031,7 +7031,7 @@ layer {
     shape {
       dim: 0
       dim: 1
-      dim: 2
+      dim: 1
       dim: -1
     }
   }
@@ -7042,7 +7042,7 @@ layer {
   bottom: "r1"
   top: "p"
   pooling_param {
-    pool: MAX
+    pool: AVE
     stride: 1
     kernel_h: 1
     kernel_w: 19
@@ -7056,7 +7056,7 @@ layer {
   reshape_param {
     shape {
       dim: 0
-      dim: 2
+      dim: 1
       dim: 1
       dim: -1
     }
@@ -7064,7 +7064,7 @@ layer {
 }
 layer {
   name: "loss"
-  type: "SoftmaxWithLoss"
+  type: "HingeLoss"
   bottom: "r2"
   bottom: "label"
   top: "loss"
