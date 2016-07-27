@@ -32,7 +32,7 @@ C = textscan(fileID,'%s %d');
 fclose(fileID);
 
 %% prepare test result containner
-tRes=cell(nTrain, 12);
+tRes=cell(nTrain, 13);
 for ii=1:nTrain
     tRes(ii,1)=tp{1}(ii);
     tRes(ii,2)=tp{2}(ii);
@@ -52,7 +52,7 @@ end
 
 %% do the training
 disp('start training')
-for ii=1:10
+for ii=1:3000
     disp(ii)
     
     image_path1=tRes{ii,1};
@@ -66,6 +66,9 @@ for ii=1:10
     %coarser classify
     [p1,p2,r1,r2,feat,cats1,cats2]=coarse_class(net,C,resize,image_path1,image_path2);
     %p1',p2'
+    disp('coarser class time')
+    %toc
+    
     v=r1-r2;
     dist = sqrt(v'*v)/norm(r1)/norm(r2)
     
@@ -83,7 +86,8 @@ for ii=1:10
     %%finner discriminate
     
     %% get positive samples
-    n_colors=2;
+    %tic
+    n_colors=1;
     ims1=Image_aug_color(image_path1,n_colors,resize);
     ims2=Image_aug_color(image_path2,n_colors,resize);
     pos1 = ims1(:, :, [3, 2, 1],:); % convert from RGB to BGR
@@ -96,7 +100,9 @@ for ii=1:10
     pos_size=size(pos1);
     n_positive=pos_size(4);
     disp('positive image augmentation')
+    %toc
 
+    %tic
     net.blobs('data').reshape([resize resize 3 n_positive]); % reshape blob 'data'
     net.reshape();
     res_pos1 = net.forward({pos1});
@@ -104,17 +110,28 @@ for ii=1:10
     res_pos2 = net.forward({pos2});
     pos_feat2 = net.blobs('fc7').get_data()';
 
-    disp('get positive features')
+    %disp('get positive features')
+    %toc
     
     net.blobs('data').reshape([resize resize 3 2]); % reshape blob 'data'
     net.reshape();
     % get negative
+    %tic
     neg=[];
     for jj=1:numel(catsUnion)
-        neg=[neg;negMap(catsUnion{jj})];
+        try
+            neg1=negMap(catsUnion{jj});
+            neg=[neg;neg1];
+        catch
+            disp('neg feat not found')
+            tRes{ii,13}=1;
+        end
     end
+    %disp('get negative features')
+    %toc
     
     %% train two linear SVMs
+    %tic
     X1=[pos_feat1; neg];
     X2=[pos_feat2; neg];
 
@@ -130,6 +147,8 @@ for ii=1:10
     aveScore=(mean(score2(:,2))+mean(score1(:,2)))/2
 
     similarity= SVMModel_linear_1.Beta'*SVMModel_linear_2.Beta/norm(SVMModel_linear_1.Beta)/norm(SVMModel_linear_2.Beta)
+    disp('train 2 SVMs and predict')
+    toc
     tRes{ii,10}=aveScore;
     tRes{ii,11}=similarity;
     time=toc

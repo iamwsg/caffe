@@ -45,7 +45,7 @@ def doubleTower(bottom1,bottom2):
 		relu1=reLu(ip1)
 		ip2=ip(relu1,512,"fc2_w","fc2_b")
 		relu2=reLu(ip2)
-		ip3=ip(relu2,1,"fc3_w","fc3_b")
+		ip3=ip(relu2,2,"fc3_w","fc3_b")
 		return ip3
 
 def concatN(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19):
@@ -138,6 +138,19 @@ def matchNetTrain(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
 	return trNet
 
+def matchNetSimple(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.dt=doubleTower(trNet.p1,trNet.p2)
+	trNet.accuracy=acc(trNet.dt, trNet.label, Phase)
+	trNet.loss=softMaxLoss(trNet.dt,trNet.label)
+	return trNet
+
+
+
 trainSrc="examples/scene/train_pairs.lmdb"
 testSrc="examples/scene/test_pairs.lmdb"
 mean="examples/scene/scene_mean.binaryproto"
@@ -149,13 +162,20 @@ cropSize=64
 trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 teNet=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-with open('./matchNetTrainHinge.prototxt', 'w') as f:
-    f.write(str(trNet.to_proto()))
+trNetSimple=matchNetSimple(trainSrc, mean, trainBatchSize, cropSize,0)
+teNetSimple=matchNetSimple(testSrc, mean, trainBatchSize, cropSize,1)
 
-with open('./matchNetTestHinge.prototxt', 'w') as f:
-    f.write(str(teNet.to_proto()))
+#with open('./matchNetTrainHinge.prototxt', 'w') as f:
+#    f.write(str(trNet.to_proto()))
 
+#with open('./matchNetTestHinge.prototxt', 'w') as f:
+#    f.write(str(teNet.to_proto()))
 
+with open('./matchNetTrainHingeSimple.prototxt', 'w') as f:
+    f.write(str(trNetSimple.to_proto()))
+
+with open('./matchNetTestHingeSimple.prototxt', 'w') as f:
+    f.write(str(teNetSimple.to_proto()))
 
 
 
