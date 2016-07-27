@@ -1,5 +1,5 @@
 function fileList = filePathGen(dirName,fileName)
-
+   %dirName='/home/shaogangwang/Datasets/scenes/train'
   dirData = dir(dirName);      %# Get the data for the current directory
   dirData=dirData(~ismember({dirData.name},{'.','..','.DS_Store'}));
   dirIndex = [dirData.isdir];  %# Find the index for directories
@@ -27,4 +27,4 @@ function fileList = filePathGen(dirName,fileName)
   end
 
   fclose(fileID);
-end
+  end

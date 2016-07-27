@@ -4,9 +4,9 @@
 clear;
 
 %read image files and labels, and store in cell vectors
-fid_read = fopen('test_unseen.txt');
-fid = fopen('test_pairs_unseen.txt','w');
-Np=1000;
+fid_read = fopen('train1.txt');
+fid = fopen('train1_pairs.txt','w');
+Np=10000;
 tline = fgets(fid_read);
 lines={tline};
 ii=2;
