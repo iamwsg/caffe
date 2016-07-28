@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-rm -f ./siamese_train_s.log.train
-rm -f ./siamese_train_s.log.test
+rm -f ./scene_multi.log.train
+rm -f ./scene_multi.log.test
 
 F="scene_multi.log"
 echo $F

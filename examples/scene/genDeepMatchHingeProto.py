@@ -34,6 +34,17 @@ def tower(bottom):
 		ip2=ip(reLu1,500,"ip2_w","ip2_b")
 		return ip2
 
+def towerMini(bottom):
+		conv1=conv(bottom,20,"conv1_w","conv1_b")
+		pool1=maxPool(conv1)
+		conv2=conv(pool1,50,"conv2_w","conv2_b")
+		pool2=maxPool(conv2)
+		ip1=ip(pool2,100,"ip1_w","ip1_b")
+		reLu1=reLu(ip1)
+		ip2=ip(reLu1,50,"ip2_w","ip2_b")
+		return ip2
+
+
 def concat(bottom1,bottom2):
 	return L.Concat(bottom1,bottom2, concat_param=dict(axis=1))
 
@@ -48,8 +59,23 @@ def doubleTower(bottom1,bottom2):
 		ip3=ip(relu2,1,"fc3_w","fc3_b")
 		return ip3
 
+def doubleTowerMini(bottom1,bottom2):
+		t1=towerMini(bottom1)
+		t2=towerMini(bottom2)
+		con=concat(t1,t2)
+		ip1=ip(con,64,"fc1_w","fc1_b")
+		relu1=reLu(ip1)
+		ip2=ip(relu1,32,"fc2_w","fc2_b")
+		relu2=reLu(ip2)
+		ip3=ip(relu2,2,"fc3_w","fc3_b")
+		return ip3
+
+
 def concatN(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19):
 	return L.Concat(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19, concat_param=dict(axis=-1))
+
+def concat3(b1,b2,b3):
+	return L.Concat(b1,b2,b3,concat_param=dict(axis=-1))
 
 def reshape(bottom,Dim):
 	return L.Reshape(bottom, reshape_param=dict(shape=dict(dim=Dim)))
@@ -149,7 +175,28 @@ def matchNetSimple(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.loss=hingeLoss(trNet.dt,trNet.label)
 	return trNet
 
+def matchNetMini(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.dt=doubleTowerMini(trNet.p1, trNet.p2)
+	trNet.dt1=doubleTowerMini(trNet.p1, trNet.c21)
+	trNet.dt2=doubleTowerMini(trNet.p2, trNet.c11)
+	trNet.con=concat3(trNet.dt,trNet.dt1,trNet.dt2)
+	trNet.r1=reshape(trNet.con,[0,1,2,-1])
+	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.MAX)	
+	trNet.r2=reshape(trNet.p,[0,2,1,-1])
+	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
+	trNet.loss=hingeLoss(trNet.r2,trNet.label)
+	return trNet
 
+
+#trainSrc="examples/scene/train_pairs.lmdb"
+#testSrc="examples/scene/test_pairs.lmdb"
 
 trainSrc="examples/scene/train_pairs.lmdb"
 testSrc="examples/scene/test_pairs.lmdb"
@@ -159,11 +206,14 @@ trainBatchSize=128
 testBatchSize=100
 cropSize=64
 
-trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
-teNet=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
+#trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
+#teNet=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetSimple=matchNetSimple(trainSrc, mean, trainBatchSize, cropSize,0)
-teNetSimple=matchNetSimple(testSrc, mean, trainBatchSize, cropSize,1)
+#trNetSimple=matchNetSimple(trainSrc, mean, trainBatchSize, cropSize,0)
+#teNetSimple=matchNetSimple(testSrc, mean, testBatchSize, cropSize,1)
+
+trNetMini=matchNetMini(trainSrc, mean, trainBatchSize/4, cropSize,0)
+teNetMini=matchNetMini(testSrc, mean, testBatchSize/2, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))
@@ -171,13 +221,17 @@ teNetSimple=matchNetSimple(testSrc, mean, trainBatchSize, cropSize,1)
 #with open('./matchNetTestHinge.prototxt', 'w') as f:
 #    f.write(str(teNet.to_proto()))
 
-with open('./matchNetTrainHingeSimple.prototxt', 'w') as f:
-    f.write(str(trNetSimple.to_proto()))
+#with open('./matchNetTrainHingeSimple.prototxt', 'w') as f:
+#    f.write(str(trNetSimple.to_proto()))
 
-with open('./matchNetTestHingeSimple.prototxt', 'w') as f:
-    f.write(str(teNetSimple.to_proto()))
+#with open('./matchNetTestHingeMini.prototxt', 'w') as f:
+#    f.write(str(teNetSimple.to_proto()))
 
+with open('./matchNetTrainHingeMini.prototxt', 'w') as f:
+    f.write(str(trNetMini.to_proto()))
 
+with open('./matchNetTestHingeMini.prototxt', 'w') as f:
+    f.write(str(teNetMini.to_proto()))
 
 
 

@@ -11,24 +11,22 @@ import caffe
 
 os.chdir(caffe_root)
 
-MODEL_FILE = caffe_root+'examples/scene/scene_train_test.prototxt'
+#MODEL_FILE = caffe_root+'examples/scene/scene_train_test.prototxt'
 #PRETRAINED_FILE = 'My_mnist_siamese_0to2_feat3_iter_5000.caffemodel' 
 
 #net = caffe.Net(MODEL_FILE, caffe.TEST)
 #net_train = caffe.Net(MODEL_FILE, caffe.TEST)
 caffe.set_mode_cpu()
 solver = None
-solver = caffe.SGDSolver(folder+'scene_solver.prototxt')
-[(k, v.data.shape) for k, v in solver.net.blobs.items()]
+solver = caffe.SGDSolver(folder+'scene_solver_2.prototxt')
 
 solver.net.forward()  # train net
 solver.test_nets[0].forward()  # test net (there can be more than one)
 
-#print 'train labels:', solver.net.blobs['label'].data[:8]
+print 'train labels:', solver.net.blobs['label'].data[:8]
 #imshow(solver.net.blobs['pair_data'].data[0][0]);show()
 
-niter = 10
-test_interval = 10
+
 # losses will also be stored in the log
 train_loss = zeros(niter)
 acc = zeros(int(np.ceil(niter / test_interval)))
@@ -40,7 +38,8 @@ loss=solver.net.blobs['loss'].data;loss
 acc=solver.test_nets[0].blobs['accuracy'].data;acc
 out=solver.test_nets[0].blobs['out'].data;out
 
-
+niter = 10
+test_interval = 10
 # the main solver loop
 for it in range(niter):
     solver.step(1)  # SGD by Caffe
