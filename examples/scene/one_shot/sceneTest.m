@@ -1,4 +1,5 @@
-%%scene train
+%% Scene Test
+
 clear;
 close all;
 clc;
@@ -7,12 +8,13 @@ addpath /home/shaogangwang/mywork/caffe/matlab
 addpath /home/shaogangwang/mywork/caffe/examples/scene/one_shot
 
 %% prepare train file
-disp('prepare train file')
-fid=fopen('train1_pairs.txt');
+disp('prepare test file')
+fid=fopen('test1_pairs.txt');
 tp=textscan(fid,'%s %s %d');
 fclose(fid);
 
-nTrain=length(tp{1});
+nTest=length(tp{1});
+
 
 %% prepare the net
 disp('prepare net')
@@ -31,13 +33,7 @@ fileID = fopen(labelFile);
 C = textscan(fileID,'%s %d');
 fclose(fileID);
 
-%% prepare test result containner
-tRes=cell(nTrain, 13);
-for ii=1:nTrain
-    tRes(ii,1)=tp{1}(ii);
-    tRes(ii,2)=tp{2}(ii);
-    tRes{ii,3}=tp{3}(ii);
-end
+
 
 %% preload negtive features
 disp('preload negative features')
@@ -50,10 +46,30 @@ for ii=3:length(negfiles)
     negMap(name)=loadNeg.feat;
 end
 
-%% do the training
-nTrain=3000;
+%% setup thresholds
+posDist=1.6;
+posInter=0;
+
+negDist=4;
+negInter=0;
+
+thDist=3; %naive threshold
+thSim=0.25;
+
+%% prepare test result containner
+nTest = 1000;
+tRes=cell(nTest, 13+5); %14:naive thresholding label; 15:two-step label; 16: first step mark
+for ii=1:nTest
+    tRes(ii,1)=tp{1}(ii);
+    tRes(ii,2)=tp{2}(ii);
+    tRes{ii,3}=tp{3}(ii);
+end
+%tRes{:,13}=0;
+
+%% do the test
+
 disp('start training')
-for ii=1:nTrain
+for ii=1:nTest
     disp(ii)
     
     image_path1=tRes{ii,1};
@@ -84,10 +100,35 @@ for ii=1:nTrain
     tRes{ii,8}=catsInter;
     tRes{ii,9}=numel(catsInter);
     
+    %% do naive thresholding
+    if dist<thDist
+        tRes{ii,14}=0;
+    else
+        tRes{ii,14}=1;
+    end
+    
+    %% do two step thresholding
+    if (dist<posDist) && (numel(catsInter)>=posInter)
+        tRes{ii,15}=0;
+        tRes{ii,16}=1;
+        time=toc;
+        tRes{ii,12}=time;
+        continue;
+    elseif (dist>negDist) && (numel(catsInter)<=negInter)
+        tRes{ii,15}=1;
+        tRes{ii,16}=1;
+        time=toc;
+        tRes{ii,12}=time;
+        continue;
+    else
+        tRes{ii,16}=0;
+    end
+            
     %%finner discriminate
     
     %% get positive samples
     %tic
+    disp('do second stage discrimination')
     n_colors=1;
     ims1=Image_aug_color(image_path1,n_colors,resize);
     ims2=Image_aug_color(image_path2,n_colors,resize);
@@ -152,103 +193,15 @@ for ii=1:nTrain
     toc
     tRes{ii,10}=aveScore;
     tRes{ii,11}=similarity;
+    
+    if similarity>thSim
+        tRes{ii,15}=0;
+    else
+        tRes{ii,15}=1;
+    end
     time=toc
     tRes{ii,12}=time;
 end
-
-
-
-%% seperate positive and negative
-load('train1_3000.mat');
-nTrain=length(ttRes);
-%ttRes=tRes(1:nTrain,:);
-
-for ii=1:nTrain
-    if isempty(ttRes{ii,13})
-        ttRes{ii,13}=0;
-    end
-end
-
-ttRes=ttRes(find([ttRes{:,13}]==0),:); %find valid res
-nTrain=length(ttRes);
-
-% invalidUnion=[];
-% for ii=length(resInvalid)
-%     invalidUnion=union(invalidUnion,resInvalid{ii,7});
-% end
-
-resPos= ttRes(find([ttRes{:,3}]==0),:);
-resNeg= ttRes(find([ttRes{:,3}]==1),:);
-
-%% statistics of the dist
-distPos=cell2mat(resPos(:,4));
-distNeg=cell2mat(resNeg(:,4));
-
-distPosMean=mean(distPos)
-distPosVar=var(distPos)
-distNegMean=mean(distNeg)
-distNegVar=var(distNeg)
-
-figure,subplot(211),hist(distPos,100),subplot(212),hist(distNeg,100);
-
-perDistLe=@(x,d)length(find(x<d))/length(x);
-perDistGe=@(x,d)length(find(x>d))/length(x);
-
-thDist=2.5;
-perDistPos= perDistLe(distPos,thDist)
-perDistNeg= perDistGe(distNeg,thDist)
-perDistPosFalse=perDistGe(distPos,thDist)
-perDistNegFalse=perDistLe(distNeg,thDist)
-%% statistics of the intersection classes
-interPos=cell2mat(resPos(:,9));
-interNeg=cell2mat(resNeg(:,9));
-
-interPosMean=mean(interPos)
-interPosVar=var(interPos)
-interNegMean=mean(interNeg)
-interNegVar=var(interNeg)
-
-figure,subplot(211),hist(interPos,20),subplot(212),hist(interNeg,20);
-
-perInter=@(x,n)length(find(x==n))/length(x);
-
-perInterPos=perInter(interPos,3)
-perInterNeg=perInter(interNeg,0)
-
-
-%% statistics of SVM
-svmScorePos=cell2mat(resPos(:,10));
-svmScoreNeg=cell2mat(resNeg(:,10));
-
-svmSimPos=cell2mat(resPos(:,11));
-svmSimNeg=cell2mat(resNeg(:,11));
-
-figure,subplot(211),hist(svmSimPos,20),subplot(212),hist(svmSimNeg,20);
-%figure,subplot(411),hist(svmScorePos,20),subplot(412),hist(svmScoreNeg,20),subplot(413),hist(svmSimPos,20),subplot(414),hist(svmSimNeg,20);
-
-thSim=0.25;
-perSvmSimPos=perDistGe(svmSimPos,thSim)
-perSvmSimNeg=perDistLe(svmSimNeg,thSim)
-
-%% combination of metrics in step1
-distInterPos=[distPos interPos];
-distInterNeg=[distNeg interNeg];
-%temp=find((distInterNeg(:,2)==0) & (distInterNeg(:,1)>3.5))
-
-th1Neg=@(x,d,n)length(find((x(:,2)<=n) & (x(:,1)>d)))/length(x);
-th1Pos=@(x,d,n)length(find((x(:,2)>=n) & (x(:,1)<d)))/length(x);
-
-posDist=1.6;
-posInter=0;
-perPos1=th1Pos(distInterPos,posDist,posInter)
-perFalsePos1=th1Pos(distInterNeg,posDist,posInter)
-
-negDist=4;
-negInter=0;
-perNeg1=th1Neg(distInterNeg,negDist,negInter)
-perFalseNeg1=th1Neg(distInterPos,negDist,negInter)
-
-
 
 
 
