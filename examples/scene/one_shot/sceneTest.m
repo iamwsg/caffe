@@ -204,5 +204,47 @@ for ii=1:nTest
 end
 
 
+%% seperate positive and negative
+load('test1_1000.mat');
+nTrain=length(tRes);
+%ttRes=tRes(1:nTrain,:);
 
+for ii=1:nTrain
+    if isempty(tRes{ii,13})
+        tRes{ii,13}=0;
+    end
+end
+
+ttRes=tRes(find([tRes{:,13}]==0),:); %find valid res
+nTrain=length(ttRes);
+
+% invalidUnion=[];
+% for ii=length(resInvalid)
+%     invalidUnion=union(invalidUnion,resInvalid{ii,7});
+% end
+
+trueTruthPos= ttRes(find([ttRes{:,3}]==0),:);
+trueTruthNeg= ttRes(find([ttRes{:,3}]==1),:);
+
+naivePos=ttRes(find([ttRes{:,14}]==0),:);
+naiveNeg=ttRes(find([ttRes{:,14}]==1),:);
+
+findPos=ttRes(find([ttRes{:,15}]==0),:);
+findNeg=ttRes(find([ttRes{:,15}]==1),:);
+
+ap=@(x,label)length(find([x{:,3}]==label))/length(x);
+
+posAP=ap(findPos,0)
+negAP=ap(findNeg,1)
+
+posAPnaive=ap(naivePos,0)
+negAPnaive=ap(naiveNeg,1)
+
+recall=@(found,ground,label)length(find([found{:,3}]==label))/length(ground);
+
+posRecall=recall(findPos,trueTruthPos,0)
+negRecall=recall(findNeg,trueTruthNeg,1)
+
+posRecallNaive=recall(naivePos,trueTruthPos,0)
+negRecallNaive=recall(naiveNeg,trueTruthNeg,1)
 
