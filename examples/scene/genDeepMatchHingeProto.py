@@ -138,31 +138,31 @@ def matchNetTrain(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.c27=crop(trNet.i2,Phase,trainBatchSize,2,[64,0],cropSize)
 	trNet.c28=crop(trNet.i2,Phase,trainBatchSize,2,[64,32],cropSize)
 	trNet.c29=crop(trNet.i2,Phase,trainBatchSize,2,[64,64],cropSize)
-	trNet.dt0=doubleTower(trNet.p1,trNet.p2)
-	trNet.dt1=doubleTower(trNet.p1,trNet.c21)
-	trNet.dt2=doubleTower(trNet.p1,trNet.c22)
-	trNet.dt3=doubleTower(trNet.p1,trNet.c23)
-	trNet.dt4=doubleTower(trNet.p1,trNet.c24)
-	trNet.dt5=doubleTower(trNet.p1,trNet.c25)
-	trNet.dt6=doubleTower(trNet.p1,trNet.c26)
-	trNet.dt7=doubleTower(trNet.p1,trNet.c27)
-	trNet.dt8=doubleTower(trNet.p1,trNet.c28)
-	trNet.dt9=doubleTower(trNet.p1,trNet.c29)
-	trNet.dt10=doubleTower(trNet.p2,trNet.c11)
-	trNet.dt11=doubleTower(trNet.p2,trNet.c12)
-	trNet.dt12=doubleTower(trNet.p2,trNet.c13)
-	trNet.dt13=doubleTower(trNet.p2,trNet.c14)
-	trNet.dt14=doubleTower(trNet.p2,trNet.c15)
-	trNet.dt15=doubleTower(trNet.p2,trNet.c16)
-	trNet.dt16=doubleTower(trNet.p2,trNet.c17)
-	trNet.dt17=doubleTower(trNet.p2,trNet.c18)
-	trNet.dt18=doubleTower(trNet.p2,trNet.c19)
+	trNet.dt0=doubleTowerMini(trNet.p1,trNet.p2)
+	trNet.dt1=doubleTowerMini(trNet.p1,trNet.c21)
+	trNet.dt2=doubleTowerMini(trNet.p1,trNet.c22)
+	trNet.dt3=doubleTowerMini(trNet.p1,trNet.c23)
+	trNet.dt4=doubleTowerMini(trNet.p1,trNet.c24)
+	trNet.dt5=doubleTowerMini(trNet.p1,trNet.c25)
+	trNet.dt6=doubleTowerMini(trNet.p1,trNet.c26)
+	trNet.dt7=doubleTowerMini(trNet.p1,trNet.c27)
+	trNet.dt8=doubleTowerMini(trNet.p1,trNet.c28)
+	trNet.dt9=doubleTowerMini(trNet.p1,trNet.c29)
+	trNet.dt10=doubleTowerMini(trNet.p2,trNet.c11)
+	trNet.dt11=doubleTowerMini(trNet.p2,trNet.c12)
+	trNet.dt12=doubleTowerMini(trNet.p2,trNet.c13)
+	trNet.dt13=doubleTowerMini(trNet.p2,trNet.c14)
+	trNet.dt14=doubleTowerMini(trNet.p2,trNet.c15)
+	trNet.dt15=doubleTowerMini(trNet.p2,trNet.c16)
+	trNet.dt16=doubleTowerMini(trNet.p2,trNet.c17)
+	trNet.dt17=doubleTowerMini(trNet.p2,trNet.c18)
+	trNet.dt18=doubleTowerMini(trNet.p2,trNet.c19)
 	trNet.con=concatN(trNet.dt0,trNet.dt1,trNet.dt2,trNet.dt3,trNet.dt4,trNet.dt5,trNet.dt6,trNet.dt7,
 			trNet.dt8,trNet.dt9,trNet.dt10,trNet.dt11,trNet.dt12,trNet.dt13,trNet.dt14,trNet.dt15,
 			trNet.dt16,trNet.dt17,trNet.dt18)
-	trNet.r1=reshape(trNet.con,[0,1,1,-1])
+	trNet.r1=reshape(trNet.con,[0,1,2,-1])
 	trNet.p=unevenPool(trNet.r1,1,19, P.Pooling.AVE)	
-	trNet.r2=reshape(trNet.p,[0,1,1,-1])
+	trNet.r2=reshape(trNet.p,[0,2,1,-1])
 	trNet.loss=hingeLoss(trNet.r2,trNet.label)
 	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
 	return trNet
@@ -239,7 +239,7 @@ testSrc="examples/scene/scene_test_pairs.lmdb"
 
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=400
+trainBatchSize=100
 testBatchSize=100
 cropSize=64
 
@@ -252,8 +252,8 @@ cropSize=64
 #trNetMini=matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetBaseLine(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetMini(trainSrc, mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetMini(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))

@@ -27,6 +27,7 @@ solver.test_nets[0].forward()  # test net (there can be more than one)
 solver.step(1)
 
 dt=solver.net.blobs['dt'].data
+con=solver.net.blobs['con'].data
 label=solver.net.blobs['label'].data
 
 #print 'train labels:', solver.net.blobs['label'].data[:8]
