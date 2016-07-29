@@ -67,7 +67,7 @@ def doubleTowerMini(bottom1,bottom2):
 		relu1=reLu(ip1)
 		ip2=ip(relu1,32,"fc2_w","fc2_b")
 		relu2=reLu(ip2)
-		ip3=ip(relu2,1,"fc3_w","fc3_b")
+		ip3=ip(relu2,2,"fc3_w","fc3_b")
 		return ip3
 
 
@@ -191,12 +191,13 @@ def matchNetMini(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.dt2=doubleTowerMini(trNet.p2, trNet.c11)
 	trNet.con=concat3(trNet.dt,trNet.dt1,trNet.dt2)
 	trNet.r1=reshape(trNet.con,[0,1,2,-1])
-	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.MAX)	
+	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.AVE)	
 	trNet.r2=reshape(trNet.p,[0,2,1,-1])
 	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
 	trNet.loss=hingeLoss(trNet.r2,trNet.label)
 	return trNet
 
+#three pipe lines
 def matchNetMiniHinge(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet=caffe.NetSpec()
 	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
@@ -219,15 +220,26 @@ def matchNetMiniHinge(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	return trNet
 
 
+def matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.dt=doubleTowerMini(trNet.p1,trNet.p2)
+	trNet.accuracy=acc(trNet.dt, trNet.label, Phase)
+	trNet.loss=hingeLoss(trNet.dt,trNet.label)
+	return trNet
 
-#trainSrc="examples/scene/train_pairs.lmdb"
-#testSrc="examples/scene/test_pairs.lmdb"
 
-trainSrc="examples/scene/train_pairs_unseen_hinge.lmdb"
-testSrc="examples/scene/test_pairs_unseen_hinge.lmdb"
+#trainSrc="examples/scene/scene_train_pairs_hinge.lmdb"
+#testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
+trainSrc="examples/scene/scene_train_pairs.lmdb"
+testSrc="examples/scene/scene_test_pairs.lmdb"
+
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=128
+trainBatchSize=400
 testBatchSize=100
 cropSize=64
 
@@ -237,8 +249,11 @@ cropSize=64
 #trNetSimple=matchNetSimple(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetSimple=matchNetSimple(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetMiniHinge(trainSrc, mean, trainBatchSize/4, cropSize,0)
-teNetMini=matchNetMiniHinge(testSrc, mean, testBatchSize/2, cropSize,1)
+#trNetMini=matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize,0)
+#teNetMini=matchNetBaseLine(testSrc, mean, testBatchSize, cropSize,1)
+
+trNetMini=matchNetMini(trainSrc, mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetMini(testSrc, mean, testBatchSize, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))

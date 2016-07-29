@@ -1,5 +1,5 @@
 function fileList = filePathGenNoNum(dirName,fileName)
-
+  %dirName='/home/shaogangwang/LabelMeToolbox/Images'
   dirData = dir(dirName);      %# Get the data for the current directory
   dirData=dirData(~ismember({dirData.name},{'.','..','.DS_Store'}));
   dirIndex = [dirData.isdir];  %# Find the index for directories
@@ -18,7 +18,7 @@ function fileList = filePathGenNoNum(dirName,fileName)
     nextDir = fullfile(dirName,subDirs{iDir});    %# Get the subdirectory path
     fileList = getAllFiles(nextDir);
     for ii=1:length(fileList)
-        fprintf(fileID,'%s %d\n',strjoin(fileList(ii)));
+        fprintf(fileID,'%s\n',strjoin(fileList(ii)));
     end
  
          

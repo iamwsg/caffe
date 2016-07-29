@@ -2,8 +2,9 @@ from pylab import *
 import matplotlib
 #import numpy as np
 
-caffe_root = '/home/shaogang/caffe/'  
-folder=caffe_root+'/examples/scene/'
+#caffe_root = '/home/shaogang/caffe/'  
+caffe_root = '/home/shaogangwang/mywork/caffe/'  
+folder=caffe_root+'examples/scene/'
 import sys
 import os
 sys.path.insert(0, caffe_root + 'python')
@@ -11,20 +12,22 @@ import caffe
 
 os.chdir(caffe_root)
 
-MODEL_FILE = caffe_root+'examples/scene/scene.prototxt'
-PRETRAINED_FILE = caffe_root+ 'examples/scene/scene_iter_2000.caffemodel' 
+#MODEL_FILE = caffe_root+'examples/scene/scene.prototxt'
+#PRETRAINED_FILE = caffe_root+ 'examples/scene/scene_iter_2000.caffemodel' 
 #net = caffe.Net(MODEL_FILE,PRETRAINED_FILE,caffe.TEST)
-net = caffe.Net(MODEL_FILE,caffe.TEST)
-caffe.set_mode_cpu()
-
+#net = caffe.Net(MODEL_FILE,caffe.TEST)
 #net_train = caffe.Net(MODEL_FILE, caffe.TEST)
 
-solver = None
-solver = caffe.SGDSolver(folder+'scene_solver.prototxt')
-#[(k, v.data.shape) for k, v in solver.net.blobs.items()]
+caffe.set_mode_gpu()
+
+solver = caffe.SGDSolver(folder+'scene_solver_2.prototxt')
 
 solver.net.forward()  # train net
 solver.test_nets[0].forward()  # test net (there can be more than one)
+solver.step(1)
+
+dt=solver.net.blobs['dt'].data
+label=solver.net.blobs['label'].data
 
 #print 'train labels:', solver.net.blobs['label'].data[:8]
 #imshow(solver.net.blobs['pair_data'].data[0][0]);show()
@@ -39,7 +42,7 @@ train_loss = zeros(niter)
 acc = zeros(int(np.ceil(niter / test_interval)))
 output = zeros((niter, 100))
 
-solver.step(1)
+
 sim_test=solver.test_nets[0].blobs['label'].data.flatten();prob_test=np.round(solver.test_nets[0].blobs['prob'].data.flatten());mi=sim_test-prob_test;mi
 loss=solver.net.blobs['loss'].data;loss
 acc=solver.test_nets[0].blobs['accuracy'].data;acc

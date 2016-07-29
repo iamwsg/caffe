@@ -12,8 +12,8 @@ layer {
     mean_file: "examples/scene/scene_mean.binaryproto"
   }
   data_param {
-    source: "examples/scene/train_pairs_unseen_hinge.lmdb"
-    batch_size: 32
+    source: "examples/scene/scene_train_pairs.lmdb"
+    batch_size: 400
     backend: LMDB
   }
 }
@@ -59,7 +59,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 32
+      dim: 400
       dim: 3
       dim: 64
       dim: 64
@@ -87,7 +87,7 @@ layer {
   }
   input_param {
     shape {
-      dim: 32
+      dim: 400
       dim: 3
       dim: 64
       dim: 64
@@ -436,7 +436,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 1
+    num_output: 2
     weight_filler {
       type: "xavier"
     }
@@ -775,7 +775,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 1
+    num_output: 2
     weight_filler {
       type: "xavier"
     }
@@ -1114,7 +1114,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 1
+    num_output: 2
     weight_filler {
       type: "xavier"
     }
@@ -1143,7 +1143,7 @@ layer {
     shape {
       dim: 0
       dim: 1
-      dim: 1
+      dim: 2
       dim: -1
     }
   }
@@ -1154,7 +1154,7 @@ layer {
   bottom: "r1"
   top: "p"
   pooling_param {
-    pool: MAX
+    pool: AVE
     stride: 1
     kernel_h: 1
     kernel_w: 3
@@ -1168,40 +1168,16 @@ layer {
   reshape_param {
     shape {
       dim: 0
-      dim: 1
-      dim: 1
-      dim: -1
-    }
-  }
-}
-layer {
-  name: "padL"
-  type: "Reshape"
-  bottom: "label"
-  top: "padL"
-  reshape_param {
-    shape {
-      dim: 0
-      dim: 1
+      dim: 2
       dim: 1
       dim: -1
     }
-  }
-}
-layer {
-  name: "pad"
-  type: "Concat"
-  bottom: "r2"
-  bottom: "padL"
-  top: "pad"
-  concat_param {
-    axis: 1
   }
 }
 layer {
   name: "accuracy"
   type: "Accuracy"
-  bottom: "pad"
+  bottom: "r2"
   bottom: "label"
   top: "accuracy"
   include {
@@ -1211,7 +1187,7 @@ layer {
 layer {
   name: "loss"
   type: "HingeLoss"
-  bottom: "pad"
+  bottom: "r2"
   bottom: "label"
   top: "loss"
 }
