@@ -12,7 +12,7 @@ layer {
     mean_file: "examples/scene/scene_mean.binaryproto"
   }
   data_param {
-    source: "examples/scene/test_pairs.lmdb"
+    source: "examples/scene/test_pairs_unseen_hinge.lmdb"
     batch_size: 50
     backend: LMDB
   }
@@ -436,7 +436,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -775,7 +775,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1114,7 +1114,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -1143,7 +1143,7 @@ layer {
     shape {
       dim: 0
       dim: 1
-      dim: 2
+      dim: 1
       dim: -1
     }
   }
@@ -1168,16 +1168,40 @@ layer {
   reshape_param {
     shape {
       dim: 0
-      dim: 2
+      dim: 1
       dim: 1
       dim: -1
     }
   }
 }
 layer {
+  name: "padL"
+  type: "Reshape"
+  bottom: "label"
+  top: "padL"
+  reshape_param {
+    shape {
+      dim: 0
+      dim: 1
+      dim: 1
+      dim: -1
+    }
+  }
+}
+layer {
+  name: "pad"
+  type: "Concat"
+  bottom: "r2"
+  bottom: "padL"
+  top: "pad"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
   name: "accuracy"
   type: "Accuracy"
-  bottom: "r2"
+  bottom: "pad"
   bottom: "label"
   top: "accuracy"
   include {
@@ -1187,7 +1211,7 @@ layer {
 layer {
   name: "loss"
   type: "HingeLoss"
-  bottom: "r2"
+  bottom: "pad"
   bottom: "label"
   top: "loss"
 }

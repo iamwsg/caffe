@@ -223,6 +223,7 @@ nTrain=length(ttRes);
 %     invalidUnion=union(invalidUnion,resInvalid{ii,7});
 % end
 
+
 trueTruthPos= ttRes(find([ttRes{:,3}]==0),:);
 trueTruthNeg= ttRes(find([ttRes{:,3}]==1),:);
 
@@ -248,3 +249,11 @@ negRecall=recall(findNeg,trueTruthNeg,1)
 posRecallNaive=recall(naivePos,trueTruthPos,0)
 negRecallNaive=recall(naiveNeg,trueTruthNeg,1)
 
+firstStageRes=ttRes(find([ttRes{:,16}]==1),:);
+secondStageRes=ttRes(find([ttRes{:,16}]==0),:);
+
+aveAcc=@(x)length(find([x{:,3}]==[x{:,15}]))/length(x);
+totalAcc=aveAcc(ttRes)
+firstStageAcc= aveAcc(firstStageRes)
+secondStageAcc= aveAcc(secondStageRes)
+naiveAcc=length(find([ttRes{:,3}]==[ttRes{:,14}]))/length(ttRes)
