@@ -70,6 +70,17 @@ def doubleTowerMini(bottom1,bottom2):
 		ip3=ip(relu2,2,"fc3_w","fc3_b")
 		return ip3
 
+def doubleTowerMini_1(bottom1,bottom2):
+		t1=towerMini(bottom1)
+		t2=towerMini(bottom2)
+		con=concat(t1,t2)
+		ip1=ip(con,64,"fc1_w","fc1_b")
+		relu1=reLu(ip1)
+		ip2=ip(relu1,32,"fc2_w","fc2_b")
+		relu2=reLu(ip2)
+		ip3=ip(relu2,1,"fc3_w","fc3_b")
+		return ip3
+
 
 def concatN(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19):
 	return L.Concat(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19, concat_param=dict(axis=-1))
@@ -112,6 +123,9 @@ def crop(bottom,Phase,numBatch,Axis,Offset,cropSize):
 				include=dict(phase=Phase))
 	top=L.Crop(bottom, crop_ref, crop_param=dict(axis=Axis, offset=Offset))
 	return top
+
+def threshold(bottom, th):
+	return L.Threshold(bottom, threshold_param=dict(threshold=th))
 
 
 def matchNetTrain(trainSrc, mean, trainBatchSize, cropSize, Phase):
@@ -198,7 +212,29 @@ def matchNetMini(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	return trNet
 
 #three pipe lines
-def matchNetMiniHinge(trainSrc, mean, trainBatchSize, cropSize, Phase):
+def matchNetMiniHingePadTrain(trainSrc,mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.dt=doubleTowerMini_1(trNet.p1, trNet.p2)
+	trNet.dt1=doubleTowerMini_1(trNet.p1, trNet.c21)
+	trNet.dt2=doubleTowerMini_1(trNet.p2, trNet.c11)
+	trNet.con=concat3(trNet.dt,trNet.dt1,trNet.dt2)
+	trNet.r1=reshape(trNet.con,[0,1,1,-1])
+	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.MAX)	
+	trNet.r2=reshape(trNet.p,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1]) #
+	trNet.pad=padLabel(trNet.r2,trNet.padL)
+	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
+	trNet.loss=hingeLoss(trNet.pad,trNet.th)
+	return trNet
+
+def matchNetMiniHingePadTest(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet=caffe.NetSpec()
 	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
 	trNet.i1, trNet.i2=sliceData(trNet.data)
@@ -206,18 +242,20 @@ def matchNetMiniHinge(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.p2=avePool(trNet.i2)
 	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
 	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
-	trNet.dt=doubleTowerMini(trNet.p1, trNet.p2)
-	trNet.dt1=doubleTowerMini(trNet.p1, trNet.c21)
-	trNet.dt2=doubleTowerMini(trNet.p2, trNet.c11)
+	trNet.dt=doubleTowerMini_1(trNet.p1, trNet.p2)
+	trNet.dt1=doubleTowerMini_1(trNet.p1, trNet.c21)
+	trNet.dt2=doubleTowerMini_1(trNet.p2, trNet.c11)
 	trNet.con=concat3(trNet.dt,trNet.dt1,trNet.dt2)
 	trNet.r1=reshape(trNet.con,[0,1,1,-1])
 	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.MAX)	
 	trNet.r2=reshape(trNet.p,[0,1,1,-1])
-	trNet.padL=reshape(trNet.label,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1]) 
 	trNet.pad=padLabel(trNet.r2,trNet.padL)
 	trNet.accuracy=acc(trNet.pad, trNet.label, Phase)
 	trNet.loss=hingeLoss(trNet.pad,trNet.label)
 	return trNet
+
+
 
 
 def matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize, Phase):
@@ -234,13 +272,14 @@ def matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize, Phase):
 
 #trainSrc="examples/scene/scene_train_pairs_hinge.lmdb"
 #testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
-trainSrc="examples/scene/scene_train_pairs.lmdb"
+trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
 testSrc="examples/scene/scene_test_pairs.lmdb"
+padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
 
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=10
-testBatchSize=10
+trainBatchSize=100
+testBatchSize=100
 cropSize=64
 
 #trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
@@ -252,8 +291,11 @@ cropSize=64
 #trNetMini=matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetBaseLine(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetMini(trainSrc, mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetMini(testSrc, mean, testBatchSize, cropSize,1)
+#trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
+#teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
+
+trNetMini=matchNetMiniHingePadTrain(padSrc ,mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetMiniHingePadTrain(testSrc, mean, testBatchSize, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))
@@ -275,7 +317,6 @@ with open('./matchNetTestHingeMini.prototxt', 'w') as f:
 
 
 
-    
     
     
 

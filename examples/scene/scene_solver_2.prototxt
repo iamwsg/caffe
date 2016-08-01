@@ -23,4 +23,4 @@ max_iter: 5000
 snapshot: 5000
 snapshot_prefix: "examples/scene"
 # solver mode: CPU or GPU
-solver_mode: CPU
+solver_mode: GPU
