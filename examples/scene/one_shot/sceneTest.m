@@ -257,3 +257,6 @@ totalAcc=aveAcc(ttRes)
 firstStageAcc= aveAcc(firstStageRes)
 secondStageAcc= aveAcc(secondStageRes)
 naiveAcc=length(find([ttRes{:,3}]==[ttRes{:,14}]))/length(ttRes)
+
+falseAlarm=ttRes(find(([ttRes{:,3}]==1) & ([ttRes{:,15}]==0)),:);
+missDetect=ttRes(find(([ttRes{:,3}]==0) & ([ttRes{:,15}]==1)),:);

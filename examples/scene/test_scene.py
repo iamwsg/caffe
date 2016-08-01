@@ -2,8 +2,8 @@ from pylab import *
 import matplotlib
 #import numpy as np
 
-#caffe_root = '/home/shaogang/caffe/'  
-caffe_root = '/home/shaogangwang/mywork/caffe/'  
+caffe_root = '/home/shaogang/caffe/'  
+#caffe_root = '/home/shaogangwang/mywork/caffe/'  
 folder=caffe_root+'examples/scene/'
 import sys
 import os
@@ -18,7 +18,7 @@ os.chdir(caffe_root)
 #net = caffe.Net(MODEL_FILE,caffe.TEST)
 #net_train = caffe.Net(MODEL_FILE, caffe.TEST)
 
-caffe.set_mode_gpu()
+caffe.set_mode_cpu()
 
 solver = caffe.SGDSolver(folder+'scene_solver_2.prototxt')
 
@@ -28,6 +28,9 @@ solver.step(1)
 
 dt=solver.net.blobs['dt'].data
 con=solver.net.blobs['con'].data
+r1=solver.net.blobs['r1'].data
+r2=solver.net.blobs['r2'].data
+r1[:5,0,:,:];r2[:5,:,0,0]
 label=solver.net.blobs['label'].data
 
 #print 'train labels:', solver.net.blobs['label'].data[:8]

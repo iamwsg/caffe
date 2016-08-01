@@ -239,8 +239,8 @@ testSrc="examples/scene/scene_test_pairs.lmdb"
 
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=100
-testBatchSize=100
+trainBatchSize=10
+testBatchSize=10
 cropSize=64
 
 #trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
@@ -252,8 +252,8 @@ cropSize=64
 #trNetMini=matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetBaseLine(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetMini(trainSrc, mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetMini(testSrc, mean, testBatchSize, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))

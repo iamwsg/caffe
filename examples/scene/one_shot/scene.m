@@ -112,6 +112,7 @@ nn2=neg*coef2(:,1:2);
 %sup2=SVMModel_linear_2.SupportVectors*coef2(:,1:2);
 sup1=pos_feat2*coef(:,1:2);
 sup2=pos_feat1*coef2(:,1:2);
+%figure,plot(pp1(:,1),pp1(:,2),'bo',nn1(:,1),nn1(:,2),'r*');
 figure,subplot(211),plot(pp1(:,1),pp1(:,2),'bo',nn1(:,1),nn1(:,2),'r*',sup1(:,1),sup1(:,2),'blacko'),grid;
 subplot(212),plot(pp2(:,1),pp2(:,2),'go',nn2(:,1),nn2(:,2),'r*',sup2(:,1),sup2(:,2),'blacko'),grid;
 
