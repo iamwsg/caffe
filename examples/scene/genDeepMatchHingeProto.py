@@ -274,7 +274,7 @@ def matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize, Phase):
 #testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
 trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
 testSrc="examples/scene/scene_test_pairs.lmdb"
-padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
+padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
 
 mean="examples/scene/scene_mean.binaryproto"
 

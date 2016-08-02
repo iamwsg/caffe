@@ -12,7 +12,7 @@ layer {
     mean_file: "examples/scene/scene_mean.binaryproto"
   }
   data_param {
-    source: "examples/scene/scene_train7_pairs_20000_pad.lmdb"
+    source: "examples/scene/scene_train3_pairs_4000_pad.lmdb"
     batch_size: 100
     backend: LMDB
   }

@@ -2,8 +2,8 @@ from pylab import *
 #import matplotlib
 #import numpy as np
 #########################################
-#caffe_root = '/home/shaogang/caffe/'  
-caffe_root = '/home/shaogangwang/mywork/caffe/'
+caffe_root = '/home/shaogang/caffe/'  
+#caffe_root = '/home/shaogangwang/mywork/caffe/'
 #########################################  
 folder=caffe_root+'examples/scene/'
 import sys
@@ -14,7 +14,7 @@ import caffe
 os.chdir(caffe_root)
 
 #############################
-caffe.set_mode_gpu()
+caffe.set_mode_cpu()
 #############################
 
 solver = caffe.SGDSolver(folder+'scene_solver_2.prototxt')
