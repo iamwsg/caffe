@@ -586,7 +586,7 @@
 /home/shaogangwang/Datasets/scenes/Taj_Mahal/41.jpg
 /home/shaogangwang/Datasets/scenes/Taj_Mahal/42.jpg
 /home/shaogangwang/Datasets/scenes/Taj_Mahal/43.jpg
-/home/shaogangwang/Datasets/scenes/Taj_Mahal/44.jgp.jpg
+/home/shaogangwang/Datasets/scenes/Taj_Mahal/44.jpg
 /home/shaogangwang/Datasets/scenes/Taj_Mahal/45.jpg
 /home/shaogangwang/Datasets/scenes/Taj_Mahal/46.jpg
 /home/shaogangwang/Datasets/scenes/Taj_Mahal/47.jpg
