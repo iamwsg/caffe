@@ -9,7 +9,7 @@ posFeatPath='/home/shaogang/Datasets/posFeatsHOG/';
 imageRepos='/home/shaogang/Datasets/scenes/';
 
 %% load query im'/home/shaogang/scenes/'age 
-qScene='Taj_Mahal';
+qScene='Eiffel_Tower';
 qImagPath=strcat(imageRepos,qScene,'/1.jpg');
 qImag=imread(qImagPath);
 figure, imshow(qImag);
