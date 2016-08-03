@@ -274,7 +274,8 @@ def matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize, Phase):
 #testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
 trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
 testSrc="examples/scene/scene_test_pairs.lmdb"
-padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
+#padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
+padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
 
 mean="examples/scene/scene_mean.binaryproto"
 
@@ -294,8 +295,8 @@ cropSize=64
 #trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetMiniHingePadTrain(padSrc ,mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetMiniHingePadTrain(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetTrain(trainSrc ,mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))
