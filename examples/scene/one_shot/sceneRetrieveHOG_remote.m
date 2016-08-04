@@ -9,7 +9,7 @@ posFeatPath='/home/shaogang/Datasets/posFeatsHOG/';
 imageRepos='/home/shaogang/Datasets/scenes/';
 
 %% load query im'/home/shaogang/scenes/'age 
-qScene='Eiffel_Tower';
+qScene='Morning_Glorry_Pool';
 qImagPath=strcat(imageRepos,qScene,'/1.jpg');
 qImag=imread(qImagPath);
 figure, imshow(qImag);
