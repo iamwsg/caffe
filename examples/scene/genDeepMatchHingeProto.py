@@ -181,6 +181,86 @@ def matchNetTrain(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.accuracy=acc(trNet.r2, trNet.label, Phase)
 	return trNet
 
+##19 pipelines with paded labels
+def matchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[0,0],cropSize)
+	trNet.c12=crop(trNet.i1,Phase,trainBatchSize,2,[0,32],cropSize)
+	trNet.c13=crop(trNet.i1,Phase,trainBatchSize,2,[0,64],cropSize)
+	trNet.c14=crop(trNet.i1,Phase,trainBatchSize,2,[32,0],cropSize)
+	trNet.c15=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c16=crop(trNet.i1,Phase,trainBatchSize,2,[32,64],cropSize)
+	trNet.c17=crop(trNet.i1,Phase,trainBatchSize,2,[64,0],cropSize)
+	trNet.c18=crop(trNet.i1,Phase,trainBatchSize,2,[64,32],cropSize)
+	trNet.c19=crop(trNet.i1,Phase,trainBatchSize,2,[64,64],cropSize)
+	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[0,0],cropSize)
+	trNet.c22=crop(trNet.i2,Phase,trainBatchSize,2,[0,32],cropSize)
+	trNet.c23=crop(trNet.i2,Phase,trainBatchSize,2,[0,64],cropSize)
+	trNet.c24=crop(trNet.i2,Phase,trainBatchSize,2,[32,0],cropSize)
+	trNet.c25=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c26=crop(trNet.i2,Phase,trainBatchSize,2,[32,64],cropSize)
+	trNet.c27=crop(trNet.i2,Phase,trainBatchSize,2,[64,0],cropSize)
+	trNet.c28=crop(trNet.i2,Phase,trainBatchSize,2,[64,32],cropSize)
+	trNet.c29=crop(trNet.i2,Phase,trainBatchSize,2,[64,64],cropSize)
+	trNet.dt0=doubleTowerMini_1(trNet.p1,trNet.p2)
+	trNet.dt1=doubleTowerMini_1(trNet.p1,trNet.c21)
+	trNet.dt2=doubleTowerMini_1(trNet.p1,trNet.c22)
+	trNet.dt3=doubleTowerMini_1(trNet.p1,trNet.c23)
+	trNet.dt4=doubleTowerMini_1(trNet.p1,trNet.c24)
+	trNet.dt5=doubleTowerMini_1(trNet.p1,trNet.c25)
+	trNet.dt6=doubleTowerMini_1(trNet.p1,trNet.c26)
+	trNet.dt7=doubleTowerMini_1(trNet.p1,trNet.c27)
+	trNet.dt8=doubleTowerMini_1(trNet.p1,trNet.c28)
+	trNet.dt9=doubleTowerMini_1(trNet.p1,trNet.c29)
+	trNet.dt10=doubleTowerMini_1(trNet.p2,trNet.c11)
+	trNet.dt11=doubleTowerMini_1(trNet.p2,trNet.c12)
+	trNet.dt12=doubleTowerMini_1(trNet.p2,trNet.c13)
+	trNet.dt13=doubleTowerMini_1(trNet.p2,trNet.c14)
+	trNet.dt14=doubleTowerMini_1(trNet.p2,trNet.c15)
+	trNet.dt15=doubleTowerMini_1(trNet.p2,trNet.c16)
+	trNet.dt16=doubleTowerMini_1(trNet.p2,trNet.c17)
+	trNet.dt17=doubleTowerMini_1(trNet.p2,trNet.c18)
+	trNet.dt18=doubleTowerMini_1(trNet.p2,trNet.c19)
+	trNet.con=concatN(trNet.dt0,trNet.dt1,trNet.dt2,trNet.dt3,trNet.dt4,trNet.dt5,trNet.dt6,trNet.dt7,
+			trNet.dt8,trNet.dt9,trNet.dt10,trNet.dt11,trNet.dt12,trNet.dt13,trNet.dt14,trNet.dt15,
+			trNet.dt16,trNet.dt17,trNet.dt18)
+	trNet.r1=reshape(trNet.con,[0,1,1,-1])
+	trNet.p=unevenPool(trNet.r1,1,19, P.Pooling.MAX)	
+	trNet.r2=reshape(trNet.p,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1])
+	trNet.pad=padLabel(trNet.r2,trNet.padL)
+	trNet.loss=hingeLoss(trNet.pad,trNet.th)
+	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
+	return trNet
+
+#three pipe lines
+def matchNetMiniHingePadTrain(trainSrc,mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.dt=doubleTowerMini_1(trNet.p1, trNet.p2)
+	trNet.dt1=doubleTowerMini_1(trNet.p1, trNet.c21)
+	trNet.dt2=doubleTowerMini_1(trNet.p2, trNet.c11)
+	trNet.con=concat3(trNet.dt,trNet.dt1,trNet.dt2)
+	trNet.r1=reshape(trNet.con,[0,1,1,-1])
+	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.MAX)	
+	trNet.r2=reshape(trNet.p,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1]) #
+	trNet.pad=padLabel(trNet.r2,trNet.padL)
+	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
+	trNet.loss=hingeLoss(trNet.pad,trNet.th)
+	return trNet
+
 def matchNetSimple(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet=caffe.NetSpec()
 	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
@@ -211,28 +291,7 @@ def matchNetMini(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.loss=hingeLoss(trNet.r2,trNet.label)
 	return trNet
 
-#three pipe lines
-def matchNetMiniHingePadTrain(trainSrc,mean, trainBatchSize, cropSize, Phase):
-	trNet=caffe.NetSpec()
-	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
-	trNet.th= threshold(trNet.label,0)
-	trNet.i1, trNet.i2=sliceData(trNet.data)
-	trNet.p1=avePool(trNet.i1)
-	trNet.p2=avePool(trNet.i2)
-	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
-	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
-	trNet.dt=doubleTowerMini_1(trNet.p1, trNet.p2)
-	trNet.dt1=doubleTowerMini_1(trNet.p1, trNet.c21)
-	trNet.dt2=doubleTowerMini_1(trNet.p2, trNet.c11)
-	trNet.con=concat3(trNet.dt,trNet.dt1,trNet.dt2)
-	trNet.r1=reshape(trNet.con,[0,1,1,-1])
-	trNet.p=unevenPool(trNet.r1,1,3, P.Pooling.MAX)	
-	trNet.r2=reshape(trNet.p,[0,1,1,-1])
-	trNet.padL=reshape(trNet.label,[0,1,1,-1]) #
-	trNet.pad=padLabel(trNet.r2,trNet.padL)
-	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
-	trNet.loss=hingeLoss(trNet.pad,trNet.th)
-	return trNet
+
 
 def matchNetMiniHingePadTest(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet=caffe.NetSpec()
@@ -295,8 +354,8 @@ cropSize=64
 #trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetTrain(trainSrc ,mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)
 
 #with open('./matchNetTrainHinge.prototxt', 'w') as f:
 #    f.write(str(trNet.to_proto()))

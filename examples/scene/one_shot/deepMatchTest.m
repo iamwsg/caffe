@@ -303,10 +303,61 @@ title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
 s19_ave_pfa=pfa_dth; s19_ave_pd=pd_dth;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 
+caffe.reset_all();
+caffe.set_mode_gpu();
+model = 'examples/scene/models/19_stream_train7_20000_MAXpool/matchNetTestHingeMini.prototxt';
+%model = 'examples/scene/models/3_stream_train7_20000_pad/matchNetTrainHingeMini.prototxt';
+%weights = 'examples/scene/models/3_stream_train7_20000_pad/scene_iter_2000_loss_0.3.caffemodel';
+weights = 'examples/scene/models/19_stream_train7_20000_MAXpool/scene_iter_10000.caffemodel';
+net = caffe.Net(model, weights, 'test');
 
-figure, plot(baseLine_pfa, baseLine_pd, '-ob', s3_ave_pfa, s3_ave_pd, '-og', s3_max_pfa, s3_max_pd, '-oblack', s19_ave_pfa, s19_ave_pd, '-*r'),grid;
+p=[];label=[];
+for ii=1:10
+    net.forward_prefilled();
+    dt = squeeze(net.blobs('p').get_data());
+    p=[p; dt];
+    label = [label; net.blobs('label').get_data()];
+% pad = squeeze(net.blobs('pad').get_data());
+% th = squeeze(net.blobs('th').get_data());
+end
+
+
+%%evaluation
+nTest=length(label);
+%dth=-1.05:.001:-0.96;
+dth=-12:.1:8;
+ndth=length(dth);
+pfa_dth=zeros(1,ndth);
+pd_dth=zeros(1,ndth);
+ap_dth=pd_dth;
+recall_dth=pd_dth;
+for ii=1:ndth
+    Res=p;
+    for jj=1:nTest
+        if Res(jj)<dth(ii)
+            Res(jj)=1;
+        else
+            Res(jj)=0;
+        end
+    end
+    falseAlarm=find(label==1 & Res==0);
+    pfa_dth(ii)=length(falseAlarm)/length(find(label==1));
+    pd=find(label==0 & Res==0);
+    pd_dth(ii)= length(pd)/length(find(label==0));
+    ap_dth(ii)=length(find(Res==0 & label==0))/length(find(Res==0));
+    recall_dth(ii)=length(find(label==0 & Res==0))/length(find(label==0));
+end
+figure,plot(pfa_dth,pd_dth,'-ob'),grid;
+title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+s19_max_pfa=pfa_dth; s19_max_pd=pd_dth;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+figure, plot(baseLine_pfa, baseLine_pd, '-ob', s3_ave_pfa, s3_ave_pd, '-og', s3_max_pfa, s3_max_pd, '-oblack', s19_ave_pfa, s19_ave_pd, '-*r', s19_max_pfa, s19_max_pd,'-*m'),grid;
 title('ROC');xlabel('P_{fa}');ylabel('P_d');
-legend('SiameseNet','3 Streams AVE pool','3 Streams MAX pool','19 Streams AVE pool');
+legend('SiameseNet','3 Streams AVE pool','3 Streams MAX pool','19 Streams AVE pool','19 Streams MAX pool');
 
 
 
