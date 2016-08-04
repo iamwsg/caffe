@@ -2,7 +2,7 @@
 %% seperate positive and negative
 clc;
 clear;
-close all;
+%close all;
 load('imageRetrieve700_svm_Eiffel_Tower_1.mat');
 nTest=length(tRes);
 %ttRes=tRes(1:nTest,:);
@@ -47,26 +47,27 @@ negRecall=recall(findNeg,trueTruthNeg,1)
 posRecallNaive=recall(naivePos,trueTruthPos,0)
 negRecallNaive=recall(naiveNeg,trueTruthNeg,1)
 
-firstStageRes=ttRes(find([ttRes{:,16}]==1),:);
-secondStageRes=ttRes(find([ttRes{:,16}]==0),:);
+%firstStageRes=ttRes(find([ttRes{:,16}]==1),:);
+%secondStageRes=ttRes(find([ttRes{:,16}]==0),:);
 
-aveAcc=@(x)length(find([x{:,3}]==[x{:,15}]))/length(x);
-totalAcc=aveAcc(ttRes)
-firstStageAcc= aveAcc(firstStageRes)
-secondStageAcc= aveAcc(secondStageRes)
-naiveAcc=length(find([ttRes{:,3}]==[ttRes{:,14}]))/length(ttRes)
+%aveAcc=@(x)length(find([x{:,3}]==[x{:,15}]))/length(x);
+%totalAcc=aveAcc(ttRes)
+%firstStageAcc= aveAcc(firstStageRes)
+%secondStageAcc= aveAcc(secondStageRes)
+%naiveAcc=length(find([ttRes{:,3}]==[ttRes{:,14}]))/length(ttRes)
 
-falseAlarm=ttRes(find(([ttRes{:,3}]==1) & ([ttRes{:,15}]==0)),:);
-missDetect=ttRes(find(([ttRes{:,3}]==0) & ([ttRes{:,15}]==1)),:);
+%falseAlarm=ttRes(find(([ttRes{:,3}]==1) & ([ttRes{:,15}]==0)),:);
+%missDetect=ttRes(find(([ttRes{:,3}]==0) & ([ttRes{:,15}]==1)),:);
 
-falseAlarmRate=length(falseAlarm)/length(find(([ttRes{:,3}]==1)))
-pd=posRecall
+%falseAlarmRate=length(falseAlarm)/length(find(([ttRes{:,3}]==1)))
+%pd=posRecall
 
-figure,plot(1:nTest, cell2mat(tRes(:,11)),1:nTest, cell2mat(tRes(:,3)),'r',1:nTest, cell2mat(tRes(:,4)),'g'),grid
+%figure,plot(1:nTest, cell2mat(tRes(:,11)),1:nTest, cell2mat(tRes(:,3)),'r',1:nTest, cell2mat(tRes(:,4)),'g'),grid
 
 %% ROC
 %%dist thresholding
-dth=0:0.1:4;
+dth=0:0.05:4;
+%dth=0:0.005:0.6;
 ndth=length(dth);
 pfa_dth=zeros(1,ndth);
 pd_dth=zeros(1,ndth);
@@ -119,5 +120,11 @@ legend('Dist thresholding','SVM thresholding');
 % title('AP-Recall'),xlabel('P_{fa}'),ylabel('P_d');
 % legend('Dist thresholding','SVM thresholding');
 
+%pfa1=pfa_simth;
+%pd1=pd_simth;
 
-
+% pfa2=pfa_simth;
+% pd2=pd_simth;
+% figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
+% title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+% legend('10000 random negatives','Predicted negatives');

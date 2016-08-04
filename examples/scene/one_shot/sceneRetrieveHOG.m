@@ -47,7 +47,7 @@ resize=227;
 blk=16;
 %% do the test
 disp('start testing')
-for ii=551:nTest
+for ii=1:nTest
     tic
     disp(ii)
     image_path1=qImagPath;
