@@ -1,9 +1,9 @@
 %% scene analysis
 %% seperate positive and negative
 clc;
-clear;
-%close all;
-load('imageRetrieve700_svm_Eiffel_Tower_1.mat');
+%clear;
+close all;
+load('imageRetrieve700_svm_Taj_Mahal_1.mat');
 nTest=length(tRes);
 %ttRes=tRes(1:nTest,:);
 
@@ -123,8 +123,10 @@ legend('Dist thresholding','SVM thresholding');
 %pfa1=pfa_simth;
 %pd1=pd_simth;
 
-% pfa2=pfa_simth;
-% pd2=pd_simth;
-% figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
-% title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
-% legend('10000 random negatives','Predicted negatives');
+pfa2=pfa_simth;
+pd2=pd_simth;
+
+figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
+title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+legend('Classic One-Shot learning', 'Our method');
+%legend('10000 random negatives','Predicted negatives');
