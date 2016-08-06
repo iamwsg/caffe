@@ -8,18 +8,15 @@ addpath /home/shaogang/caffe/examples/scene/one_shot
 posFeatPath='/home/shaogang/Datasets/posFeatsHOG/';
 imageRepos='/home/shaogang/Datasets/scenes/';
 
-%% load query im'/home/shaogang/scenes/'age 
-qScene='Morning_Glorry_Pool';
-qImagPath=strcat(imageRepos,qScene,'/1.jpg');
-qImag=imread(qImagPath);
-figure, imshow(qImag);
+%%prepare files
+fileId=fopen('sameScene.txt');
+cats=textscan(fileId,'%s');
+fclose(fileId);
 
-qImageCells=strsplit(qImagPath, '/');
-nQcell=length(qImageCells);
-qImagFeatFile=[posFeatPath,qImageCells{nQcell-1},'_',qImageCells{nQcell},'.mat']
-
-feat=load(qImagFeatFile);
-pos_feat1=feat.pos_feat;
+n=length(cats{1});
+n_colors=1;
+resize=227;
+vname=@(x) inputname(1);
 
 %% prepare lable file
 labelFile='/home/shaogang/Downloads/placesCNN_upgraded/categoryIndex_places205.csv';
@@ -34,6 +31,27 @@ testImags=dir(posFeatPath);
 disp('preload negative features')
 load('/home/shaogang/Datasets/negHOG.mat');
 neg=negHOG;
+
+for jj=574:575
+    imgPath=cats{1}{jj};
+    disp(imgPath)
+    cpath=strsplit(imgPath,'/');
+    qImagPath=strcat('/home/shaogang/',cpath{4},'/',cpath{5},'/',cpath{6},'/',cpath{7});
+
+%% load query image 
+qScene=cpath{6};
+%qImagPath=strcat('/media/sf_Datasets/Scenes/images/',qScene,'/1.jpg');
+qImag=imread(qImagPath);
+%figure, imshow(qImag);
+
+qImageCells=strsplit(qImagPath, '/');
+nQcell=length(qImageCells);
+qImagFeatFile=[posFeatPath,qImageCells{nQcell-1},'_',qImageCells{nQcell},'.mat']
+
+feat=load(qImagFeatFile);
+pos_feat1=feat.pos_feat;
+
+
 
 
 %% prepare test result containner
@@ -111,4 +129,7 @@ for ii=1:nTest
         
     time=toc
     tRes{ii,12}=time;
+end
+    fileName=strcat('imageRetreveHOG/imageRetreveHOG_',cpath{6},'_',cpath{7},'.mat');
+    save(fileName, vname(tRes));
 end

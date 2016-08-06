@@ -18,7 +18,7 @@ n_colors=1;
 resize=227;
 vname=@(x) inputname(1);
 
-for jj=501:600
+for jj=574:600
     imgPath=cats{1}{jj};
     disp(imgPath)
     cpath=strsplit(imgPath,'/');
@@ -28,7 +28,7 @@ for jj=501:600
 qScene=cpath{6};
 %qImagPath=strcat('/media/sf_Datasets/Scenes/images/',qScene,'/1.jpg');
 qImag=imread(qImagPath);
-figure, imshow(qImag);
+%figure, imshow(qImag);
 
 qImageCells=strsplit(qImagPath, '/');
 nQcell=length(qImageCells);
