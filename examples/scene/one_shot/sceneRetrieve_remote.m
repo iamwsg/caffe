@@ -18,7 +18,7 @@ n_colors=1;
 resize=227;
 vname=@(x) inputname(1);
 
-for jj=574:600
+for jj=552:573
     imgPath=cats{1}{jj};
     disp(imgPath)
     cpath=strsplit(imgPath,'/');
