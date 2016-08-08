@@ -12,9 +12,9 @@ cd('/home/shaogangwang/mywork/caffe/');
 disp('prepare net')
 caffe.reset_all();
 caffe.set_mode_gpu();
-model = 'examples/scene/models/3_stream_train7_20000_pad/matchNetTestHingeMini_deploy.prototxt';
+model = 'examples/scene/models/19_stream_train7_20000_MAXpool_pad_M/matchNetTestHingeMini.prototxt';
 %model = 'examples/scene/models/3_stream_train7_20000_pad/matchNetTrainHingeMini.prototxt';
-weights = 'examples/scene/models/3_stream_train7_20000_pad/scene_iter_5000.caffemodel';
+weights = 'examples/scene/models/19_stream_train7_20000_MAXpool_pad_M/scene_iter_15000.caffemodel';
 net = caffe.Net(model, weights, 'test');
 
 p=[];label=[];
@@ -306,7 +306,7 @@ s19_ave_pfa=pfa_dth; s19_ave_pd=pd_dth;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 
 caffe.reset_all();
-caffe.set_mode_gpu();
+caffe.set_mode_cpu();
 model = 'examples/scene/models/19_stream_train7_20000_MAXpool/matchNetTestHingeMini.prototxt';
 %model = 'examples/scene/models/3_stream_train7_20000_pad/matchNetTrainHingeMini.prototxt';
 %weights = 'examples/scene/models/3_stream_train7_20000_pad/scene_iter_2000_loss_0.3.caffemodel';

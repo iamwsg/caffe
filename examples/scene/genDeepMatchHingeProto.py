@@ -491,7 +491,8 @@ def MmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
 testSrc="examples/scene/scene_test_pairs.lmdb"
 #padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
-padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
+#padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
+padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
 
 mean="examples/scene/scene_mean.binaryproto"
 
@@ -511,11 +512,11 @@ cropSize=64
 #trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-#trNetMini=matchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
-#teNetMini=matchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=MmatchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
-teNetMini=MmatchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)
+#trNetMini=MmatchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
+#teNetMini=MmatchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)
 
 #net=alex()
 #with open('./alex.prototxt', 'w') as f:

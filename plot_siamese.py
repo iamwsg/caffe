@@ -2,6 +2,7 @@
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 #print sys.argv[1]
 train_file = str(sys.argv[1])+".train";
@@ -12,8 +13,8 @@ train_log = pd.read_csv(train_file)
 test_log = pd.read_csv(test_file)
 _, ax1 = plt.subplots(figsize=(15, 10))
 ax2 = ax1.twinx()
-ax1.plot(train_log["NumIters"], train_log["loss"], alpha=0.4,label='Train Loss')
-ax1.plot(test_log["NumIters"], test_log["loss"], 'g',label='Test Loss')
+ax1.plot(train_log["NumIters"], 10*np.log10(train_log["loss"]), alpha=0.4,label='Train Loss (dB)')
+ax1.plot(test_log["NumIters"], 10*np.log10(test_log["loss"]), 'g',label='Test Loss (dB)')
 ax2.plot(test_log["NumIters"], test_log["accuracy"], 'r',label='Test Accuracy')
 ax2.plot(train_log["NumIters"], train_log["accuracy"], 'm',label='Train Accuracy')
 ax1.set_xlabel('iteration')
