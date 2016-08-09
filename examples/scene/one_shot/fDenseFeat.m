@@ -14,6 +14,7 @@ pos_size=size(pos1);
 n_positive=pos_size(4);
 
 %tic
+resize=227;
 net.blobs('data').reshape([resize resize 3 n_positive]); % reshape blob 'data'
 net.reshape();
 net.forward({pos1});

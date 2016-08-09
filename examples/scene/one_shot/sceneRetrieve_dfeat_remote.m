@@ -5,7 +5,7 @@ clc;
 addpath /home/shaogang/caffe/matlab
 addpath /home/shaogang/caffe/examples/scene/one_shot
 
-%posFeatPath='/home/shaogang/Datasets/posFeats/';
+posFeatPath='/home/shaogang/Datasets/posFeats/';
 imageRepos='/home/shaogang/Datasets/scenes/';
 
 %%prepare files
