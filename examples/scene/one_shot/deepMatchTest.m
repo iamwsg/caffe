@@ -12,11 +12,13 @@ cd('/home/shaogangwang/mywork/caffe/');
 disp('prepare net')
 caffe.reset_all();
 caffe.set_mode_gpu();
-model = 'examples/scene/models/19_stream_train7_20000_MAXpool_pad_M/matchNetTestHingeMini.prototxt';
-%model = 'examples/scene/models/3_stream_train7_20000_pad/matchNetTrainHingeMini.prototxt';
-weights = 'examples/scene/models/19_stream_train7_20000_MAXpool_pad_M/scene_iter_15000.caffemodel';
-net = caffe.Net(model, weights, 'test');
+model = 'examples/scene/models/19_stream_train11_300000_MAXpool_conv3/matchNetTestHingeMini.prototxt';
+weights = 'examples/scene/models/19_stream_train11_300000_MAXpool_conv3/scene_iter_35000.caffemodel';
+%model = 'examples/scene/models/19_stream_train7_20000_MAXpool_pad_M/matchNetTestHingeMini.prototxt';
+%weights = 'examples/scene/models/19_stream_train11_300000_MAXpool_conv3/scene_iter_35000.caffemodel';
 
+net = caffe.Net(model, weights, 'test');
+a=net.layers('InnerProduct2').params(1).get_data();
 p=[];label=[];
 for ii=1:10
     net.forward_prefilled();
@@ -306,7 +308,7 @@ s19_ave_pfa=pfa_dth; s19_ave_pd=pd_dth;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 
 caffe.reset_all();
-caffe.set_mode_cpu();
+caffe.set_mode_gpu();
 model = 'examples/scene/models/19_stream_train7_20000_MAXpool/matchNetTestHingeMini.prototxt';
 %model = 'examples/scene/models/3_stream_train7_20000_pad/matchNetTrainHingeMini.prototxt';
 %weights = 'examples/scene/models/3_stream_train7_20000_pad/scene_iter_2000_loss_0.3.caffemodel';

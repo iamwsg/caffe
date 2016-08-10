@@ -35680,3 +35680,5 @@ I0809 13:15:38.039983 15979 upgrade_proto.cpp:52] Attempting to upgrade input fi
 I0809 13:15:38.522640 15979 upgrade_proto.cpp:60] Successfully upgraded file specified using deprecated V1LayerParameter
 I0809 13:15:38.534440 15979 net.cpp:752] Ignoring source layer data
 I0809 13:15:38.613716 15979 net.cpp:752] Ignoring source layer loss
+[libprotobuf ERROR google/protobuf/descriptor_database.cc:57] File already exists in database: caffe.proto
+[libprotobuf FATAL google/protobuf/descriptor.cc:954] CHECK failed: generated_database_->Add(encoded_file_descriptor, size): 

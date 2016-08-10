@@ -4,6 +4,7 @@ import sys
 import os
 sys.path.insert(0, caffe_root + 'python')
 import caffe
+import numpy as np
 
 from caffe import layers as L, params as P
 
@@ -144,9 +145,23 @@ def sliceData(bottom):
 	i1,i2=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=3),ntop=2)
 	return i1,i2
 
+def sliceData3(bottom):
+	i1,i2,i3=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=[3,4]),ntop=3)
+	return i1,i2,i3
+
 def sliceData20(bottom):
-	i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]),ntop=20)
+	i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20=L.Slice(bottom, slice_param=dict(slice_dim=2, slice_point=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]),ntop=20)
 	return i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20
+
+
+def sliceDataN(bottom,n):
+	i=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=np.arange(n)+1),ntop=n)
+	return i
+
+
+#def sliceData20(bottom):
+#	i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]),ntop=20)
+#	return i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20
 
 def avePool(bottom):
 	return L.Pooling(bottom, kernel_size=2, stride=2, pool=P.Pooling.AVE)
@@ -418,6 +433,18 @@ def matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.loss=hingeLoss(trNet.dt,trNet.label)
 	return trNet
 
+def matchNetBaseLinePad(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.dt=doubleTowerMini(trNet.p1,trNet.p2)
+	trNet.accuracy=acc(trNet.dt, trNet.th, Phase)
+	trNet.loss=hingeLoss(trNet.dt,trNet.th)
+	return trNet
+
 
 
 def aconv(bottom, na ,numOutput, l1,d1,l2,d2, Pad, Group, kSize, st, Std, Val):
@@ -654,13 +681,12 @@ def metNet(b1,b2):
 	ip3=ip(drop2,1,"fc3_w","fc3_b")
 	return ip3
 
-def metricNet(src, Phase):
+def metricNet(src, trainBatchSize, Phase):
 	net=caffe.NetSpec()
 	net.data, net.label = data2(src,trainBatchSize,Phase)
 	net.th= threshold(net.label,0)
-	net.i1,net.i2,net.i3,net.i4,net.i5,net.i6,net.i7,net.i8,net.i9,
-		net.i10,net.i11,net.i12,net.i13,net.i14,net.i15,
-		net.i16,net.i17,net.i18,net.i19,net.i20=sliceData20(net.data)
+	net.i1, net.i2, net.i3, net.i4, net.i5, net.i6, net.i7, net.i8, net.i9, net.i10, net.i11, net.i12, net.i13, net.i14, net.i15, net.i16, net.i17, net.i18, net.i19, net.i20=sliceData20(net.data)
+
 	net.m1=metNet(net.i1,net.i11)
 	net.m2=metNet(net.i1,net.i12)
 	net.m3=metNet(net.i1,net.i13)
@@ -681,7 +707,7 @@ def metricNet(src, Phase):
 	net.m18=metNet(net.i9,net.i11)
 	net.m19=metNet(net.i10,net.i11)
 	net.con=concatN(net.m1,net.m2,net.m3,net.m4,net.m5,net.m6,net.m7,net.m8,
-		net.m9,net.m10,net.m11,net.m12,net.m13,net.m14,net.m15,net.m16,net.m17,net.m18,net.m19,net.m20)
+		net.m9,net.m10,net.m11,net.m12,net.m13,net.m14,net.m15,net.m16,net.m17,net.m18,net.m19)
 	net.r1=reshape(net.con,[0,1,1,-1])
 	net.p=unevenPool(net.r1,1,19, P.Pooling.MAX)	
 	net.r2=reshape(net.p,[0,1,1,-1])
@@ -693,18 +719,24 @@ def metricNet(src, Phase):
 
 #padSrc="examples/scene/scene_train_pairs_hinge.lmdb"
 #testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
-trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
-testSrc="examples/scene/scene_test_pairs.lmdb"
-#padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
-#padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
-padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
+#trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
 
-metricSrc="examples/scene/db"
+#padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
+padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
+#padSrc="examples/scene/train7_pairs_40000_pad.lmdb"
+#padSrc="examples/scene/train_pairs_1000_pad.lmdb"
+testSrc="examples/scene/test_pairs_1000_pad.lmdb"
+#testSrc="examples/scene/test_pairs_1000_pad.lmdb"
+
+#metricSrc="examples/scene/db"
+#metricSrcTest="examples/scene/db_test"
+metricSrc="/home/shaogangwang/Datasets/FeatsDB/featsTrain10k"
+metricSrcTest="/home/shaogangwang/Datasets/FeatsDB/featsTest1k"
 
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=64
-testBatchSize=64
+trainBatchSize=400
+testBatchSize=100
 cropSize=64
 
 #trNet=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
@@ -713,14 +745,23 @@ cropSize=64
 #trNetSimple=matchNetSimple(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetSimple=matchNetSimple(testSrc, mean, testBatchSize, cropSize,1)
 
-#trNetMini=matchNetBaseLine(trainSrc, mean, trainBatchSize, cropSize,0)
-#teNetMini=matchNetBaseLine(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetBaseLinePad(padSrc, mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetBaseLinePad(testSrc, mean, testBatchSize, cropSize,1)
 
 #trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetTrainPad_conv3(padSrc ,mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetTrainPad_conv3(testSrc, mean, testBatchSize, cropSize,1)
+#trNetMini=matchNetTrainPad_conv3(padSrc ,mean, trainBatchSize, cropSize,0)
+#teNetMini=matchNetTrainPad_conv3(testSrc, mean, testBatchSize, cropSize,1)
+
+
+
+#trMetNet=metricNet(metricSrc, trainBatchSize, 0)
+#teMetNet=metricNet(metricSrcTest, trainBatchSize, 1)
+#with open('./metNetTrain.prototxt', 'w') as f:
+#    f.write(str(trMetNet.to_proto()))
+#with open('./metNetTest.prototxt', 'w') as f:
+#    f.write(str(teMetNet.to_proto()))
 
 #trNetMini=MmatchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
 #teNetMini=MmatchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)

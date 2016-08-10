@@ -1,0 +1,2253 @@
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  top: "label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 1
+    mirror: false
+  }
+  data_param {
+    source: "examples/scene/db"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "th"
+  type: "Threshold"
+  bottom: "label"
+  top: "th"
+  threshold_param {
+    threshold: 0
+  }
+}
+layer {
+  name: "i1"
+  type: "Slice"
+  bottom: "data"
+  top: "i1"
+  top: "i2"
+  top: "i3"
+  top: "i4"
+  top: "i5"
+  top: "i6"
+  top: "i7"
+  top: "i8"
+  top: "i9"
+  top: "i10"
+  top: "i11"
+  top: "i12"
+  top: "i13"
+  top: "i14"
+  top: "i15"
+  top: "i16"
+  top: "i17"
+  top: "i18"
+  top: "i19"
+  top: "i20"
+  slice_param {
+    slice_dim: 1
+    slice_point: 1
+    slice_point: 2
+    slice_point: 3
+    slice_point: 4
+    slice_point: 5
+    slice_point: 6
+    slice_point: 7
+    slice_point: 8
+    slice_point: 9
+    slice_point: 10
+    slice_point: 11
+    slice_point: 12
+    slice_point: 13
+    slice_point: 14
+    slice_point: 15
+    slice_point: 16
+    slice_point: 17
+    slice_point: 18
+    slice_point: 19
+  }
+}
+layer {
+  name: "Concat1"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i11"
+  top: "Concat1"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct1"
+  type: "InnerProduct"
+  bottom: "Concat1"
+  top: "InnerProduct1"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU1"
+  type: "ReLU"
+  bottom: "InnerProduct1"
+  top: "InnerProduct1"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct1"
+  top: "Dropout1"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct2"
+  type: "InnerProduct"
+  bottom: "Dropout1"
+  top: "InnerProduct2"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU2"
+  type: "ReLU"
+  bottom: "InnerProduct2"
+  top: "InnerProduct2"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct2"
+  top: "Dropout2"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m1"
+  type: "InnerProduct"
+  bottom: "Dropout2"
+  top: "m1"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat2"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i12"
+  top: "Concat2"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct3"
+  type: "InnerProduct"
+  bottom: "Concat2"
+  top: "InnerProduct3"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU3"
+  type: "ReLU"
+  bottom: "InnerProduct3"
+  top: "InnerProduct3"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct3"
+  top: "Dropout3"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct4"
+  type: "InnerProduct"
+  bottom: "Dropout3"
+  top: "InnerProduct4"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU4"
+  type: "ReLU"
+  bottom: "InnerProduct4"
+  top: "InnerProduct4"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct4"
+  top: "Dropout4"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m2"
+  type: "InnerProduct"
+  bottom: "Dropout4"
+  top: "m2"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat3"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i13"
+  top: "Concat3"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct5"
+  type: "InnerProduct"
+  bottom: "Concat3"
+  top: "InnerProduct5"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU5"
+  type: "ReLU"
+  bottom: "InnerProduct5"
+  top: "InnerProduct5"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct5"
+  top: "Dropout5"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct6"
+  type: "InnerProduct"
+  bottom: "Dropout5"
+  top: "InnerProduct6"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU6"
+  type: "ReLU"
+  bottom: "InnerProduct6"
+  top: "InnerProduct6"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct6"
+  top: "Dropout6"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m3"
+  type: "InnerProduct"
+  bottom: "Dropout6"
+  top: "m3"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat4"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i14"
+  top: "Concat4"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct7"
+  type: "InnerProduct"
+  bottom: "Concat4"
+  top: "InnerProduct7"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU7"
+  type: "ReLU"
+  bottom: "InnerProduct7"
+  top: "InnerProduct7"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct7"
+  top: "Dropout7"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct8"
+  type: "InnerProduct"
+  bottom: "Dropout7"
+  top: "InnerProduct8"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU8"
+  type: "ReLU"
+  bottom: "InnerProduct8"
+  top: "InnerProduct8"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct8"
+  top: "Dropout8"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m4"
+  type: "InnerProduct"
+  bottom: "Dropout8"
+  top: "m4"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat5"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i15"
+  top: "Concat5"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct9"
+  type: "InnerProduct"
+  bottom: "Concat5"
+  top: "InnerProduct9"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU9"
+  type: "ReLU"
+  bottom: "InnerProduct9"
+  top: "InnerProduct9"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct9"
+  top: "Dropout9"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct10"
+  type: "InnerProduct"
+  bottom: "Dropout9"
+  top: "InnerProduct10"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU10"
+  type: "ReLU"
+  bottom: "InnerProduct10"
+  top: "InnerProduct10"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct10"
+  top: "Dropout10"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m5"
+  type: "InnerProduct"
+  bottom: "Dropout10"
+  top: "m5"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat6"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i16"
+  top: "Concat6"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct11"
+  type: "InnerProduct"
+  bottom: "Concat6"
+  top: "InnerProduct11"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU11"
+  type: "ReLU"
+  bottom: "InnerProduct11"
+  top: "InnerProduct11"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct11"
+  top: "Dropout11"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct12"
+  type: "InnerProduct"
+  bottom: "Dropout11"
+  top: "InnerProduct12"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU12"
+  type: "ReLU"
+  bottom: "InnerProduct12"
+  top: "InnerProduct12"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct12"
+  top: "Dropout12"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m6"
+  type: "InnerProduct"
+  bottom: "Dropout12"
+  top: "m6"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat7"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i17"
+  top: "Concat7"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct13"
+  type: "InnerProduct"
+  bottom: "Concat7"
+  top: "InnerProduct13"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU13"
+  type: "ReLU"
+  bottom: "InnerProduct13"
+  top: "InnerProduct13"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct13"
+  top: "Dropout13"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct14"
+  type: "InnerProduct"
+  bottom: "Dropout13"
+  top: "InnerProduct14"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU14"
+  type: "ReLU"
+  bottom: "InnerProduct14"
+  top: "InnerProduct14"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct14"
+  top: "Dropout14"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m7"
+  type: "InnerProduct"
+  bottom: "Dropout14"
+  top: "m7"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat8"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i18"
+  top: "Concat8"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct15"
+  type: "InnerProduct"
+  bottom: "Concat8"
+  top: "InnerProduct15"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU15"
+  type: "ReLU"
+  bottom: "InnerProduct15"
+  top: "InnerProduct15"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct15"
+  top: "Dropout15"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct16"
+  type: "InnerProduct"
+  bottom: "Dropout15"
+  top: "InnerProduct16"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU16"
+  type: "ReLU"
+  bottom: "InnerProduct16"
+  top: "InnerProduct16"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct16"
+  top: "Dropout16"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m8"
+  type: "InnerProduct"
+  bottom: "Dropout16"
+  top: "m8"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat9"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i19"
+  top: "Concat9"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct17"
+  type: "InnerProduct"
+  bottom: "Concat9"
+  top: "InnerProduct17"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU17"
+  type: "ReLU"
+  bottom: "InnerProduct17"
+  top: "InnerProduct17"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct17"
+  top: "Dropout17"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct18"
+  type: "InnerProduct"
+  bottom: "Dropout17"
+  top: "InnerProduct18"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU18"
+  type: "ReLU"
+  bottom: "InnerProduct18"
+  top: "InnerProduct18"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct18"
+  top: "Dropout18"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m9"
+  type: "InnerProduct"
+  bottom: "Dropout18"
+  top: "m9"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat10"
+  type: "Concat"
+  bottom: "i1"
+  bottom: "i20"
+  top: "Concat10"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct19"
+  type: "InnerProduct"
+  bottom: "Concat10"
+  top: "InnerProduct19"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU19"
+  type: "ReLU"
+  bottom: "InnerProduct19"
+  top: "InnerProduct19"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct19"
+  top: "Dropout19"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct20"
+  type: "InnerProduct"
+  bottom: "Dropout19"
+  top: "InnerProduct20"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU20"
+  type: "ReLU"
+  bottom: "InnerProduct20"
+  top: "InnerProduct20"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct20"
+  top: "Dropout20"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m10"
+  type: "InnerProduct"
+  bottom: "Dropout20"
+  top: "m10"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat11"
+  type: "Concat"
+  bottom: "i2"
+  bottom: "i11"
+  top: "Concat11"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct21"
+  type: "InnerProduct"
+  bottom: "Concat11"
+  top: "InnerProduct21"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU21"
+  type: "ReLU"
+  bottom: "InnerProduct21"
+  top: "InnerProduct21"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct21"
+  top: "Dropout21"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct22"
+  type: "InnerProduct"
+  bottom: "Dropout21"
+  top: "InnerProduct22"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU22"
+  type: "ReLU"
+  bottom: "InnerProduct22"
+  top: "InnerProduct22"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct22"
+  top: "Dropout22"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m11"
+  type: "InnerProduct"
+  bottom: "Dropout22"
+  top: "m11"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat12"
+  type: "Concat"
+  bottom: "i3"
+  bottom: "i11"
+  top: "Concat12"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct23"
+  type: "InnerProduct"
+  bottom: "Concat12"
+  top: "InnerProduct23"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU23"
+  type: "ReLU"
+  bottom: "InnerProduct23"
+  top: "InnerProduct23"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct23"
+  top: "Dropout23"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct24"
+  type: "InnerProduct"
+  bottom: "Dropout23"
+  top: "InnerProduct24"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU24"
+  type: "ReLU"
+  bottom: "InnerProduct24"
+  top: "InnerProduct24"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct24"
+  top: "Dropout24"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m12"
+  type: "InnerProduct"
+  bottom: "Dropout24"
+  top: "m12"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat13"
+  type: "Concat"
+  bottom: "i4"
+  bottom: "i11"
+  top: "Concat13"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct25"
+  type: "InnerProduct"
+  bottom: "Concat13"
+  top: "InnerProduct25"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU25"
+  type: "ReLU"
+  bottom: "InnerProduct25"
+  top: "InnerProduct25"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct25"
+  top: "Dropout25"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct26"
+  type: "InnerProduct"
+  bottom: "Dropout25"
+  top: "InnerProduct26"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU26"
+  type: "ReLU"
+  bottom: "InnerProduct26"
+  top: "InnerProduct26"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct26"
+  top: "Dropout26"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m13"
+  type: "InnerProduct"
+  bottom: "Dropout26"
+  top: "m13"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat14"
+  type: "Concat"
+  bottom: "i5"
+  bottom: "i11"
+  top: "Concat14"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct27"
+  type: "InnerProduct"
+  bottom: "Concat14"
+  top: "InnerProduct27"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU27"
+  type: "ReLU"
+  bottom: "InnerProduct27"
+  top: "InnerProduct27"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct27"
+  top: "Dropout27"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct28"
+  type: "InnerProduct"
+  bottom: "Dropout27"
+  top: "InnerProduct28"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU28"
+  type: "ReLU"
+  bottom: "InnerProduct28"
+  top: "InnerProduct28"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct28"
+  top: "Dropout28"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m14"
+  type: "InnerProduct"
+  bottom: "Dropout28"
+  top: "m14"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat15"
+  type: "Concat"
+  bottom: "i6"
+  bottom: "i11"
+  top: "Concat15"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct29"
+  type: "InnerProduct"
+  bottom: "Concat15"
+  top: "InnerProduct29"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU29"
+  type: "ReLU"
+  bottom: "InnerProduct29"
+  top: "InnerProduct29"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct29"
+  top: "Dropout29"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct30"
+  type: "InnerProduct"
+  bottom: "Dropout29"
+  top: "InnerProduct30"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU30"
+  type: "ReLU"
+  bottom: "InnerProduct30"
+  top: "InnerProduct30"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct30"
+  top: "Dropout30"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m15"
+  type: "InnerProduct"
+  bottom: "Dropout30"
+  top: "m15"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat16"
+  type: "Concat"
+  bottom: "i7"
+  bottom: "i11"
+  top: "Concat16"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct31"
+  type: "InnerProduct"
+  bottom: "Concat16"
+  top: "InnerProduct31"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU31"
+  type: "ReLU"
+  bottom: "InnerProduct31"
+  top: "InnerProduct31"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct31"
+  top: "Dropout31"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct32"
+  type: "InnerProduct"
+  bottom: "Dropout31"
+  top: "InnerProduct32"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU32"
+  type: "ReLU"
+  bottom: "InnerProduct32"
+  top: "InnerProduct32"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct32"
+  top: "Dropout32"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m16"
+  type: "InnerProduct"
+  bottom: "Dropout32"
+  top: "m16"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat17"
+  type: "Concat"
+  bottom: "i8"
+  bottom: "i11"
+  top: "Concat17"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct33"
+  type: "InnerProduct"
+  bottom: "Concat17"
+  top: "InnerProduct33"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU33"
+  type: "ReLU"
+  bottom: "InnerProduct33"
+  top: "InnerProduct33"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct33"
+  top: "Dropout33"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct34"
+  type: "InnerProduct"
+  bottom: "Dropout33"
+  top: "InnerProduct34"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU34"
+  type: "ReLU"
+  bottom: "InnerProduct34"
+  top: "InnerProduct34"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct34"
+  top: "Dropout34"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m17"
+  type: "InnerProduct"
+  bottom: "Dropout34"
+  top: "m17"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat18"
+  type: "Concat"
+  bottom: "i9"
+  bottom: "i11"
+  top: "Concat18"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct35"
+  type: "InnerProduct"
+  bottom: "Concat18"
+  top: "InnerProduct35"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU35"
+  type: "ReLU"
+  bottom: "InnerProduct35"
+  top: "InnerProduct35"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct35"
+  top: "Dropout35"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct36"
+  type: "InnerProduct"
+  bottom: "Dropout35"
+  top: "InnerProduct36"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU36"
+  type: "ReLU"
+  bottom: "InnerProduct36"
+  top: "InnerProduct36"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct36"
+  top: "Dropout36"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m18"
+  type: "InnerProduct"
+  bottom: "Dropout36"
+  top: "m18"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Concat19"
+  type: "Concat"
+  bottom: "i10"
+  bottom: "i11"
+  top: "Concat19"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "InnerProduct37"
+  type: "InnerProduct"
+  bottom: "Concat19"
+  top: "InnerProduct37"
+  param {
+    name: "fc1_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc1_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU37"
+  type: "ReLU"
+  bottom: "InnerProduct37"
+  top: "InnerProduct37"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "InnerProduct37"
+  top: "Dropout37"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "InnerProduct38"
+  type: "InnerProduct"
+  bottom: "Dropout37"
+  top: "InnerProduct38"
+  param {
+    name: "fc2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc2_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 64
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ReLU38"
+  type: "ReLU"
+  bottom: "InnerProduct38"
+  top: "InnerProduct38"
+}
+layer {
+  name: "drop2"
+  type: "Dropout"
+  bottom: "InnerProduct38"
+  top: "Dropout38"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "m19"
+  type: "InnerProduct"
+  bottom: "Dropout38"
+  top: "m19"
+  param {
+    name: "fc3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "fc3_b"
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "con"
+  type: "Concat"
+  bottom: "m1"
+  bottom: "m2"
+  bottom: "m3"
+  bottom: "m4"
+  bottom: "m5"
+  bottom: "m6"
+  bottom: "m7"
+  bottom: "m8"
+  bottom: "m9"
+  bottom: "m10"
+  bottom: "m11"
+  bottom: "m12"
+  bottom: "m13"
+  bottom: "m14"
+  bottom: "m15"
+  bottom: "m16"
+  bottom: "m17"
+  bottom: "m18"
+  bottom: "m19"
+  top: "con"
+  concat_param {
+    axis: -1
+  }
+}
+layer {
+  name: "r1"
+  type: "Reshape"
+  bottom: "con"
+  top: "r1"
+  reshape_param {
+    shape {
+      dim: 0
+      dim: 1
+      dim: 1
+      dim: -1
+    }
+  }
+}
+layer {
+  name: "p"
+  type: "Pooling"
+  bottom: "r1"
+  top: "p"
+  pooling_param {
+    pool: MAX
+    stride: 1
+    kernel_h: 1
+    kernel_w: 19
+  }
+}
+layer {
+  name: "r2"
+  type: "Reshape"
+  bottom: "p"
+  top: "r2"
+  reshape_param {
+    shape {
+      dim: 0
+      dim: 1
+      dim: 1
+      dim: -1
+    }
+  }
+}
+layer {
+  name: "padL"
+  type: "Reshape"
+  bottom: "label"
+  top: "padL"
+  reshape_param {
+    shape {
+      dim: 0
+      dim: 1
+      dim: 1
+      dim: -1
+    }
+  }
+}
+layer {
+  name: "pad"
+  type: "Concat"
+  bottom: "r2"
+  bottom: "padL"
+  top: "pad"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "loss"
+  type: "HingeLoss"
+  bottom: "pad"
+  bottom: "th"
+  top: "loss"
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "pad"
+  bottom: "th"
+  top: "accuracy"
+  include {
+    phase: TRAIN
+  }
+}

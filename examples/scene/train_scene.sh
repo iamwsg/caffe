@@ -10,3 +10,7 @@ $TOOLS/caffe train --solver=examples/scene/scene_solver_2.prototxt 2>&1 | tee sc
 
 #./convert_pairs.bin --resize_height=128 --resize_width=128 /home/shaogangwang/Datasets/ /home/shaogangwang/mywork/caffe/examples/scene/train11_pairs_300000_pad.txt /home/shaogangwang/mywork/caffe/examples/scene/train11_pairs_300000_pad.lmdb
 
+
+#./convert_pairs.bin --resize_height=128 --resize_width=128 /home/shaogangwang/Datasets/ /home/shaogangwang/mywork/caffe/examples/scene/train7_pairs_40000_pad.txt /home/shaogangwang/mywork/caffe/examples/scene/train7_pairs_40000_pad.lmdb
+
+#./convert_pairs.bin --resize_height=128 --resize_width=128 /home/shaogangwang/Datasets/ /home/shaogangwang/mywork/caffe/examples/scene/test_pairs_1000_pad.txt /home/shaogangwang/mywork/caffe/examples/scene/test_pairs_1000_pad.lmdb
