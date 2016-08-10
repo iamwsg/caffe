@@ -3,7 +3,10 @@
 clc;
 %clear;
 close all;
-load('imageRetrieve700_svm_Taj_Mahal_1.mat');
+%load('imageRetrieve700_svm_Taj_Mahal_1.mat');
+
+tRes(:,4)=tRes(:,15); %for dense features
+
 nTest=length(tRes);
 %ttRes=tRes(1:nTest,:);
 
@@ -68,6 +71,7 @@ negRecallNaive=recall(naiveNeg,trueTruthNeg,1)
 %%dist thresholding
 dth=0:0.05:4;
 %dth=0:0.005:0.6;
+dth=linspace(0,0.05); %for dense feat
 ndth=length(dth);
 pfa_dth=zeros(1,ndth);
 pd_dth=zeros(1,ndth);
@@ -92,6 +96,7 @@ end
 %figure,plot(pfa_dth,pd_dth),grid;
 
 simth=0:1/ndth:1-1/ndth;
+%simth=0:0.045/ndth:0.045-0.045/ndth;
 pfa_simth=zeros(1,ndth);
 pd_simth=zeros(1,ndth);
 ap_simth=pd_dth;
@@ -106,6 +111,7 @@ for ii=1:ndth
         end
     end
     falseAlarm=find(([Res{:,3}]==1) & ([Res{:,15}]==0));
+    missDet=find(([Res{:,3}]==0) & ([Res{:,15}]==1));
     pfa_simth(ii)=length(falseAlarm)/length(find(([Res{:,3}]==1)));
     pd=find(([Res{:,3}]==0) & ([Res{:,15}]==0));
     pd_simth(ii)= length(pd)/length(find([Res{:,3}]==0));
@@ -120,13 +126,13 @@ legend('Dist thresholding','SVM thresholding');
 % title('AP-Recall'),xlabel('P_{fa}'),ylabel('P_d');
 % legend('Dist thresholding','SVM thresholding');
 
-%pfa1=pfa_simth;
-%pd1=pd_simth;
+pfa1=pfa_simth;
+pd1=pd_simth;
 
-pfa2=pfa_simth;
-pd2=pd_simth;
-
-figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
-title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
-legend('Classic One-Shot learning', 'Our method');
+% pfa2=pfa_simth;
+% pd2=pd_simth;
+% 
+% figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
+% title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+% legend('More representative query', 'Less representative query');
 %legend('10000 random negatives','Predicted negatives');

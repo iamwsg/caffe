@@ -50,7 +50,7 @@ X1=[pos_feat; neg_feat];
 pp1=pos_feat*coef(:,1:2);
 nn1=neg_feat*coef(:,1:2);
 figure,plot(pp1(:,1),pp1(:,2),'bo',nn1(:,1),nn1(:,2),'r*'),grid;
-
+title('HOG space'),legend('Positive samples','Hard negative samples');
 %% Deep feature
 %% prepare the net
 disp('prepare net')
@@ -90,6 +90,7 @@ X1=[pos_feat; neg_feat];
 pp1=pos_feat*coef(:,1:2);
 nn1=neg_feat*coef(:,1:2);
 figure,plot(pp1(:,1),pp1(:,2),'bo',nn1(:,1),nn1(:,2),'r*'),grid;
+title('Deep feature space'),legend('Positive samples','Hard negative samples');
 
 
 
