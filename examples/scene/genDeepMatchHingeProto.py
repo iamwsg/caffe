@@ -135,10 +135,18 @@ def acc(netOutput, label, Phase):
 def data(src, mean, numBatch, Phase):
 	pair_data, label = L.Data(batch_size=numBatch, backend=P.Data.LMDB, source=src, include=dict(phase=Phase) ,transform_param=dict(scale=1./255, mirror=True, mean_file = mean) ,ntop=2)
 	return pair_data, label
+
+def data2(src, numBatch, Phase):
+	pair_data, label = L.Data(batch_size=numBatch, backend=P.Data.LMDB, source=src, include=dict(phase=Phase) ,transform_param=dict(scale=1, mirror=False) ,ntop=2)
+	return pair_data, label
 	
 def sliceData(bottom):
 	i1,i2=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=3),ntop=2)
 	return i1,i2
+
+def sliceData20(bottom):
+	i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20=L.Slice(bottom, slice_param=dict(slice_dim=1, slice_point=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]),ntop=20)
+	return i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15,i16,i17,i18,i19,i20
 
 def avePool(bottom):
 	return L.Pooling(bottom, kernel_size=2, stride=2, pool=P.Pooling.AVE)
@@ -635,6 +643,53 @@ def MmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
 	return trNet
 
+def metNet(b1,b2):
+	con=concat(b1,b2)
+	ip1=ip(con,64,"fc1_w","fc1_b")
+	relu1=reLu(ip1)
+	drop1=drop(relu1,"drop1",0.5)
+	ip2=ip(drop1,64,"fc2_w","fc2_b")
+	relu2=reLu(ip2)
+	drop2=drop(relu2,"drop2",0.5)
+	ip3=ip(drop2,1,"fc3_w","fc3_b")
+	return ip3
+
+def metricNet(src, Phase):
+	net=caffe.NetSpec()
+	net.data, net.label = data2(src,trainBatchSize,Phase)
+	net.th= threshold(net.label,0)
+	net.i1,net.i2,net.i3,net.i4,net.i5,net.i6,net.i7,net.i8,net.i9,
+		net.i10,net.i11,net.i12,net.i13,net.i14,net.i15,
+		net.i16,net.i17,net.i18,net.i19,net.i20=sliceData20(net.data)
+	net.m1=metNet(net.i1,net.i11)
+	net.m2=metNet(net.i1,net.i12)
+	net.m3=metNet(net.i1,net.i13)
+	net.m4=metNet(net.i1,net.i14)
+	net.m5=metNet(net.i1,net.i15)
+	net.m6=metNet(net.i1,net.i16)
+	net.m7=metNet(net.i1,net.i17)
+	net.m8=metNet(net.i1,net.i18)
+	net.m9=metNet(net.i1,net.i19)
+	net.m10=metNet(net.i1,net.i20)
+	net.m11=metNet(net.i2,net.i11)
+	net.m12=metNet(net.i3,net.i11)
+	net.m13=metNet(net.i4,net.i11)
+	net.m14=metNet(net.i5,net.i11)
+	net.m15=metNet(net.i6,net.i11)
+	net.m16=metNet(net.i7,net.i11)
+	net.m17=metNet(net.i8,net.i11)
+	net.m18=metNet(net.i9,net.i11)
+	net.m19=metNet(net.i10,net.i11)
+	net.con=concatN(net.m1,net.m2,net.m3,net.m4,net.m5,net.m6,net.m7,net.m8,
+		net.m9,net.m10,net.m11,net.m12,net.m13,net.m14,net.m15,net.m16,net.m17,net.m18,net.m19,net.m20)
+	net.r1=reshape(net.con,[0,1,1,-1])
+	net.p=unevenPool(net.r1,1,19, P.Pooling.MAX)	
+	net.r2=reshape(net.p,[0,1,1,-1])
+	net.padL=reshape(net.label,[0,1,1,-1])
+	net.pad=padLabel(net.r2,net.padL)
+	net.loss=hingeLoss(net.pad,net.th)
+	net.accuracy=acc(net.pad, net.th, Phase)
+	return net
 
 #trainSrc="examples/scene/scene_train_pairs_hinge.lmdb"
 #testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
@@ -643,6 +698,8 @@ testSrc="examples/scene/scene_test_pairs.lmdb"
 #padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
 #padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
 padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
+
+metricSrc="examples/scene/db"
 
 mean="examples/scene/scene_mean.binaryproto"
 
