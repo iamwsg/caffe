@@ -636,7 +636,7 @@ def MmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	return trNet
 
 
-#trainSrc="examples/scene/scene_train_pairs_hinge.lmdb"
+#padSrc="examples/scene/scene_train_pairs_hinge.lmdb"
 #testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
 trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
 testSrc="examples/scene/scene_test_pairs.lmdb"
