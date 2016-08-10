@@ -481,6 +481,19 @@ def alexTower(bottom):
 	relu7=reLu(fc7)
 	return relu7
 
+def alexDoubleTower(bottom1,bottom2):
+	t1=alexTower(bottom1)
+	t2=alexTower(bottom2)
+	con=concat(t1,t2)
+	ip1=ip(con,64,"fc1_w","fc1_b")
+	relu1=reLu(ip1)
+	drop1=drop(relu1,"drop1",0.5)
+	ip2=ip(drop1,64,"fc2_w","fc2_b")
+	relu2=reLu(ip2)
+	drop2=drop(relu2,"drop2",0.5)
+	ip3=ip(drop2,1,"fc3_w","fc3_b")
+	return ip3
+
 def mTower(bottom):
 	conv0=aconv(bottom, "conv0", 24, 1,1,2,0,3,1,7,1,0.01,0)
 	relu1=reLu(conv0)
@@ -510,6 +523,62 @@ def mDoubleTower(bottom1,bottom2):
 
 
 ##19 pipelines with paded labels
+def AmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.c11=crop(trNet.i1,Phase,trainBatchSize,2,[0,0],cropSize)
+	trNet.c12=crop(trNet.i1,Phase,trainBatchSize,2,[0,32],cropSize)
+	trNet.c13=crop(trNet.i1,Phase,trainBatchSize,2,[0,64],cropSize)
+	trNet.c14=crop(trNet.i1,Phase,trainBatchSize,2,[32,0],cropSize)
+	trNet.c15=crop(trNet.i1,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c16=crop(trNet.i1,Phase,trainBatchSize,2,[32,64],cropSize)
+	trNet.c17=crop(trNet.i1,Phase,trainBatchSize,2,[64,0],cropSize)
+	trNet.c18=crop(trNet.i1,Phase,trainBatchSize,2,[64,32],cropSize)
+	trNet.c19=crop(trNet.i1,Phase,trainBatchSize,2,[64,64],cropSize)
+	trNet.c21=crop(trNet.i2,Phase,trainBatchSize,2,[0,0],cropSize)
+	trNet.c22=crop(trNet.i2,Phase,trainBatchSize,2,[0,32],cropSize)
+	trNet.c23=crop(trNet.i2,Phase,trainBatchSize,2,[0,64],cropSize)
+	trNet.c24=crop(trNet.i2,Phase,trainBatchSize,2,[32,0],cropSize)
+	trNet.c25=crop(trNet.i2,Phase,trainBatchSize,2,[32,32],cropSize)
+	trNet.c26=crop(trNet.i2,Phase,trainBatchSize,2,[32,64],cropSize)
+	trNet.c27=crop(trNet.i2,Phase,trainBatchSize,2,[64,0],cropSize)
+	trNet.c28=crop(trNet.i2,Phase,trainBatchSize,2,[64,32],cropSize)
+	trNet.c29=crop(trNet.i2,Phase,trainBatchSize,2,[64,64],cropSize)
+	trNet.dt0=alexDoubleTower(trNet.p1,trNet.p2)
+	trNet.dt1=alexDoubleTower(trNet.p1,trNet.c21)
+	trNet.dt2=alexDoubleTower(trNet.p1,trNet.c22)
+	trNet.dt3=alexDoubleTower(trNet.p1,trNet.c23)
+	trNet.dt4=alexDoubleTower(trNet.p1,trNet.c24)
+	trNet.dt5=alexDoubleTower(trNet.p1,trNet.c25)
+	trNet.dt6=alexDoubleTower(trNet.p1,trNet.c26)
+	trNet.dt7=alexDoubleTower(trNet.p1,trNet.c27)
+	trNet.dt8=alexDoubleTower(trNet.p1,trNet.c28)
+	trNet.dt9=alexDoubleTower(trNet.p1,trNet.c29)
+	trNet.dt10=alexDoubleTower(trNet.p2,trNet.c11)
+	trNet.dt11=alexDoubleTower(trNet.p2,trNet.c12)
+	trNet.dt12=alexDoubleTower(trNet.p2,trNet.c13)
+	trNet.dt13=alexDoubleTower(trNet.p2,trNet.c14)
+	trNet.dt14=alexDoubleTower(trNet.p2,trNet.c15)
+	trNet.dt15=alexDoubleTower(trNet.p2,trNet.c16)
+	trNet.dt16=alexDoubleTower(trNet.p2,trNet.c17)
+	trNet.dt17=alexDoubleTower(trNet.p2,trNet.c18)
+	trNet.dt18=alexDoubleTower(trNet.p2,trNet.c19)
+	trNet.con=concatN(trNet.dt0,trNet.dt1,trNet.dt2,trNet.dt3,trNet.dt4,trNet.dt5,trNet.dt6,trNet.dt7,
+			trNet.dt8,trNet.dt9,trNet.dt10,trNet.dt11,trNet.dt12,trNet.dt13,trNet.dt14,trNet.dt15,
+			trNet.dt16,trNet.dt17,trNet.dt18)
+	trNet.r1=reshape(trNet.con,[0,1,1,-1])
+	trNet.p=unevenPool(trNet.r1,1,19, P.Pooling.MAX)	
+	trNet.r2=reshape(trNet.p,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1])
+	trNet.pad=padLabel(trNet.r2,trNet.padL)
+	trNet.loss=hingeLoss(trNet.pad,trNet.th)
+	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
+	return trNet
+
 def MmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet=caffe.NetSpec()
 	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
@@ -565,7 +634,6 @@ def MmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.loss=hingeLoss(trNet.pad,trNet.th)
 	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
 	return trNet
-
 
 
 #trainSrc="examples/scene/scene_train_pairs_hinge.lmdb"
