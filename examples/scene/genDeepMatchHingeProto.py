@@ -730,8 +730,11 @@ testSrc="examples/scene/test_pairs_1000_pad.lmdb"
 
 #metricSrc="examples/scene/db"
 #metricSrcTest="examples/scene/db_test"
-metricSrc="/home/shaogangwang/Datasets/FeatsDB/featsTrain10k"
-metricSrcTest="/home/shaogangwang/Datasets/FeatsDB/featsTest1k"
+#metricSrc="/home/shaogangwang/Datasets/FeatsDB/featsTrain10k"
+#metricSrcTest="/home/shaogangwang/Datasets/FeatsDB/featsTest1k"
+metricSrc="/home/shaogang/Datasets/FeatsDB/featsTrain20k"
+metricSrcTest="/home/shaogang/Datasets/FeatsDB/featsTest1k"
+
 
 mean="examples/scene/scene_mean.binaryproto"
 

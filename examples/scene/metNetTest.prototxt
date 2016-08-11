@@ -11,8 +11,8 @@ layer {
     mirror: false
   }
   data_param {
-    source: "/home/shaogangwang/Datasets/FeatsDB/featsTest1k"
-    batch_size: 64
+    source: "/home/shaogang/Datasets/FeatsDB/featsTest1k"
+    batch_size: 100
     backend: LMDB
   }
 }
