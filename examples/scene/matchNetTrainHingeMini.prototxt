@@ -12,8 +12,8 @@ layer {
     mean_file: "examples/scene/scene_mean.binaryproto"
   }
   data_param {
-    source: "examples/scene/scene_train7_pairs_20000_pad.lmdb"
-    batch_size: 400
+    source: "examples/scene/train11_pairs_300000_pad.lmdb"
+    batch_size: 100
     backend: LMDB
   }
 }
@@ -73,7 +73,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 20
+    num_output: 50
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -109,7 +109,7 @@ layer {
     lr_mult: 2
   }
   convolution_param {
-    num_output: 50
+    num_output: 100
     kernel_size: 5
     stride: 1
     weight_filler {
@@ -132,9 +132,45 @@ layer {
   }
 }
 layer {
+  name: "Convolution3"
+  type: "Convolution"
+  bottom: "Pooling2"
+  top: "Convolution3"
+  param {
+    name: "conv3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv3_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 100
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Pooling3"
+  type: "Pooling"
+  bottom: "Convolution3"
+  top: "Pooling3"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
   name: "InnerProduct1"
   type: "InnerProduct"
-  bottom: "Pooling2"
+  bottom: "Pooling3"
   top: "InnerProduct1"
   param {
     name: "ip1_w"
@@ -145,7 +181,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 100
+    num_output: 200
     weight_filler {
       type: "xavier"
     }
@@ -174,7 +210,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 50
+    num_output: 100
     weight_filler {
       type: "xavier"
     }
@@ -184,52 +220,16 @@ layer {
   }
 }
 layer {
-  name: "Convolution3"
+  name: "Convolution4"
   type: "Convolution"
   bottom: "p2"
-  top: "Convolution3"
+  top: "Convolution4"
   param {
     name: "conv1_w"
     lr_mult: 1
   }
   param {
     name: "conv1_b"
-    lr_mult: 2
-  }
-  convolution_param {
-    num_output: 20
-    kernel_size: 5
-    stride: 1
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layer {
-  name: "Pooling3"
-  type: "Pooling"
-  bottom: "Convolution3"
-  top: "Pooling3"
-  pooling_param {
-    pool: MAX
-    kernel_size: 2
-    stride: 2
-  }
-}
-layer {
-  name: "Convolution4"
-  type: "Convolution"
-  bottom: "Pooling3"
-  top: "Convolution4"
-  param {
-    name: "conv2_w"
-    lr_mult: 1
-  }
-  param {
-    name: "conv2_b"
     lr_mult: 2
   }
   convolution_param {
@@ -256,9 +256,81 @@ layer {
   }
 }
 layer {
+  name: "Convolution5"
+  type: "Convolution"
+  bottom: "Pooling4"
+  top: "Convolution5"
+  param {
+    name: "conv2_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv2_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 100
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Pooling5"
+  type: "Pooling"
+  bottom: "Convolution5"
+  top: "Pooling5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "Convolution6"
+  type: "Convolution"
+  bottom: "Pooling5"
+  top: "Convolution6"
+  param {
+    name: "conv3_w"
+    lr_mult: 1
+  }
+  param {
+    name: "conv3_b"
+    lr_mult: 2
+  }
+  convolution_param {
+    num_output: 100
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "Pooling6"
+  type: "Pooling"
+  bottom: "Convolution6"
+  top: "Pooling6"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
   name: "InnerProduct3"
   type: "InnerProduct"
-  bottom: "Pooling4"
+  bottom: "Pooling6"
   top: "InnerProduct3"
   param {
     name: "ip1_w"
@@ -269,7 +341,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 100
+    num_output: 200
     weight_filler {
       type: "xavier"
     }
@@ -298,7 +370,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 50
+    num_output: 100
     weight_filler {
       type: "xavier"
     }
@@ -331,7 +403,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 200
     weight_filler {
       type: "xavier"
     }
@@ -360,7 +432,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 32
+    num_output: 100
     weight_filler {
       type: "xavier"
     }
@@ -389,7 +461,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 2
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -399,9 +471,47 @@ layer {
   }
 }
 layer {
+  name: "r2"
+  type: "Reshape"
+  bottom: "dt"
+  top: "r2"
+  reshape_param {
+    shape {
+      dim: 0
+      dim: 1
+      dim: 1
+      dim: -1
+    }
+  }
+}
+layer {
+  name: "padL"
+  type: "Reshape"
+  bottom: "label"
+  top: "padL"
+  reshape_param {
+    shape {
+      dim: 0
+      dim: 1
+      dim: 1
+      dim: -1
+    }
+  }
+}
+layer {
+  name: "pad"
+  type: "Concat"
+  bottom: "r2"
+  bottom: "padL"
+  top: "pad"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
   name: "accuracy"
   type: "Accuracy"
-  bottom: "dt"
+  bottom: "pad"
   bottom: "th"
   top: "accuracy"
   include {
@@ -411,7 +521,7 @@ layer {
 layer {
   name: "loss"
   type: "HingeLoss"
-  bottom: "dt"
+  bottom: "pad"
   bottom: "th"
   top: "loss"
 }

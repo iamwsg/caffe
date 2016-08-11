@@ -46,15 +46,15 @@ def towerMini(bottom):
 		return ip2
 
 def towerMiniConv3(bottom):
-		conv1=conv(bottom,20,"conv1_w","conv1_b")
+		conv1=conv(bottom,50,"conv1_w","conv1_b") #20
 		pool1=maxPool(conv1)
-		conv2=conv(pool1,50,"conv2_w","conv2_b")
+		conv2=conv(pool1,100,"conv2_w","conv2_b") #50
 		pool2=maxPool(conv2)
-		conv3=conv(pool2,50,"conv3_w","conv3_b")
+		conv3=conv(pool2,100,"conv3_w","conv3_b") #50
 		pool3=maxPool(conv3)
-		ip1=ip(pool3,100,"ip1_w","ip1_b")
+		ip1=ip(pool3,200,"ip1_w","ip1_b") #100
 		reLu1=reLu(ip1)
-		ip2=ip(reLu1,50,"ip2_w","ip2_b")
+		ip2=ip(reLu1,100,"ip2_w","ip2_b") #50
 		return ip2
 
 
@@ -98,13 +98,13 @@ def doubleTowerMini_1_conv3(bottom1,bottom2):
 		t1=towerMiniConv3(bottom1)
 		t2=towerMiniConv3(bottom2)
 		con=concat(t1,t2)
-		ip1=ip(con,64,"fc1_w","fc1_b")
+		ip1=ip(con,200,"fc1_w","fc1_b") #64
 		relu1=reLu(ip1)
-		drop1=drop(relu1,"drop1",0.5)
-		ip2=ip(drop1,32,"fc2_w","fc2_b")
+		#drop1=drop(relu1,"drop1",0.5)
+		ip2=ip(relu1,100,"fc2_w","fc2_b") #32
 		relu2=reLu(ip2)
-		drop2=drop(relu2,"drop2",0.5)
-		ip3=ip(drop2,1,"fc3_w","fc3_b")
+		#drop2=drop(relu2,"drop2",0.5)
+		ip3=ip(relu2,1,"fc3_w","fc3_b")
 		return ip3
 
 
@@ -445,6 +445,36 @@ def matchNetBaseLinePad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 	trNet.loss=hingeLoss(trNet.dt,trNet.th)
 	return trNet
 
+def matchNetBaseLinePadoneSideHinge(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.dt=doubleTowerMini_1(trNet.p1,trNet.p2)
+	trNet.r2=reshape(trNet.dt,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1]) 
+	trNet.pad=padLabel(trNet.r2,trNet.padL)
+	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
+	trNet.loss=hingeLoss(trNet.pad,trNet.th)
+	return trNet
+
+def matchNetBaseLinePadConv3(trainSrc, mean, trainBatchSize, cropSize, Phase):
+	trNet=caffe.NetSpec()
+	trNet.data, trNet.label = data(trainSrc,mean,trainBatchSize,Phase)
+	trNet.th= threshold(trNet.label,0)
+	trNet.i1, trNet.i2=sliceData(trNet.data)
+	trNet.p1=avePool(trNet.i1)
+	trNet.p2=avePool(trNet.i2)
+	trNet.dt=doubleTowerMini_1_conv3(trNet.p1,trNet.p2)
+	trNet.r2=reshape(trNet.dt,[0,1,1,-1])
+	trNet.padL=reshape(trNet.label,[0,1,1,-1]) 
+	trNet.pad=padLabel(trNet.r2,trNet.padL)
+	trNet.accuracy=acc(trNet.pad, trNet.th, Phase)
+	trNet.loss=hingeLoss(trNet.pad,trNet.th)
+	return trNet
+
 
 
 def aconv(bottom, na ,numOutput, l1,d1,l2,d2, Pad, Group, kSize, st, Std, Val):
@@ -717,14 +747,11 @@ def metricNet(src, trainBatchSize, Phase):
 	net.accuracy=acc(net.pad, net.th, Phase)
 	return net
 
-#padSrc="examples/scene/scene_train_pairs_hinge.lmdb"
-#testSrc="examples/scene/scene_test_pairs_hinge.lmdb"
-#trainSrc="examples/scene/scene_train7_pairs_20000.lmdb"
-
-#padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
-padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
-#padSrc="examples/scene/train7_pairs_40000_pad.lmdb"
 #padSrc="examples/scene/train_pairs_1000_pad.lmdb"
+padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
+#padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
+#padSrc="examples/scene/train7_pairs_40000_pad.lmdb"
+#padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
 testSrc="examples/scene/test_pairs_1000_pad.lmdb"
 #testSrc="examples/scene/test_pairs_1000_pad.lmdb"
 
@@ -738,7 +765,7 @@ metricSrcTest="/home/shaogang/Datasets/FeatsDB/featsTest1k"
 
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=400
+trainBatchSize=100
 testBatchSize=100
 cropSize=64
 
@@ -748,8 +775,8 @@ cropSize=64
 #trNetSimple=matchNetSimple(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetSimple=matchNetSimple(testSrc, mean, testBatchSize, cropSize,1)
 
-trNetMini=matchNetBaseLinePad(padSrc, mean, trainBatchSize, cropSize,0)
-teNetMini=matchNetBaseLinePad(testSrc, mean, testBatchSize, cropSize,1)
+trNetMini=matchNetBaseLinePadConv3(padSrc, mean, trainBatchSize, cropSize,0)
+teNetMini=matchNetBaseLinePadConv3(testSrc, mean, testBatchSize, cropSize,1)
 
 #trNetMini=matchNetTrain(trainSrc, mean, trainBatchSize, cropSize,0)
 #teNetMini=matchNetTrain(testSrc, mean, testBatchSize, cropSize,1)

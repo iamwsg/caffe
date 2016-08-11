@@ -2,7 +2,12 @@
 
 TOOLS=./build/tools
 
-$TOOLS/caffe train --solver=examples/scene/scene_solver_2.prototxt 2>&1 | tee scene_multi.log
+$TOOLS/caffe train --solver=examples/scene/scene_solver_2.prototxt  2>&1 | tee scene_multi.log
+
+#$TOOLS/caffe train --solver=examples/scene/scene_solver_2.prototxt --weights=examples/scene/models/baseLine_train7_20000_pad_batch_400/scene_iter_10000.caffemodel 2>&1 | tee scene_multi.log
+
+
+
 #$TOOLS/caffe train --solver=examples/siamese/mnist_siamese_solver.prototxt
 
 
