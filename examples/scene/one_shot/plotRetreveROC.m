@@ -1,12 +1,13 @@
 %% sceneRetreve ROC
 
 clear;
-files=dir('imageRetreve');
+name='imageRetreveDenseFeat/';
+files=dir(name);
 n=length(files)-2;
 
-for ii=5:15
-    disp(strcat('imageRetreve/',files(ii+2).name));
-    res=load(strcat('imageRetreve/',files(ii+2).name));
+for ii=1:n
+    disp(strcat(name,files(ii+2).name));
+    res=load(strcat(name,files(ii+2).name));
     [pfa(ii,:),pd(ii,:)]=fSceneAnalysis(res.tRes);
 end
 
@@ -14,7 +15,7 @@ end
 figure;
 for ii=38:46
     disp(ii)
-    disp(strcat('imageRetreve/',files(ii+2).name));
+    disp(strcat(name,files(ii+2).name));
     pause(1.5);
     plot(pfa(ii,:),pd(ii,:)),hold on;
 end

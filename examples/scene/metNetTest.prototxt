@@ -96,7 +96,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -134,7 +134,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -205,7 +205,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -243,7 +243,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -314,7 +314,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -352,7 +352,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -423,7 +423,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -461,7 +461,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -532,7 +532,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -570,7 +570,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -641,7 +641,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -679,7 +679,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -750,7 +750,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -788,7 +788,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -859,7 +859,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -897,7 +897,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -968,7 +968,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1006,7 +1006,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1077,7 +1077,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1115,7 +1115,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1186,7 +1186,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1224,7 +1224,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1295,7 +1295,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1333,7 +1333,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1404,7 +1404,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1442,7 +1442,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1513,7 +1513,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1551,7 +1551,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1622,7 +1622,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1660,7 +1660,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1731,7 +1731,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1769,7 +1769,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1840,7 +1840,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1878,7 +1878,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -1949,7 +1949,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -1987,7 +1987,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
@@ -2058,7 +2058,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 256
     weight_filler {
       type: "xavier"
     }
@@ -2096,7 +2096,7 @@ layer {
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 64
+    num_output: 128
     weight_filler {
       type: "xavier"
     }
