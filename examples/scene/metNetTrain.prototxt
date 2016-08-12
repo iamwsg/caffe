@@ -12,7 +12,7 @@ layer {
   }
   data_param {
     source: "/home/shaogang/Datasets/FeatsDB/featsTrain20k"
-    batch_size: 100
+    batch_size: 200
     backend: LMDB
   }
 }

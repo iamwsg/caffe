@@ -765,7 +765,7 @@ metricSrcTest="/home/shaogang/Datasets/FeatsDB/featsTest1k"
 
 mean="examples/scene/scene_mean.binaryproto"
 
-trainBatchSize=100
+trainBatchSize=200
 testBatchSize=100
 cropSize=64
 

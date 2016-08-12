@@ -13,7 +13,7 @@ layer {
   }
   data_param {
     source: "examples/scene/train11_pairs_300000_pad.lmdb"
-    batch_size: 100
+    batch_size: 200
     backend: LMDB
   }
 }

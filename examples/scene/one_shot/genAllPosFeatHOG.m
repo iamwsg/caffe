@@ -16,7 +16,7 @@ blk=16;
 vname=@(x) inputname(1);
 
 %%
-for ii=589:n
+for ii=1:n
     imgPath=cats{1}{ii};
     disp(imgPath)
     
