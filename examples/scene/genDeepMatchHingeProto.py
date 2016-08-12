@@ -702,10 +702,10 @@ def MmatchNetTrainPad(trainSrc, mean, trainBatchSize, cropSize, Phase):
 
 def metNet(b1,b2):
 	con=concat(b1,b2)
-	ip1=ip(con,64,"fc1_w","fc1_b")
+	ip1=ip(con,256,"fc1_w","fc1_b")
 	relu1=reLu(ip1)
 	drop1=drop(relu1,"drop1",0.5)
-	ip2=ip(drop1,64,"fc2_w","fc2_b")
+	ip2=ip(drop1,128,"fc2_w","fc2_b")
 	relu2=reLu(ip2)
 	drop2=drop(relu2,"drop2",0.5)
 	ip3=ip(drop2,1,"fc3_w","fc3_b")
@@ -786,12 +786,12 @@ teNetMini=matchNetBaseLinePadConv3(testSrc, mean, testBatchSize, cropSize,1)
 
 
 
-#trMetNet=metricNet(metricSrc, trainBatchSize, 0)
-#teMetNet=metricNet(metricSrcTest, trainBatchSize, 1)
-#with open('./metNetTrain.prototxt', 'w') as f:
-#    f.write(str(trMetNet.to_proto()))
-#with open('./metNetTest.prototxt', 'w') as f:
-#    f.write(str(teMetNet.to_proto()))
+trMetNet=metricNet(metricSrc, trainBatchSize, 0)
+teMetNet=metricNet(metricSrcTest, trainBatchSize, 1)
+with open('./metNetTrain.prototxt', 'w') as f:
+    f.write(str(trMetNet.to_proto()))
+with open('./metNetTest.prototxt', 'w') as f:
+    f.write(str(teMetNet.to_proto()))
 
 #trNetMini=MmatchNetTrainPad(padSrc ,mean, trainBatchSize, cropSize,0)
 #teNetMini=MmatchNetTrainPad(testSrc, mean, testBatchSize, cropSize,1)
