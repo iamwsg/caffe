@@ -35,5 +35,4 @@ icon=inv(con);
 negPCA.mean=m;
 negPCA.coef=coef;
 negPCA.latent=latent;
-negPCA.con=con;
-negPCA.icon=icon;
+
