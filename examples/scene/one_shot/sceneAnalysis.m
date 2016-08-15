@@ -5,11 +5,11 @@ clc;
 close all;
 %load('imageRetrieve700_svm_Taj_Mahal_1.mat');
 
-%tRes(:,4)=tRes(:,15); %for dense features
+tRes(:,4)=tRes(:,15); %for dense features
 %%dist thresholding
 dth=0:0.05:4;
 %dth=0:0.005:0.6;
-%dth=linspace(0,0.05); %for dense feat
+dth=linspace(0,0.05); %for dense feat
 
 nTest=length(tRes);
 %ttRes=tRes(1:nTest,:);
@@ -87,9 +87,13 @@ for ii=1:ndth
             Res{jj,15}=1;
         end
     end
+    if ii==52
+        kk=52;
+    end
     falseAlarm=find(([Res{:,3}]==1) & ([Res{:,15}]==0));
     pfa_dth(ii)=length(falseAlarm)/length(find(([Res{:,3}]==1)));
     pd=find(([Res{:,3}]==0) & ([Res{:,15}]==0));
+    mis=find(([Res{:,3}]==0) & ([Res{:,15}]==1));
     pd_dth(ii)= length(pd)/length(find([Res{:,3}]==0));
     ap_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,15}]==0));
     recall_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,3}]==0));
