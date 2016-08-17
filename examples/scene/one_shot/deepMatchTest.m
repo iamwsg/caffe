@@ -412,8 +412,9 @@ title('ROC');xlabel('P_{fa}');ylabel('P_d');
 legend('SiameseNet','3 Streams AVE pool','3 Streams MAX pool','19 Streams AVE pool','19 Streams MAX pool');
 
 
-%figure, plot(baseLine_pfa, baseLine_pd, '-ob', s19_max_pfa, s19_max_pd,'-*m'),grid;
-
+figure, plot(baseLine_pfa, baseLine_pd, '-ob', s19_max_pfa, s19_max_pd,'-*m'),grid;
+title('ROC');xlabel('P_{fa}');ylabel('P_d');
+legend('Baseline Siamese net','Deep MatchNet');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %plot(1:100,label,1:100,sp,'r'),grid

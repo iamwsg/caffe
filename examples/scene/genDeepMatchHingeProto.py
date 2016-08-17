@@ -547,7 +547,7 @@ def alexTower(bottom):
 	return relu7
 
 def alexTowerSmall(bottom):
-	conv1=aconv(bottom, "conv1", 96, 0,0,0,0,7,1,11,4,0.01,0)
+	conv1=aconv(bottom, "conv1", 96, 0,0,0,0,5,1,11,4,0.01,0)
 	relu1=reLu(conv1)
 	norm1=norm(relu1,"norm1",5,0.0001,0.75)
 	pool1=apool(norm1, "pool1", P.Pooling.MAX, 3,2)
@@ -829,11 +829,11 @@ def metricNet(src, trainBatchSize, Phase):
 	net.accuracy=acc(net.pad, net.th, Phase)
 	return net
 
-#padSrc="examples/scene/train_pairs_1000_pad.lmdb"
+padSrc="examples/scene/train_pairs_1000_pad.lmdb"
 #padSrc="examples/scene/train11_pairs_300000_pad.lmdb"
 #padSrc="examples/scene/scene_train7_pairs_20000_pad.lmdb"
 #padSrc="examples/scene/train7_pairs_40000_pad.lmdb"
-padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
+#padSrc="examples/scene/scene_train3_pairs_4000_pad.lmdb"
 testSrc="examples/scene/test_pairs_1000_pad.lmdb"
 #testSrc="examples/scene/test_pairs_1000_pad.lmdb"
 
