@@ -58,7 +58,7 @@ qImagFeatFile=[posFeatPath,qImageCells{nQcell-1},'_',qImageCells{nQcell},'.mat']
 nTest = length(testImags)-2;
 tRes=cell(nTest, 13+5); %14:naive thresholding label; 15:two-step label; 16: first step mark
 % for ii=1:nTest
-%     tRes(ii,1)=tp{1}(ii);
+%     tRes(ii,1)=tp{1}(ii);fileId=fopen('sameScene.txt');
 %     tRes(ii,2)=tp{2}(ii);
 %     tRes{ii,3}=tp{3}(ii);
 % end

@@ -1,5 +1,6 @@
 %% store each image category into seperate files
-fileId=fopen('newImageList.txt');
+file='/home/shaogang/Datasets/PLACES205.txt';
+fileId=fopen(file);
 cats=textscan(fileId,'%s');
 fclose(fileId);
 
@@ -36,7 +37,7 @@ for ii=1:length(sep)-1
     if strcmp(firstCat,'outdoor')
         firstCat=[firstCells{(length(firstCells)-2)},'_outdoor'];
     end
-    fileName=['imageLists3/' firstCat '.txt'];
+    fileName=['P205/' firstCat '.txt'];
     fid=fopen(fileName, 'w');
     for jj=sep(ii):sep(ii+1)-1
         str=cats{1}(jj);

@@ -3,37 +3,38 @@ clear;
 close all;
 clc;
 
-addpath /home/shaogangwang/mywork/caffe/matlab
-addpath /home/shaogangwang/mywork/caffe/examples/scene/one_shot
+addpath /home/shaogang/caffe/matlab
+addpath /home/shaogang/caffe/examples/scene/one_shot
 
 %prepare the net
 caffe.reset_all();
-caffe.set_mode_gpu();
-model = '/home/shaogangwang/Downloads/placesCNN_upgraded/places205CNN_deploy_upgraded.prototxt';
-weights = '/home/shaogangwang/Downloads/placesCNN_upgraded/places205CNN_iter_300000_upgraded.caffemodel';
+caffe.set_mode_cpu();
+model = '/home/shaogang/Downloads/placesCNN_upgraded/places205CNN_deploy_upgraded.prototxt';
+weights = '/home/shaogang/Downloads/placesCNN_upgraded/places205CNN_iter_300000_upgraded.caffemodel';
 net = caffe.Net(model, weights, 'test');
 resize=227;
 net.blobs('data').reshape([resize resize 3 1]); % reshape blob 'data'
 net.reshape();
 
 %%
-files=dir('imageLists2');
-filesNew=dir('imageLists3');
-f=cell(length(files),1);
-for ii=1:length(files)
-    f{ii}=files(ii).name;
-end
-f2=cell(length(filesNew),1);
-for ii=1:length(filesNew)
-    f2{ii}=filesNew(ii).name;
-end
-df=setdiff(f2,f);
+% files=dir('imageLists2');
+% filesNew=dir('imageLists3');
+% f=cell(length(files),1);
+% for ii=1:length(files)
+%     f{ii}=files(ii).name;
+% end
+% f2=cell(length(filesNew),1);
+% for ii=1:length(filesNew)
+%     f2{ii}=filesNew(ii).name;
+% end
+% df=setdiff(f2,f);
+df=dir('P205');
 
 %%
 vname=@(x) inputname(1);
-for ii=1:length(df)
-    f=df{ii}
-    fid=fopen(['imageLists3/' f]);
+for ii=61:80
+    f=df(ii).name;
+    fid=fopen(['P205/' f]);
     tline = fgets(fid);
     feat=[];
     kk=1;
@@ -56,12 +57,12 @@ for ii=1:length(df)
             continue;
         end
         net.forward({im_data});
-        feat(kk,:)=net.blobs('fc7').get_data()';
+        feat(kk,:)=net.blobs('fc8').get_data()';
         kk=kk+1;
         tline = fgets(fid);
     end
     fclose(fid);
-    savefeat=['negFeats/' f '.mat'];
+    savefeat=['/home/shaogang/Datasets/negFeats205/' f '.mat'];
     save(savefeat, vname(feat));
 end
 

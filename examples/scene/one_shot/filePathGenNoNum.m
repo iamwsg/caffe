@@ -1,5 +1,5 @@
 function fileList = filePathGenNoNum(dirName,fileName)
-  %dirName='/home/shaogangwang/LabelMeToolbox/Images'
+  %dirName='/home/shaogang/Downloads/data/vision/torralba/deeplearning/images256'
   dirData = dir(dirName);      %# Get the data for the current directory
   dirData=dirData(~ismember({dirData.name},{'.','..','.DS_Store'}));
   dirIndex = [dirData.isdir];  %# Find the index for directories
