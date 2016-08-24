@@ -4,14 +4,14 @@ clear;
 close all;
 clc;
 
-addpath /home/shaogangwang/mywork/caffe/matlab
-addpath /home/shaogangwang/mywork/caffe/examples/scene/one_shot
+addpath /home/shaogang/caffe/matlab
+addpath /home/shaogang/caffe/examples/scene/one_shot
 
 %prepare the net
 caffe.reset_all();
-caffe.set_mode_gpu();
-model = '/home/shaogangwang/Downloads/placesCNN_upgraded/places205CNN_deploy_upgraded.prototxt';
-weights = '/home/shaogangwang/Downloads/placesCNN_upgraded/places205CNN_iter_300000_upgraded.caffemodel';
+caffe.set_mode_cpu();
+model = '/home/shaogang/Downloads/placesCNN_upgraded/places205CNN_deploy_upgraded.prototxt';
+weights = '/home/shaogang/Downloads/placesCNN_upgraded/places205CNN_iter_300000_upgraded.caffemodel';
 net = caffe.Net(model, weights, 'test');
 resize=227;
 net.blobs('data').reshape([resize resize 3 1]); % reshape blob 'data'
@@ -25,8 +25,10 @@ fclose(fileId);
 n=length(cats{1});
 n_colors=1;
 vname=@(x) inputname(1);
-for ii=1:n
+for ii=601:700
     imgPath=cats{1}{ii};
+    sp=strsplit(imgPath,'/');
+    imgPath=strcat('/', sp{2},'/','shaogang','/',sp{4},'/',sp{5},'/',sp{6},'/',sp{7});
     disp(imgPath)
     
     ims1=Image_aug_color(imgPath,n_colors,resize);
@@ -41,12 +43,12 @@ for ii=1:n
     net.blobs('data').reshape([resize resize 3 n_positive]); % reshape blob 'data'
     net.reshape();
     res_pos1 = net.forward({pos1});
-    pos_feat1 = net.blobs('fc7').get_data()';
+    pos_feat1 = net.blobs('fc8').get_data()';
 
     %%store featues
     scells=strsplit(imgPath,'/');
     nsc=length(scells);
-    fileName=['posFeats/' scells{nsc-1} '_' scells{nsc} '.mat'];
+    fileName=['posFeats205/' scells{nsc-1} '_' scells{nsc} '.mat'];
     save(fileName, vname(pos_feat1));
 end
 
