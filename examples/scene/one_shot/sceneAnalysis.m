@@ -5,11 +5,14 @@ clc;
 close all;
 %load('imageRetrieve700_svm_Taj_Mahal_1.mat');
 
-tRes(:,4)=tRes(:,15); %for dense features
+%tRes(:,4)=tRes(:,15); %for dense features
 %%dist thresholding
-dth=0:0.05:4;
+
+dists=cell2mat(tRes(:,4));
+
+%dth=0:0.05:4;
 %dth=0:0.005:0.6;
-dth=linspace(0,0.05); %for dense feat
+dth=linspace(min(dists),max(dists)); %for dense feat
 
 nTest=length(tRes);
 %ttRes=tRes(1:nTest,:);
@@ -81,7 +84,7 @@ recall_dth=pd_dth;
 for ii=1:ndth
     Res=tRes;
     for jj=1:nTest
-        if Res{jj,4}<dth(ii)
+        if Res{jj,4}>dth(ii)
             Res{jj,15}=0;
         else
             Res{jj,15}=1;
@@ -100,12 +103,14 @@ for ii=1:ndth
 end
 %figure,plot(pfa_dth,pd_dth),grid;
 
-simth=0:1/ndth:1-1/ndth;
+%%
+sims=cell2mat(Res(:,15));
+simth=linspace(min(sims),max(sims));
 %simth=0:0.045/ndth:0.045-0.045/ndth;
 pfa_simth=zeros(1,ndth);
 pd_simth=zeros(1,ndth);
-ap_simth=pd_dth;
-recall_simth=pd_dth;
+ap_simth=pfa_simth;
+recall_simth=pfa_simth;
 for ii=1:ndth
     Res=tRes;
     for jj=1:nTest
@@ -131,6 +136,7 @@ legend('Dist thresholding','SVM thresholding');
 % title('AP-Recall'),xlabel('P_{fa}'),ylabel('P_d');
 % legend('Dist thresholding','SVM thresholding');
 
+%%
 %pfa2=pfa_dth;
 %pd2=pd_dth;
 pfa1=pfa_dth;
@@ -140,7 +146,7 @@ pd1=pd_dth;
 % pfa2=pfa_simth;
 % pd2=pd_simth;
 % 
-figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
-title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
-legend('BaseLine', 'Deep MatchNet');
+% figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
+% title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+% legend('BaseLine', 'Deep MatchNet');
 %legend('10000 random negatives','Predicted negatives');

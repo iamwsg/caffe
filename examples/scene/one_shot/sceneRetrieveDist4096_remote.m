@@ -49,7 +49,7 @@ n=length(cats{1});
 vname=@(x) inputname(1);
 
 %%
-for jj=551:551
+for jj=552:600
     imgPath=cats{1}{jj};
     disp(imgPath)
     cpath=strsplit(imgPath,'/');
@@ -91,7 +91,9 @@ for jj=551:551
 
         %%coarser classify
         [p1,p2,r1,r2,feat,cats1,cats2]=coarse_class(net,C,resize,image_path1,image_path2);
-        v=r1-r2;
+        r1=feat(1,:);
+        r2=feat(2,:);
+        v=r1'-r2';
         dist = sqrt(v'*v)/norm(r1)/norm(r2);
         catsUnion=union(cats1,cats2);
         catsInter=intersect(cats1,cats2)
@@ -102,47 +104,8 @@ for jj=551:551
         tRes{ii,8}=catsInter;
         tRes{ii,9}=numel(catsInter);
               
-        %% finner discriminate
-        tImageCells=strsplit(image_path2, '/');
-        nTcell=length(tImageCells);
-        tImagFeatFile=[posFeatPath,tImageCells{nTcell-1},'_',tImageCells{nTcell},'.mat']
-
-        tFeat=load(tImagFeatFile);
-        pos_feat2=tFeat.pos_feat1;
-
-        % get negative
-        %tic
-        neg=[];
-        for jj=1:numel(catsUnion)
-            try
-                neg1=negMap(catsUnion{jj});
-                neg=[neg;neg1];
-            catch
-                disp('neg feat not found')
-                tRes{ii,13}=1;
-            end
-        end
-        %disp('get negative features')
-        %toc
-
-        %% train two linear SVMs
-        %tic
-        X1=[pos_feat1; neg];
-        X2=[pos_feat2; neg];
-        [n_positive,~]=size(pos_feat1);
-        Y= -ones(length(neg(:,1))+n_positive,1);Y(1:n_positive)=1;
-        SVMModel_linear_1 = fitcsvm(X1,Y);
-        SVMModel_linear_2 = fitcsvm(X2,Y);
-        disp('train 2 SVMs')
-
-        %% predict
-        similarity= SVMModel_linear_1.Beta'*SVMModel_linear_2.Beta/norm(SVMModel_linear_1.Beta)/norm(SVMModel_linear_2.Beta)
-        toc
-        tRes{ii,11}=similarity;
-        time=toc
-        tRes{ii,12}=time;
     end
     
-    fileName=strcat('imageRetreve205/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
+    fileName=strcat('imageRetreveDist4096/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
     save(fileName, vname(tRes));
 end
