@@ -49,7 +49,7 @@ n=length(cats{1});
 vname=@(x) inputname(1);
 
 %%
-for jj=552:600
+for jj=551:600
     imgPath=cats{1}{jj};
     disp(imgPath)
     cpath=strsplit(imgPath,'/');
@@ -94,7 +94,8 @@ for jj=552:600
         r1=feat(1,:);
         r2=feat(2,:);
         v=r1'-r2';
-        dist = sqrt(v'*v)/norm(r1)/norm(r2);
+        %dist = sqrt(v'*v)/norm(r1)/norm(r2);
+        dist = sqrt(v'*v);
         catsUnion=union(cats1,cats2);
         catsInter=intersect(cats1,cats2)
         tRes{ii,4}=dist;
@@ -106,6 +107,6 @@ for jj=552:600
               
     end
     
-    fileName=strcat('imageRetreveDist4096/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
+    fileName=strcat('imageRetreveDist4096NoNorm/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
     save(fileName, vname(tRes));
 end

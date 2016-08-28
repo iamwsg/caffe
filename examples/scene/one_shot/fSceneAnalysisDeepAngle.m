@@ -1,9 +1,11 @@
 %% scene analysis
-function [pfa_dth,pd_dth]=fSceneAnalysisDeepDist(tRes)
+function [pfa_dth,pd_dth]=fSceneAnalysisDeepAngle(tRes)
 
 nTest=length(tRes);
 
-dth=linspace(min(cell2mat(tRes(:,4))),max(cell2mat(tRes(:,4)))); %for dense feat
+dists=cell2mat(tRes(:,4));
+dth=linspace(min(dists),max(dists)); %for dense feat
+
 
 %% ROC
 %%dist thresholding
@@ -16,7 +18,7 @@ recall_dth=pd_dth;
 for ii=1:ndth
     Res=tRes;
     for jj=1:nTest
-        if Res{jj,4}<dth(ii)
+        if Res{jj,4}>dth(ii)
             Res{jj,15}=0;
         else
             Res{jj,15}=1;
