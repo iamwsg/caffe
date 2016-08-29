@@ -32,7 +32,7 @@ df=dir('/home/shaogang/Datasets/P205/');
 
 %%
 vname=@(x) inputname(1);
-for ii=151:length(df)
+for ii=143:150
     f=df(ii).name;
     fid=fopen(['/home/shaogang/Datasets/P205/' f]);
     tline = fgets(fid);

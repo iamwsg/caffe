@@ -1,7 +1,7 @@
 %% sceneRetreve ROC
 
 %clear;
-name='imageRetreveAngle205/';
+name='imageRetreveDenseFeatAngle/';
 files=dir(name);
 n=length(files)-2;
 
@@ -16,7 +16,7 @@ figure;
 for ii=1:n
     disp(ii)
     disp(strcat(name,files(ii+2).name));
-    pause(1);
+    %pause(1);
     plot(pfa(ii,:),pd(ii,:)),hold on;
 end
 title('ROC'),xlabel('P_{fa}'),ylabel('P_d');grid;
@@ -27,5 +27,5 @@ figure,plot(mpfa,mpd,'LineWidth',2),grid;title('ROC'),xlabel('P_{fa}'),ylabel('P
 
 %ii=100;figure,plot(pfa(ii,:),pd(ii,:)),grid,disp(strcat(files(ii+2).name));
 
-% mpfa1=mean(pfa);mpd1=mean(pd);
-% figure,plot(mpfa,mpd,'b',mpfa1,mpd1,'r','LineWidth',2),grid;title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+%mpfa1=mean(pfa);mpd1=mean(pd);
+figure,plot(mpfa,mpd,'b',mpfa1,mpd1,'r','LineWidth',2),grid;title('ROC'),xlabel('P_{fa}'),ylabel('P_d');

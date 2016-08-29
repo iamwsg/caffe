@@ -29,7 +29,7 @@ net = caffe.Net(model, weights, 'test');
 %net.blobs('data').reshape([resize resize 3 2]); % reshape blob 'data'
 %net.reshape();
 
-for jj=551:600
+for jj=591:600
     imgPath=cats{1}{jj};
     disp(imgPath)
     cpath=strsplit(imgPath,'/');
@@ -68,12 +68,12 @@ for ii=1:nTest
         tRes{ii,3}=1;
     end
     
-    [tRes{ii,15},tRes{ii,16}]=fDenseFeat(net,image_path1,image_path2);
+    [tRes{ii,4},tRes{ii,5}]=fDenseFeatAngle(net,image_path1,image_path2);
     
    
     time=toc
     tRes{ii,12}=time;
 end
-    fileName=strcat('imageRetreveDenseFeat/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
+    fileName=strcat('imageRetreveDenseFeatAngle/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
     save(fileName, vname(tRes));
 end
