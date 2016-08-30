@@ -98,5 +98,21 @@ figure,subplot(221),plot(wabbey2(:,1),wabbey2(:,2),'o'),grid,subplot(222),plot(w
 % wsky2= wsky*c_sky(:,1:2);
 % figure,plot(wsky2(:,1),wsky2(:,2),'mo'),grid;
 
+%%
+mau=load('/home/shaogang/Datasets/negFeats205/mausoleum.txt.mat');
+mau=mau.feat;
+
+%%
+m_mau=mean(mau);
+for ii=1:size(mau,1)
+    mau(ii,:)=mau(ii,:)-m_mau;
+end
+[mau2, l_mau]= proj2(mau);
+figure,plot(mau2(:,1),mau2(:,2),'o'),grid;
+
+whiter=c_mau*diag(1./sqrt(l_mau));
+w_mau= mau*whiter;
+[w_mau2,~]=proj2(w_mau);
+figure,plot(w_mau2(:,1),w_mau2(:,2),'ro'),grid;
 
 
