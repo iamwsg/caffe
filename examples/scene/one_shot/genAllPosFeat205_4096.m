@@ -27,6 +27,7 @@ n_colors=1;
 vname=@(x) inputname(1);
 pos205=single(zeros(700,205));
 pos4096=single(zeros(700,4096));
+posProb=single(zeros(700,205));
 for ii=1:700
     imgPath=cats{1}{ii};
     sp=strsplit(imgPath,'/');
@@ -39,11 +40,12 @@ for ii=1:700
     res_pos1 = net.forward({im_data1});
     pos205(ii,:) = net.blobs('fc8').get_data()';
     pos4096(ii,:) = net.blobs('fc7').get_data()';
+    posProb(ii,:)=net.blobs('prob').get_data()';
     %%store featues
 end
 
 
-prob= net.blobs('prob').get_data()';
+
 
 
 

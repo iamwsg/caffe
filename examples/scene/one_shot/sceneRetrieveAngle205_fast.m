@@ -62,23 +62,17 @@ for jj=551:600
             tRes{ii,3}=1;
         end
 
-
-
         r1=feat(jj,:);
         r2=feat(ii,:);
         
-        dist = r1'*r2/norm(r1)/norm(r2);
-        catsUnion=union(cats1,cats2);
-        catsInter=intersect(cats1,cats2)
+        dist = r1*r2';
+        %dist = r1*r2'/norm(r1)/norm(r2);
+        %dist=norm(r1-r2);
+        
         tRes{ii,4}=dist;
-        tRes{ii,5}=p1;
-        tRes{ii,6}=p2;
-        tRes{ii,7}=catsUnion;
-        tRes{ii,8}=catsInter;
-        tRes{ii,9}=numel(catsInter);
-              
+                
     end
     
-    fileName=strcat('imageRetreveAngle205/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
+    fileName=strcat('imageRetreveAngle205NoNormfast/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
     save(fileName, vname(tRes));
 end

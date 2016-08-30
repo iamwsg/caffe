@@ -1,7 +1,7 @@
 %% sceneRetreve ROC
 
 %clear;
-name='imageRetreveAngle205/';
+name='imageRetreveAngle205NoNormfast/';
 files=dir(name);
 n=length(files)-2;
 
@@ -28,7 +28,7 @@ title('ROC'),xlabel('P_{fa}'),ylabel('P_d');grid;
 
 %%
 mpfa=mean(pfa);mpd=mean(pd);
-figure,plot(mpfa,mpd,'LineWidth',2),grid;title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
+figure,plot(mpfa,mpd,'LineWidth',2),grid;title('205 Dist'),xlabel('P_{fa}'),ylabel('P_d');
 
 %ii=26;figure,plot(pfa(ii,:),pd(ii,:)),grid,disp(strcat(files(ii+2).name));
 
