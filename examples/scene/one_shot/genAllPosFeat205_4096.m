@@ -43,7 +43,7 @@ for ii=1:700
 end
 
 
-
+prob= net.blobs('prob').get_data()';
 
 
 
