@@ -4,29 +4,32 @@ clear;
 close all;
 clc;
 
-addpath /home/shaogangwang/mywork/caffe/matlab
-addpath /home/shaogangwang/mywork/caffe/examples/scene/one_shot
+addpath /home/shaogang/caffe/matlab
+addpath /home/shaogang/caffe/examples/scene/one_shot
 
 %prepare the net
 caffe.reset_all();
-caffe.set_mode_gpu();
-model = '/home/shaogangwang/Downloads/placesCNN_upgraded/places205CNN_deploy_upgraded.prototxt';
-weights = '/home/shaogangwang/Downloads/placesCNN_upgraded/places205CNN_iter_300000_upgraded.caffemodel';
+caffe.set_mode_cpu();
+model = '/home/shaogang/Downloads/placesCNN_upgraded/places205CNN_deploy_upgraded.prototxt';
+weights = '/home/shaogang/Downloads/placesCNN_upgraded/places205CNN_iter_300000_upgraded.caffemodel';
 net = caffe.Net(model, weights, 'test');
 resize=227;
 net.blobs('data').reshape([resize resize 3 10]); % reshape blob 'data'
 net.reshape();
 
 %%prepare files
-fileId=fopen('sameScene.txt');
+%fileId=fopen('sameScene.txt');
+fileId=fopen('oxford.txt');
 cats=textscan(fileId,'%s');
 fclose(fileId);
 
 n=length(cats{1});
 n_colors=1;
 vname=@(x) inputname(1);
-for ii=1:n
+for ii=3501:n
     imgPath=cats{1}{ii};
+    %sp=strsplit(imgPath,'/');
+    %imgPath=strcat('/', sp{2},'/','shaogang','/',sp{4},'/',sp{5},'/',sp{6},'/',sp{7});
     disp(ii)
     disp(imgPath)
     ims1=denseImages(imgPath);
@@ -39,11 +42,12 @@ for ii=1:n
 %     net.blobs('data').reshape([resize resize 3 n_positive]); % reshape blob 'data'
 %     net.reshape();
     net.forward({pos1});
-    pos_feat1 = net.blobs('fc7').get_data()';
+    pos_feat1 = net.blobs('fc8').get_data()';
     
     %%store featues
     scells=strsplit(imgPath,'/');
     nsc=length(scells);
-    fileName=['posFeatsDense/' scells{nsc-1} '_' scells{nsc} '.mat'];
+    %fileName=['oxfordFeatsDense205/' scells{nsc-1} '_' scells{nsc} '.mat'];
+    fileName=['oxfordFeatsDense205/' scells{nsc} '.mat'];
     save(fileName, vname(pos_feat1));
 end

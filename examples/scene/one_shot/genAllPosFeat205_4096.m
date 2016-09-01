@@ -18,20 +18,22 @@ net.blobs('data').reshape([resize resize 3 1]); % reshape blob 'data'
 net.reshape();
 
 %%prepare files
-fileId=fopen('sameScene.txt');
+%fileId=fopen('sameScene.txt');
+fileId=fopen('oxford.txt');
 cats=textscan(fileId,'%s');
 fclose(fileId);
 
 n=length(cats{1});
 n_colors=1;
 vname=@(x) inputname(1);
-pos205=single(zeros(700,205));
-pos4096=single(zeros(700,4096));
-posProb=single(zeros(700,205));
-for ii=1:700
+pos205=single(zeros(n,205));
+pos4096=single(zeros(n,4096));
+posProb=single(zeros(n,205));
+for ii=1:n
     imgPath=cats{1}{ii};
-    sp=strsplit(imgPath,'/');
-    imgPath=strcat('/', sp{2},'/','shaogang','/',sp{4},'/',sp{5},'/',sp{6},'/',sp{7});
+    %sp=strsplit(imgPath,'/');
+    %imgPath=strcat('/', sp{2},'/','shaogang','/',sp{4},'/',sp{5},'/',sp{6},'/',sp{7});
+    disp(ii)
     disp(imgPath)
     
     im_data1=caffe.io.load_image(imgPath);
@@ -44,7 +46,9 @@ for ii=1:700
     %%store featues
 end
 
-
+oxford.pos205=pos205;
+oxford.pos4096=pos4096;
+oxford.posProb=posProb;
 
 
 

@@ -18,12 +18,13 @@ resize=227;
 net.blobs('data').reshape([resize resize 3 n_positive]); % reshape blob 'data'
 net.reshape();
 net.forward({pos1});
-pos_feat1 = net.blobs('fc7').get_data()';
+pos_feat1 = net.blobs('prob').get_data()';
 net.forward({pos2});
-pos_feat2 = net.blobs('fc7').get_data()';
+pos_feat2 = net.blobs('prob').get_data()';
 
 %dist=@(r1,r2)sqrt((r1-r2)*(r1-r2)')/norm(r1)/norm(r2);
-dist=@(r1,r2)r1*r2'/norm(r1)/norm(r2);
+%dist=@(r1,r2)r1*r2'/norm(r1)/norm(r2);
+dist=@(r1,r2)r1*r2';
 
 %%do compare
 dis=zeros(1,2*n_positive-1);

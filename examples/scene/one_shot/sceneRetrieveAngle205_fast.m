@@ -21,6 +21,9 @@ feat=feat.pos205;
 %% prepair test image pool
 testImags=dir(posFeatPath);
 
+%% load the whiter
+w=load('mau_whiter.mat');
+w=w.whiter;
 
 n=length(cats{1});
 vname=@(x) inputname(1);
@@ -65,14 +68,20 @@ for jj=551:600
         r1=feat(jj,:);
         r2=feat(ii,:);
         
-        dist = r1*r2';
+        %r1=(w*r1')'/length(r1);
+        %r2=(w*r2')'/length(r1);
+        
         %dist = r1*r2'/norm(r1)/norm(r2);
-        %dist=norm(r1-r2);
+        dist=norm(r1-r2);
+        
+        %dist = smax(r1)*smax(r2)';
+        %dist=norm(w*r1'-w*r2');
+        %dist = -smax(r1)*log2(smax(r2)')-smax(r2)*log2(smax(r1)');
         
         tRes{ii,4}=dist;
                 
     end
     
-    fileName=strcat('imageRetreveAngle205NoNormfast/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
+    fileName=strcat('imageRetreveAngle205fast/imageRetreve_',cpath{6},'_',cpath{7},'.mat');
     save(fileName, vname(tRes));
 end
