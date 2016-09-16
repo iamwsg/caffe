@@ -1,5 +1,5 @@
 %% scene analysis
-function [pfa_dth,pd_dth]=fSceneAnalysisDeepDist(tRes)
+function [pfa_dth,pd_dth,recall_dth, ap_dth ]=fSceneAnalysisDeepDist(tRes)
 
 nTest=length(tRes);
 
@@ -26,7 +26,7 @@ for ii=1:ndth
     pfa_dth(ii)=length(falseAlarm)/length(find(([Res{:,3}]==1)));
     pd=find(([Res{:,3}]==0) & ([Res{:,15}]==0));
     pd_dth(ii)= length(pd)/length(find([Res{:,3}]==0));
-    %ap_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,15}]==0));
-    %recall_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,3}]==0));
+    ap_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,15}]==0));
+    recall_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,3}]==0));
 end
 

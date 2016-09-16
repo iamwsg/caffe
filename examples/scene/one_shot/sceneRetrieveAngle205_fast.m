@@ -72,9 +72,9 @@ for jj=551:600
         %r2=(w*r2')'/length(r1);
         
         %dist = r1*r2'/norm(r1)/norm(r2);
-        dist=norm(r1-r2);
+        %dist=norm(r1-r2);
         
-        %dist = smax(r1)*smax(r2)';
+        dist = smax(r1)*smax(r2)';
         %dist=norm(w*r1'-w*r2');
         %dist = -smax(r1)*log2(smax(r2)')-smax(r2)*log2(smax(r1)');
         

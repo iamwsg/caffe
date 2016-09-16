@@ -17,6 +17,12 @@ resize=227;
 net.blobs('data').reshape([resize resize 3 1]); % reshape blob 'data'
 net.reshape();
 
+%% prepare lable file
+labelFile='/home/shaogang/Downloads/placesCNN_upgraded/categoryIndex_places205.csv';
+fileID = fopen(labelFile);
+C = textscan(fileID,'%s %d');
+fclose(fileID);
+
 n=55;
 query205=single(zeros(n,205));
 queryProb=single(zeros(n,205));
@@ -43,6 +49,9 @@ for ii=1:n
     crop=imcrop(im,rec);
     ims1=imresize(crop,[227,227]);
     
+    %imshow(ims1);
+    %pause;
+    
     pos1 = ims1(:, :, [3, 2, 1]); % convert from RGB to BGR
     pos1 = permute(pos1, [2, 1, 3]); % permute width and height
     pos1 = single(pos1); % convert to single precision
@@ -52,6 +61,25 @@ for ii=1:n
     queryProb(ii,:) = net.blobs('prob').get_data()';
     query4096(ii,:) = net.blobs('fc7').get_data()';
     name{ii}=q;
+    
+    %%get labels
+%     N=5;
+%     cats1=cell(N,1);
+%     [sortedX,sortingIndices] = sort(query205(ii,:),'descend');
+%     maxValues = sortedX(1:N);
+%     maxValueIndices = sortingIndices(1:N);
+%     for kk=1:N
+%         p1{kk}=[num2str(maxValues(kk)) ' ' C{1}{maxValueIndices(kk)} ' ' num2str(C{2}(maxValueIndices(kk)))];
+%         split=strsplit(C{1}{maxValueIndices(kk)},'/');
+%         len=length(split);
+%         cat=split{len};
+%         if strcmp(cat,'outdoor')
+%             cat=[split{len-1} '_outdoor'];
+%         end
+%         cats1{kk}=cat;
+%         
+%     end
+%     disp(cats1)
 end
 
 oxfordQuery.name=name;
