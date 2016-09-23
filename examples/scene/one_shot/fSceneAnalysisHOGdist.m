@@ -1,5 +1,5 @@
 %% scene analysis
-function [pfa_dth,pd_dth]=fSceneAnalysisHOGdist(tRes)
+function [pfa_dth,pd_dth, scores, labels]=fSceneAnalysisHOGdist(tRes)
 
 nTest=length(tRes);
 dth=linspace(0.4,0.7); %for dense feat
@@ -28,4 +28,5 @@ for ii=1:ndth
     %ap_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,15}]==0));
     %recall_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,3}]==0));
 end
-
+scores=cell2mat(tRes(:,4));
+labels=cell2mat(tRes(:,3));

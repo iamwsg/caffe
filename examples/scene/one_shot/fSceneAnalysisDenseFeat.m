@@ -1,5 +1,5 @@
 %% scene analysis
-function [pfa_dth,pd_dth]=fSceneAnalysisDenseFeat(tRes)
+function [pfa_dth,pd_dth, scores, labels]=fSceneAnalysisDenseFeat(tRes)
 
 nTest=length(tRes);
 %ttRes=tRes(1:nTest,:);
@@ -56,46 +56,6 @@ for ii=1:ndth
     %recall_dth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,3}]==0));
 end
 %figure,plot(pfa_dth,pd_dth),grid;
+scores=cell2mat(tRes(:,4));
+labels=cell2mat(tRes(:,3));
 
-% simth=0:1/ndth:1-1/ndth;
-% pfa_simth=zeros(1,ndth);
-% pd_simth=zeros(1,ndth);
-% ap_simth=pd_dth;
-% recall_simth=pd_dth;
-% for ii=1:ndth
-%     Res=tRes;
-%     for jj=1:nTest
-%         if Res{jj,11}>simth(ii)
-%             Res{jj,15}=0;
-%         else
-%             Res{jj,15}=1;
-%         end
-%     end
-%     falseAlarm=find(([Res{:,3}]==1) & ([Res{:,15}]==0));
-%     pfa_simth(ii)=length(falseAlarm)/length(find(([Res{:,3}]==1)));
-%     pd=find(([Res{:,3}]==0) & ([Res{:,15}]==0));
-%     pd_simth(ii)= length(pd)/length(find([Res{:,3}]==0));
-%     ap_simth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,15}]==0));
-%     recall_simth(ii)=length(find(([Res{:,3}]==0) & ([Res{:,15}]==0)))/length(find([Res{:,3}]==0));
-% end
-
-
-
-% figure,plot(pfa_dth,pd_dth,'-ob',pfa_simth,pd_simth,'-*r'),grid;
-% title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
-% legend('Dist thresholding','SVM thresholding');
-
-% figure,plot(recall_dth,ap_dth,'-ob',recall_simth,ap_simth,'-*r'),grid;
-% title('AP-Recall'),xlabel('P_{fa}'),ylabel('P_d');
-% legend('Dist thresholding','SVM thresholding');
-
-%pfa1=pfa_simth;
-%pd1=pd_simth;
-
-% pfa2=pfa_simth;
-% pd2=pd_simth;
-% 
-% figure,plot(pfa1,pd1,'-ob',pfa2, pd2,'-*r'),grid;
-% title('ROC'),xlabel('P_{fa}'),ylabel('P_d');
-% legend('Classic One-Shot learning', 'Our method');
-%legend('10000 random negatives','Predicted negatives');

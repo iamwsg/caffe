@@ -87,7 +87,6 @@ void convert_dataset(const char* image_filename, const char* label_filename,
 
   int nMatched = 0;
   int nUmatched = 0;
-  int anomally=0;
 
   int num = 1*num_items;
   int th = 3;
@@ -104,19 +103,8 @@ void convert_dataset(const char* image_filename, const char* label_filename,
 
 
     datum.set_data(pixels, 2*rows*cols);
-    if (label_i  == label_j) {
-////////////////////////////////////////////////////////
-	// 2 as 3
-	//if ((label_i==label_j) || ((label_i==2) && (label_j==3)) || ((label_i==3) && (label_j==2))) {
-////////////////////////////////////////////////////////
+    if ((label_i==label_j) || ((label_i==2) && (label_j==3)) || ((label_i==3) && (label_j==2))) {
       datum.set_label(1);
-/////////////////////////////////////////////////////////
-	  // set small portion of 2 be anomally
-	  if (label_i==2 && label_i< num_items/10)	{
-		datum.set_label(0);
-		anomally++;
-	  }
-/////////////////////////////////////////////////////////
       nMatched++;
     } else {
       datum.set_label(0);
@@ -130,7 +118,7 @@ void convert_dataset(const char* image_filename, const char* label_filename,
   delete db;
   delete [] pixels;
   
-  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n Number of anomally: %d \n",num, nMatched, nUmatched, (float)nMatched/(float)num,anomally);
+  printf("This dataset contains %d items, %d of which are matched, and %d are unmatched.\n The ratio of matched is %f \n",num, nMatched, nUmatched, (float)nMatched/(float)num);
 }
 
 int main(int argc, char** argv) {
