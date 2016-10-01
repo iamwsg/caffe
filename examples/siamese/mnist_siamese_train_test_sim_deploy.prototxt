@@ -1,21 +1,4 @@
-name: "mnist_siamese_train_test_sim"
-layer {
-  name: "pair_data"
-  type: "Data"
-  top: "pair_data"
-  top: "label"
-  include {
-    phase: TRAIN
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "/home/shaogang/caffe/examples/siamese/mnist_siamese_train_leveldb_0to6_replace_456789_rotateMerge_600000"
-    batch_size: 64
-    backend: LEVELDB
-  }
-}
+name: "mnist_siamese_train_test_sim_deploy"
 layer {
   name: "pair_data"
   type: "Data"
@@ -28,11 +11,12 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "/home/shaogang/caffe/examples/siamese/mnist_siamese_test_leveldb_89"
-    batch_size: 100
+    source: "/home/shaogang/caffe/examples/siamese/mnist_siamese_test_leveldb_789"
+    batch_size: 1000
     backend: LEVELDB
   }
 }
+
 layer {
   name: "slice_pair"
   type: "Slice"
@@ -439,49 +423,6 @@ layer {
   }
 }
 
-
-#layer {
-#  bottom: "fc3"
-#  top: "prob"
-#  type: "Sigmoid"
-#}
-
-#layer {
-#  bottom: "prob"
-#  top: "out"
-#  type: "Threshold"
-#  threshold_param {
-#  threshold: 0.5
-# }
-#}
-
-#layer {
-#    name: "reshape"
-#    type: "Reshape"
-#    bottom: "label"
-#    top: "reshape"
-#    reshape_param {
-#      shape {
-#        dim: 0  # copy the dimension from below
-#        dim: 1 # infer it from the other dimensions
-#      }
-#    }
-#    include {
-#      phase: TEST
-#    }
-#  }
-
-
-layer {
-  name: "loss"
-  #type: "SigmoidCrossEntropyLoss"
-  type: "SoftmaxWithLoss"
-  #type: "HingeLoss"
-  bottom: "fc3"
-  bottom: "label"
-  top: "loss"
-}
-
 layer {
   name: "accuracy"
   type: "Accuracy"
@@ -493,5 +434,12 @@ layer {
 #  }
 }
 
-#./python/draw_net.py ./examples/siamese/mnist_siamese_train_test_sim.prototxt ./examples/siamese/mnist_siamese_train_test_sim.png
+#layers {
+#  bottom: "fc3"
+#  top: "prob"
+#  name: "prob"
+#  type: "Softmax"
+#}
+
+
 

@@ -17,9 +17,9 @@ power: 0.75
 # Display every 100 iterations
 display: 100
 # The maximum number of iterations
-max_iter: 3000
+max_iter: 20000
 # snapshot intermediate results
-snapshot: 1000
-snapshot_prefix: "examples/siamese/My_mnist_siamese_0to4_t89_feat_2_sim"
+snapshot: 5000
+snapshot_prefix: "examples/siamese/mnist_siamese_0to3_replace_4to9_rotateMerge_feat_2_fine"
 # solver mode: CPU or GPU
 solver_mode: CPU

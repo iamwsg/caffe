@@ -112,10 +112,12 @@ void convert_dataset(const char* image_filename, const char* label_filename,
       datum.set_label(1);
 /////////////////////////////////////////////////////////
 	  // set small portion of 2 be anomally
+/*
 	  if (label_i==2 && label_i< num_items/10)	{
 		datum.set_label(0);
 		anomally++;
 	  }
+*/
 /////////////////////////////////////////////////////////
       nMatched++;
     } else {

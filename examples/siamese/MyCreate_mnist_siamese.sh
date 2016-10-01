@@ -9,10 +9,15 @@ echo "Creating leveldb..."
 #rm -rf ./examples/siamese/mnist_siamese_train_leveldb_0to2
 #rm -rf ./examples/siamese/mnist_siamese_test_leveldb_0to2
 
+#$EXAMPLES/MyConvert_mnist_siamese_data.bin \
+#    $DATA/train-images-idx3-ubyte \
+#    $DATA/train-labels-idx1-ubyte \
+#    ./examples/siamese/mnist_siamese_train_leveldb_0to6
+
 $EXAMPLES/MyConvert_mnist_siamese_data.bin \
-    $DATA/train-images-idx3-ubyte \
+    $DATA/train-images-replace-23-by-01 \
     $DATA/train-labels-idx1-ubyte \
-    ./examples/siamese/mnist_siamese_train_leveldb_0to3_2anorm
+    ./examples/siamese/mnist_siamese_train_leveldb_0to3_replace_23_by_01
 
 #$EXAMPLES/MyConvert_mnist_siamese_data.bin \
 #    $DATA/t10k-images-idx3-ubyte \
